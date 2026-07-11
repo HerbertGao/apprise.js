@@ -11,6 +11,11 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # TypeScript 7.x（原生 "tsgo" 端口）尚无 rollup-plugin-dts 支持，
+      # tsup 的 dts 构建在其上会崩（实测）。锁在 5.x，待 dts 工具链跟上再有计划地升 major。
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
