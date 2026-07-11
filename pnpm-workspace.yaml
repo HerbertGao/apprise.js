@@ -1,0 +1,4 @@
+# pnpm 11 reads build-approval from here. esbuild ships a postinstall that
+# fetches its native binary; tsup & vitest both need it, so allow it.
+allowBuilds:
+  esbuild: true

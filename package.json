@@ -1,0 +1,57 @@
+{
+  "name": "apprise.js",
+  "version": "0.0.0",
+  "description": "A faithful TypeScript translation of caronc/apprise — push notifications to many services via a single URL contract.",
+  "type": "module",
+  "sideEffects": false,
+  "license": "BSD-2-Clause",
+  "packageManager": "pnpm@11.11.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "apprise",
+    "notification",
+    "notifications",
+    "push",
+    "discord",
+    "slack",
+    "telegram",
+    "webhook"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "pnpm run build",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.3",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}
