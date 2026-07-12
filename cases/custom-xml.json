@@ -1,0 +1,75 @@
+{
+  "plugin": "custom-xml",
+  "cases": [
+    {
+      "name": "default",
+      "url": "xml://user:pass@localhost/path",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "secure",
+      "url": "xmls://localhost/spath",
+      "title": "hi",
+      "body": "hello body",
+      "type": "success"
+    },
+    {
+      "name": "user-only",
+      "url": "xml://user@localhost/path",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "method-put",
+      "url": "xml://localhost/path?method=put",
+      "title": "hi",
+      "body": "hello body",
+      "type": "warning"
+    },
+    {
+      "name": "invalid-method",
+      "url": "xml://localhost/path?method=BOGUS",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "escape",
+      "url": "xml://localhost/path",
+      "title": "t'\"<&",
+      "body": "a<b&c'd\"e",
+      "type": "info"
+    },
+    {
+      "name": "prefixes",
+      "url": "xml://localhost/path?+X-Token=abc&:foo=bar",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "payload-order-int",
+      "url": "xml://localhost/path?:2=a&:1=b",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "attachment",
+      "url": "xml://localhost/path",
+      "title": "hi",
+      "body": "see attached",
+      "type": "info",
+      "attachments": [
+        {
+          "memory": { "text": "the content" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ]
+    }
+  ]
+}

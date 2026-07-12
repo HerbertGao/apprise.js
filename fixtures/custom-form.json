@@ -1,0 +1,358 @@
+{
+  "plugin": "custom-form",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "default",
+      "input": {
+        "url": "form://user:pass@localhost/path",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "49",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic dXNlcjpwYXNz"
+          },
+          "body": {
+            "text": "version=1.0&title=hi&message=hello+body&type=info"
+          }
+        }
+      }
+    },
+    {
+      "name": "secure",
+      "input": {
+        "url": "forms://localhost/spath",
+        "title": "hi",
+        "body": "hello body",
+        "type": "success"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://localhost/spath",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "52",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "version=1.0&title=hi&message=hello+body&type=success"
+          }
+        }
+      }
+    },
+    {
+      "name": "user-only",
+      "input": {
+        "url": "form://user@localhost/path",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "49",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic dXNlcjpOb25l"
+          },
+          "body": {
+            "text": "version=1.0&title=hi&message=hello+body&type=info"
+          }
+        }
+      }
+    },
+    {
+      "name": "method-get",
+      "input": {
+        "url": "form://localhost/path?method=GET",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "GET",
+          "url": "http://localhost/path?version=1.0&title=hi&message=hello+body&type=info",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive"
+          },
+          "body": null
+        }
+      }
+    },
+    {
+      "name": "invalid-method",
+      "input": {
+        "url": "form://localhost/path?method=BOGUS",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "prefixes",
+      "input": {
+        "url": "form://localhost/path?+X-Token=abc&-tag=alpha&:extra=val",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path?tag=alpha",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "X-Token": "abc",
+            "Content-Length": "59",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "version=1.0&title=hi&message=hello+body&type=info&extra=val"
+          }
+        }
+      }
+    },
+    {
+      "name": "get-with-minus",
+      "input": {
+        "url": "form://localhost/path?method=GET&-extra=z",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "GET",
+          "url": "http://localhost/path?version=1.0&title=hi&message=hello+body&type=info&extra=z",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive"
+          },
+          "body": null
+        }
+      }
+    },
+    {
+      "name": "colon-rename-message",
+      "input": {
+        "url": "form://localhost/path?:message=msg",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "45",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "version=1.0&title=hi&msg=hello+body&type=info"
+          }
+        }
+      }
+    },
+    {
+      "name": "colon-delete-title",
+      "input": {
+        "url": "form://localhost/path?:title=",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "40",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "version=1.0&message=hello+body&type=info"
+          }
+        }
+      }
+    },
+    {
+      "name": "form-body-encoding",
+      "input": {
+        "url": "form://localhost/path?:extra=a*b~c",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "63",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "version=1.0&title=hi&message=hello+body&type=info&extra=a%2Ab~c"
+          }
+        }
+      }
+    },
+    {
+      "name": "int-field-order-form-body",
+      "input": {
+        "url": "form://localhost/path?:title=1&:message=2",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/path",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "39",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "version=1.0&1=hi&2=hello+body&type=info"
+          }
+        }
+      }
+    },
+    {
+      "name": "int-extras-reverse-get-query",
+      "input": {
+        "url": "form://localhost/path?method=GET&:2=y&:1=x",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "GET",
+          "url": "http://localhost/path?version=1.0&title=hi&message=hello+body&type=info&2=y&1=x",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive"
+          },
+          "body": null
+        }
+      }
+    }
+  ]
+}

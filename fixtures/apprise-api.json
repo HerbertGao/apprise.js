@@ -1,0 +1,255 @@
+{
+  "plugin": "apprise-api",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "default-form",
+      "input": {
+        "url": "apprise://user:pass@localhost/abc123",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/notify/abc123",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "X-Apprise-ID": "itest-uid-0",
+            "X-Apprise-Recursion-Count": "1",
+            "Content-Length": "46",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic dXNlcjpwYXNz"
+          },
+          "body": {
+            "text": "title=hi&body=hello+body&type=info&format=text"
+          }
+        }
+      }
+    },
+    {
+      "name": "secure",
+      "input": {
+        "url": "apprises://localhost/abc123",
+        "title": "hi",
+        "body": "hello body",
+        "type": "success"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://localhost/notify/abc123",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "X-Apprise-ID": "itest-uid-0",
+            "X-Apprise-Recursion-Count": "1",
+            "Content-Length": "49",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "title=hi&body=hello+body&type=success&format=text"
+          }
+        }
+      }
+    },
+    {
+      "name": "user-only",
+      "input": {
+        "url": "apprise://user@localhost/abc123",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/notify/abc123",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "X-Apprise-ID": "itest-uid-0",
+            "X-Apprise-Recursion-Count": "1",
+            "Content-Length": "46",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic dXNlcjpOb25l"
+          },
+          "body": {
+            "text": "title=hi&body=hello+body&type=info&format=text"
+          }
+        }
+      }
+    },
+    {
+      "name": "method-json",
+      "input": {
+        "url": "apprise://localhost/abc123?method=json",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/notify/abc123",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Apprise-ID": "itest-uid-0",
+            "X-Apprise-Recursion-Count": "1",
+            "Content-Length": "71"
+          },
+          "body": {
+            "text": "{\"title\": \"hi\", \"body\": \"hello body\", \"type\": \"info\", \"format\": \"text\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "json-attachment",
+      "input": {
+        "url": "apprise://localhost/abc123?method=json",
+        "title": "hi",
+        "body": "see attached",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "text": "the content"
+            },
+            "mimetype": "text/plain",
+            "name": "note.txt"
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/notify/abc123",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Apprise-ID": "itest-uid-0",
+            "X-Apprise-Recursion-Count": "1",
+            "Content-Length": "172"
+          },
+          "body": {
+            "text": "{\"title\": \"hi\", \"body\": \"see attached\", \"type\": \"info\", \"format\": \"text\", \"attachments\": [{\"filename\": \"note.txt\", \"base64\": \"dGhlIGNvbnRlbnQ=\", \"mimetype\": \"text/plain\"}]}"
+          }
+        }
+      }
+    },
+    {
+      "name": "invalid-method",
+      "input": {
+        "url": "apprise://localhost/abc123?method=bogus",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "invalid-token",
+      "input": {
+        "url": "apprise://localhost/bad.token",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "prefix-plus-ignores-minus-colon",
+      "input": {
+        "url": "apprise://localhost/abc123?+X-H=1&-foo=bar&:baz=qux",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/notify/abc123",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "X-H": "1",
+            "X-Apprise-ID": "itest-uid-0",
+            "X-Apprise-Recursion-Count": "1",
+            "Content-Length": "46",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "title=hi&body=hello+body&type=info&format=text"
+          }
+        }
+      }
+    }
+  ]
+}

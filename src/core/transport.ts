@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: BSD-2-Clause
+// apprise.js — a faithful TypeScript translation of caronc/apprise.
+// Derived from https://github.com/caronc/apprise (© Chris Caron), BSD-2-Clause.
+// Translation baseline: upstream v1.12.0 (the requests/adapters transport seam).
+//
+// The HTTP transport seam (design.md Decision 5). Every plugin routes its wire
+// request through {@link request}; the underlying implementation is injectable
+// so the golden-differential suite can intercept and record the final request
+// (method/url/headers/body) instead of hitting the network, and so a future
+// proxy / undici Agent can be slotted in without touching plugin code.
+
+/** A wire request as assembled by a plugin's `send()`. */
+export interface TransportRequest {
+  method: string
+  url: string
+  /** Semantic headers the plugin sets explicitly (e.g. `User-Agent`). */
+  headers?: Record<string, string>
+  body?: string | Uint8Array | null
+}
+
+/**
+ * The structural subset of the Fetch `Response` the engine relies on. The
+ * native `Response` satisfies this, and a recording transport can return any
+ * object with the same shape.
+ */
+export interface TransportResponse {
+  readonly ok: boolean
+  readonly status: number
+  readonly statusText: string
+  readonly headers: Headers
+  text(): Promise<string>
+}
+
+/** An injectable transport (default wraps the global `fetch`). */
+export type Transport = (
+  request: TransportRequest,
+) => Promise<TransportResponse>
+
+/** Default transport: a thin wrapper over the platform's global `fetch`. */
+async function nativeFetchTransport(
+  req: TransportRequest,
+): Promise<TransportResponse> {
+  return fetch(req.url, {
+    method: req.method,
+    headers: req.headers,
+    body: req.body ?? undefined,
+  })
+}
+
+let active: Transport = nativeFetchTransport
+
+/**
+ * Replace the active transport (e.g. inject a recorder in tests). Passing
+ * `null` restores the default native-fetch transport.
+ */
+export function setTransport(transport: Transport | null): void {
+  active = transport ?? nativeFetchTransport
+}
+
+/** Issue a request through the currently active transport. */
+export function request(req: TransportRequest): Promise<TransportResponse> {
+  return active(req)
+}

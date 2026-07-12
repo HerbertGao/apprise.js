@@ -1,0 +1,89 @@
+{
+  "plugin": "custom-form",
+  "cases": [
+    {
+      "name": "default",
+      "url": "form://user:pass@localhost/path",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "secure",
+      "url": "forms://localhost/spath",
+      "title": "hi",
+      "body": "hello body",
+      "type": "success"
+    },
+    {
+      "name": "user-only",
+      "url": "form://user@localhost/path",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "method-get",
+      "url": "form://localhost/path?method=GET",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "invalid-method",
+      "url": "form://localhost/path?method=BOGUS",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "prefixes",
+      "url": "form://localhost/path?+X-Token=abc&-tag=alpha&:extra=val",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "get-with-minus",
+      "url": "form://localhost/path?method=GET&-extra=z",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "colon-rename-message",
+      "url": "form://localhost/path?:message=msg",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "colon-delete-title",
+      "url": "form://localhost/path?:title=",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "form-body-encoding",
+      "url": "form://localhost/path?:extra=a*b~c",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "int-field-order-form-body",
+      "url": "form://localhost/path?:title=1&:message=2",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "int-extras-reverse-get-query",
+      "url": "form://localhost/path?method=GET&:2=y&:1=x",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    }
+  ]
+}

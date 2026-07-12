@@ -29,7 +29,58 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    }
+    },
+    "./plugins/custom-json": {
+      "import": {
+        "types": "./dist/plugins/custom-json.d.ts",
+        "default": "./dist/plugins/custom-json.js"
+      },
+      "require": {
+        "types": "./dist/plugins/custom-json.d.cts",
+        "default": "./dist/plugins/custom-json.cjs"
+      }
+    },
+    "./plugins/custom-form": {
+      "import": {
+        "types": "./dist/plugins/custom-form.d.ts",
+        "default": "./dist/plugins/custom-form.js"
+      },
+      "require": {
+        "types": "./dist/plugins/custom-form.d.cts",
+        "default": "./dist/plugins/custom-form.cjs"
+      }
+    },
+    "./plugins/custom-xml": {
+      "import": {
+        "types": "./dist/plugins/custom-xml.d.ts",
+        "default": "./dist/plugins/custom-xml.js"
+      },
+      "require": {
+        "types": "./dist/plugins/custom-xml.d.cts",
+        "default": "./dist/plugins/custom-xml.cjs"
+      }
+    },
+    "./plugins/apprise-api": {
+      "import": {
+        "types": "./dist/plugins/apprise-api.d.ts",
+        "default": "./dist/plugins/apprise-api.js"
+      },
+      "require": {
+        "types": "./dist/plugins/apprise-api.d.cts",
+        "default": "./dist/plugins/apprise-api.cjs"
+      }
+    },
+    "./plugins/all": {
+      "import": {
+        "types": "./dist/plugins/all.d.ts",
+        "default": "./dist/plugins/all.js"
+      },
+      "require": {
+        "types": "./dist/plugins/all.d.cts",
+        "default": "./dist/plugins/all.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -50,8 +101,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.3",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^26.1.1",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
+  },
+  "dependencies": {
+    "js-yaml": "^5.2.1",
+    "markdown-it": "^14.3.0"
   }
 }
