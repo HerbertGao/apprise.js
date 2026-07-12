@@ -1,0 +1,71 @@
+{
+  "plugin": "matrix",
+  "cases": [
+    {
+      "name": "t2bot-webhook",
+      "url": "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "raw-token-whoami-send",
+      "url": "matrixs://rawtokenABC123@matrix.example.com/!abc:matrix.example.com?discovery=no",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": { "text": "{\"user_id\":\"@bot:matrix.example.com\"}" }
+        }
+      ],
+      "seeds": { "uuid": "00000000-0000-0000-0000-000000000000" }
+    },
+    {
+      "name": "login-join-send",
+      "url": "matrixs://user:pass@matrix.example.com/!abc:matrix.example.com?discovery=no",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"access_token\":\"logintoken0\",\"user_id\":\"@user:matrix.example.com\",\"device_id\":\"DEV0\"}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "login-multi-room-txn-counter",
+      "url": "matrixs://user:pass@matrix.example.com/!r1:matrix.example.com/!r2:matrix.example.com?discovery=no",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"access_token\":\"logintoken0\",\"user_id\":\"@user:matrix.example.com\",\"device_id\":\"DEV0\"}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "login-format-html",
+      "url": "matrixs://user:pass@matrix.example.com/!abc:matrix.example.com?discovery=no&format=html",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"access_token\":\"logintoken0\",\"user_id\":\"@user:matrix.example.com\",\"device_id\":\"DEV0\"}"
+          }
+        }
+      ]
+    }
+  ]
+}

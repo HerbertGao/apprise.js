@@ -76,6 +76,14 @@ describe('custom-xml `-` params (parsed + url()-echoed, never sent)', () => {
     expect(body).not.toContain('<Version>1.1</Version>')
   })
 
+  test('GET/HEAD fails loud: xml://host?method=get add() true, notify() false', async () => {
+    // Parses & constructs (url() round-trips), but send() throws rather than
+    // silently shipping an empty GET; the throw folds via allSettled to false.
+    const app = new Apprise()
+    expect(app.add('xml://localhost/path?method=get')).toBe(true)
+    expect(await app.notify({ body: 'hi' })).toBe(false)
+  })
+
   test('the -k param does NOT appear in the wire request URL', async () => {
     const seen: TransportRequest[] = []
     setTransport(async (req) => {

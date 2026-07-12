@@ -27,26 +27,41 @@ const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 
 `add()` also accepts an array of URLs. `notify()` takes `{ title?, body?, type?, bodyFormat?, attach? }`; `type` is a `NotifyType` (`info`/`success`/`warning`/`failure`).
 
-### Batch-1 schemes
+### Schemes
 
-The engine ships with the four generic webhook meta-plugins:
+Importing the `apprise.js` barrel registers the four generic webhook meta-plugins:
 
-| Scheme                | Plugin            | Sends                          |
-| --------------------- | ----------------- | ------------------------------ |
-| `json://` / `jsons://` | `NotifyJSON`      | JSON body                      |
-| `form://` / `forms://` | `NotifyForm`      | `multipart` / form-urlencoded  |
-| `xml://` / `xmls://`   | `NotifyXML`       | XML (SOAP) body                |
-| `apprise://` / `apprises://` | `NotifyAppriseAPI` | Apprise API server |
+| Scheme                       | Plugin             | Sends                         |
+| ---------------------------- | ------------------ | ----------------------------- |
+| `json://` / `jsons://`       | `NotifyJSON`       | JSON body                     |
+| `form://` / `forms://`       | `NotifyForm`       | `multipart` / form-urlencoded |
+| `xml://` / `xmls://`         | `NotifyXML`        | XML (SOAP) body               |
+| `apprise://` / `apprises://` | `NotifyAppriseAPI` | Apprise API server            |
 
-Importing the `apprise.js` barrel registers all four. To keep only what you use (tree-shakeable), import a single plugin — or the `all` bucket — from a subpath instead:
+The six instant-messaging plugins are **not** in the barrel — import each from its subpath (or the `all` bucket) so bundlers can tree-shake the rest away:
+
+| Scheme                   | Plugin             | Subpath                        | Sends                                          |
+| ------------------------ | ------------------ | ------------------------------ | ---------------------------------------------- |
+| `mmost://` / `mmosts://` | `NotifyMattermost` | `apprise.js/plugins/mattermost` | Mattermost incoming webhook                    |
+| `discord://`             | `NotifyDiscord`    | `apprise.js/plugins/discord`   | Discord webhook (+ multipart attachments)      |
+| `slack://`               | `NotifySlack`      | `apprise.js/plugins/slack`     | Slack incoming webhook or bot (Web API)        |
+| `tgram://`               | `NotifyTelegram`   | `apprise.js/plugins/telegram`  | Telegram Bot API (`sendMessage` + media)       |
+| `rocket://` / `rockets://` | `NotifyRocketChat` | `apprise.js/plugins/rocketchat` | Rocket.Chat (webhook / token / basic login)   |
+| `matrix://` / `matrixs://` | `NotifyMatrix`     | `apprise.js/plugins/matrix`    | Matrix (t2bot webhook or direct room message)  |
+
+To keep only what you use (tree-shakeable), import a single plugin — or the `all` bucket — from a subpath:
 
 ```ts
 import { Apprise } from 'apprise.js'
 import 'apprise.js/plugins/custom-json' // registers only json:// + jsons://
-// or: import 'apprise.js/plugins/all'  // registers every batch-1 scheme
+import 'apprise.js/plugins/discord'     // registers only discord://
+import 'apprise.js/plugins/telegram'    // registers only tgram://
+// or: import 'apprise.js/plugins/all'  // registers every scheme above
 
 const apprise = new Apprise()
-apprise.add('json://example.com/hook')
+apprise.add('discord://webhook_id/webhook_token')
+apprise.add('tgram://bot_token/12345')
+const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 ```
 
 Runtime handlers can also be registered without a plugin class via `Apprise.register(scheme, handler)`.

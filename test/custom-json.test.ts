@@ -41,6 +41,19 @@ describe('custom-json url() round-trip', () => {
   })
 })
 
+describe('GET/HEAD fails loud (native fetch cannot carry the JSON body)', () => {
+  // json://…?method=get parses & constructs (url() round-trips), but send()
+  // throws rather than silently shipping an empty GET/HEAD; the throw folds via
+  // allSettled into notify() -> false.
+  for (const method of ['get', 'head']) {
+    test(`json://host?method=${method}: add() true, notify() false`, async () => {
+      const app = new Apprise()
+      expect(app.add(`json://localhost/path?method=${method}`)).toBe(true)
+      expect(await app.notify({ body: 'hi' })).toBe(false)
+    })
+  }
+})
+
 describe('TRUNCATE overflow clamps >1 attachment to the first', () => {
   afterEach(() => {
     setTransport(null)

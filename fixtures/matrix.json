@@ -1,0 +1,368 @@
+{
+  "plugin": "matrix",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "t2bot-webhook",
+      "input": {
+        "url": "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://webhooks.t2bot.io/api/v1/matrix/hook/abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "73"
+          },
+          "body": {
+            "text": "{\"displayName\": \"Apprise\", \"format\": \"plain\", \"text\": \"hi\\r\\nhello body\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "raw-token-whoami-send",
+      "input": {
+        "url": "matrixs://rawtokenABC123@matrix.example.com/!abc:matrix.example.com?discovery=no",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"user_id\":\"@bot:matrix.example.com\"}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null,
+        "uuid": "00000000-0000-0000-0000-000000000000"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://matrix.example.com/_matrix/client/v3/account/whoami",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer rawtokenABC123",
+              "Content-Length": "4"
+            },
+            "body": {
+              "text": "null"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/join/%21abc%3Amatrix.example.com",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer rawtokenABC123",
+              "Content-Length": "2"
+            },
+            "body": {
+              "text": "{}"
+            }
+          },
+          {
+            "method": "PUT",
+            "url": "https://matrix.example.com/_matrix/client/v3/rooms/%21abc%3Amatrix.example.com/send/m.room.message/00000000-0000-0000-0000-000000000000",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer rawtokenABC123",
+              "Content-Length": "51"
+            },
+            "body": {
+              "text": "{\"msgtype\": \"m.text\", \"body\": \"# hi\\r\\nhello body\"}"
+            }
+          }
+        ],
+        "expectedCount": 3
+      }
+    },
+    {
+      "name": "login-join-send",
+      "input": {
+        "url": "matrixs://user:pass@matrix.example.com/!abc:matrix.example.com?discovery=no",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"access_token\":\"logintoken0\",\"user_id\":\"@user:matrix.example.com\",\"device_id\":\"DEV0\"}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/login",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "143"
+            },
+            "body": {
+              "text": "{\"type\": \"m.login.password\", \"identifier\": {\"type\": \"m.id.user\", \"user\": \"user\"}, \"password\": \"pass\", \"initial_device_display_name\": \"Apprise\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/join/%21abc%3Amatrix.example.com",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "2"
+            },
+            "body": {
+              "text": "{}"
+            }
+          },
+          {
+            "method": "PUT",
+            "url": "https://matrix.example.com/_matrix/client/v3/rooms/%21abc%3Amatrix.example.com/send/m.room.message/0",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "51"
+            },
+            "body": {
+              "text": "{\"msgtype\": \"m.text\", \"body\": \"# hi\\r\\nhello body\"}"
+            }
+          }
+        ],
+        "expectedCount": 3
+      }
+    },
+    {
+      "name": "login-multi-room-txn-counter",
+      "input": {
+        "url": "matrixs://user:pass@matrix.example.com/!r1:matrix.example.com/!r2:matrix.example.com?discovery=no",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"access_token\":\"logintoken0\",\"user_id\":\"@user:matrix.example.com\",\"device_id\":\"DEV0\"}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/login",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "143"
+            },
+            "body": {
+              "text": "{\"type\": \"m.login.password\", \"identifier\": {\"type\": \"m.id.user\", \"user\": \"user\"}, \"password\": \"pass\", \"initial_device_display_name\": \"Apprise\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/join/%21r1%3Amatrix.example.com",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "2"
+            },
+            "body": {
+              "text": "{}"
+            }
+          },
+          {
+            "method": "PUT",
+            "url": "https://matrix.example.com/_matrix/client/v3/rooms/%21r1%3Amatrix.example.com/send/m.room.message/0",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "51"
+            },
+            "body": {
+              "text": "{\"msgtype\": \"m.text\", \"body\": \"# hi\\r\\nhello body\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/join/%21r2%3Amatrix.example.com",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "2"
+            },
+            "body": {
+              "text": "{}"
+            }
+          },
+          {
+            "method": "PUT",
+            "url": "https://matrix.example.com/_matrix/client/v3/rooms/%21r2%3Amatrix.example.com/send/m.room.message/1",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "51"
+            },
+            "body": {
+              "text": "{\"msgtype\": \"m.text\", \"body\": \"# hi\\r\\nhello body\"}"
+            }
+          }
+        ],
+        "expectedCount": 5
+      }
+    },
+    {
+      "name": "login-format-html",
+      "input": {
+        "url": "matrixs://user:pass@matrix.example.com/!abc:matrix.example.com?discovery=no&format=html",
+        "title": "hi",
+        "body": "hello body",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"access_token\":\"logintoken0\",\"user_id\":\"@user:matrix.example.com\",\"device_id\":\"DEV0\"}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/login",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "143"
+            },
+            "body": {
+              "text": "{\"type\": \"m.login.password\", \"identifier\": {\"type\": \"m.id.user\", \"user\": \"user\"}, \"password\": \"pass\", \"initial_device_display_name\": \"Apprise\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://matrix.example.com/_matrix/client/v3/join/%21abc%3Amatrix.example.com",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "2"
+            },
+            "body": {
+              "text": "{}"
+            }
+          },
+          {
+            "method": "PUT",
+            "url": "https://matrix.example.com/_matrix/client/v3/rooms/%21abc%3Amatrix.example.com/send/m.room.message/0",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Authorization": "Bearer logintoken0",
+              "Content-Length": "130"
+            },
+            "body": {
+              "text": "{\"msgtype\": \"m.text\", \"body\": \"# hi\\r\\nhello body\", \"format\": \"org.matrix.custom.html\", \"formatted_body\": \"<h1>hi</h1>hello body\"}"
+            }
+          }
+        ],
+        "expectedCount": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "plugin": "_multireq_smoke",
+  "cases": [
+    {
+      "name": "overflow-split-two-requests",
+      "url": "json://localhost/path?overflow=split",
+      "title": "",
+      "body_gen": { "char": "A", "count": 40000 },
+      "type": "info"
+    }
+  ]
+}

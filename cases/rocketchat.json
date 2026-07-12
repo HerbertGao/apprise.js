@@ -1,0 +1,49 @@
+{
+  "plugin": "rocketchat",
+  "cases": [
+    {
+      "name": "basic-login-flow",
+      "url": "rocket://user:pass@localhost/#general",
+      "title": "",
+      "body": "hello world",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"status\":\"success\",\"data\":{\"authToken\":\"itest-auth-token-0\",\"userId\":\"itest-user-id-0\"}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "token-direct",
+      "url": "rocket://user:abcdefghijklmnopqrstuvwxyz0123456789@localhost/#channel?avatar=no",
+      "title": "",
+      "body": "hello world",
+      "type": "info"
+    },
+    {
+      "name": "webhook-direct",
+      "url": "rocket://tokenaaa/tokenbbb@localhost",
+      "title": "",
+      "body": "hello world",
+      "type": "info"
+    },
+    {
+      "name": "basic-multi-target",
+      "url": "rocket://user:pass@localhost/#alpha/@bravo",
+      "title": "",
+      "body": "hi there",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"status\":\"success\",\"data\":{\"authToken\":\"itest-auth-token-0\",\"userId\":\"itest-user-id-0\"}}"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -37,10 +37,13 @@ import { AppriseAttachment } from '../src/attachment/base.js'
 import { AttachMemory } from '../src/attachment/memory.js'
 import type { NotifyType } from '../src/common.js'
 import { Apprise } from '../src/core/apprise.js'
+import { setMultipartBoundarySeed } from '../src/core/multipart.js'
+import { clearStoreSeeds, setStoreSeeds } from '../src/core/store.js'
 import {
   setTransport,
   type Transport,
   type TransportRequest,
+  type TransportResponse,
 } from '../src/core/transport.js'
 
 // --- fixture shape -----------------------------------------------------------
@@ -56,6 +59,19 @@ export interface FixtureRequest {
   url: string
   headers: Record<string, string>
   body: FixtureBody | null
+}
+
+/**
+ * A canned response the recording transport returns for the i-th request of a
+ * multi-step case, so a stateful plugin (login → send …) can build later
+ * requests from earlier responses. Shape MUST match the upstream parse path
+ * (e.g. rocketchat login → `{status,data:{authToken,userId}}`); a missing field
+ * makes upstream short-circuit. Defaults to a 200 `{}` when absent.
+ */
+export interface CannedResponse {
+  status?: number
+  headers?: Record<string, string>
+  body?: FixtureBody | null
 }
 
 export type AttachmentDescriptor =
@@ -74,10 +90,25 @@ export interface FixtureCase {
     body?: string
     type?: string
     attachments?: AttachmentDescriptor[]
+    /** Per-request canned responses replayed in order (multi-step plugins). */
+    responses?: CannedResponse[]
   }
-  seeds?: { uid?: string; recursion?: number; boundary?: string | null }
+  seeds?: {
+    uid?: string
+    recursion?: number
+    boundary?: string | null
+    /** matrix login-mode txnId counter start (see store.ts). */
+    txn?: number
+    /** matrix raw-token fixed uuid (see store.ts). */
+    uuid?: string
+  }
   expected: {
+    /** Single-request delivery (unchanged, backward-compatible). */
     request?: FixtureRequest
+    /** Ordered multi-request sequence (login/whoami/join/send/logout, split). */
+    requests?: FixtureRequest[]
+    /** Independent request-count oracle for `requests` (defends vs truncation). */
+    expectedCount?: number
     noRequest?: { reason: string }
   }
 }
@@ -156,6 +187,28 @@ interface DriveResult {
   result: boolean
 }
 
+/** Build a form-correct TransportResponse from a canned spec (default 200 `{}`). */
+function makeResponse(spec: CannedResponse | undefined): TransportResponse {
+  const status = spec?.status ?? 200
+  let bodyText: string
+  if (spec === undefined) {
+    bodyText = '{}'
+  } else if (spec.body == null) {
+    bodyText = ''
+  } else if (spec.body.base64 !== undefined) {
+    bodyText = Buffer.from(spec.body.base64, 'base64').toString()
+  } else {
+    bodyText = spec.body.text ?? ''
+  }
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    statusText: 'OK',
+    headers: new Headers(spec?.headers ?? {}),
+    text: async () => bodyText,
+  }
+}
+
 /** Drive one case through Apprise, recording the wire request(s). */
 async function driveCase(c: FixtureCase): Promise<DriveResult> {
   const seeds = c.seeds ?? {}
@@ -163,36 +216,47 @@ async function driveCase(c: FixtureCase): Promise<DriveResult> {
     uid: seeds.uid ?? 'itest-uid-0',
     recursion: seeds.recursion ?? 0,
   })
-  const app = new Apprise({ asset })
-  const added = app.add(c.input.url)
 
-  const requests: TransportRequest[] = []
-  const transport: Transport = async (req) => {
-    requests.push(req)
-    return {
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers(),
-      text: async () => '{}',
-    }
-  }
+  // Pin the store determinism BEFORE the plugin is constructed (the store reads
+  // seeds at construction). Cleared in the finally below (like setTransport).
+  setStoreSeeds({ txn: seeds.txn, uuid: seeds.uuid })
+  // Pin the shared multipart boundary so hand-assembled multipart bodies replay
+  // byte-for-byte against the capture. Cleared in the finally (like setTransport).
+  setMultipartBoundarySeed(seeds.boundary ?? null)
+  try {
+    const app = new Apprise({ asset })
+    const added = app.add(c.input.url)
 
-  let result = false
-  if (added) {
-    setTransport(transport)
-    try {
-      result = await app.notify({
-        title: c.input.title ?? '',
-        body: c.input.body ?? '',
-        type: (c.input.type ?? 'info') as NotifyType,
-        attach: buildAttach(c.input.attachments),
-      })
-    } finally {
-      setTransport(null)
+    const canned = c.input.responses ?? []
+    const requests: TransportRequest[] = []
+    // This recorder captures the request the PLUGIN emits (Python parity),
+    // including any GET/HEAD body upstream sends; the real native-fetch runtime
+    // drops a GET/HEAD body (transport.ts) — see transport.test.ts.
+    const transport: Transport = async (req) => {
+      const idx = requests.length
+      requests.push(req)
+      return makeResponse(canned[idx])
     }
+
+    let result = false
+    if (added) {
+      setTransport(transport)
+      try {
+        result = await app.notify({
+          title: c.input.title ?? '',
+          body: c.input.body ?? '',
+          type: (c.input.type ?? 'info') as NotifyType,
+          attach: buildAttach(c.input.attachments),
+        })
+      } finally {
+        setTransport(null)
+      }
+    }
+    return { added, requests, result }
+  } finally {
+    clearStoreSeeds()
+    setMultipartBoundarySeed(null)
   }
-  return { added, requests, result }
 }
 
 function headerMap(h: Record<string, string> | undefined): Map<string, string> {
@@ -270,28 +334,38 @@ function compareHeaders(
 }
 
 function compareBody(
-  actual: string | null,
+  actual: TransportRequest['body'],
   expected: FixtureBody | null,
   mode: BodyMode,
 ): void {
   if (expected == null) {
-    expect(actual == null || actual === '', 'body should be empty').toBe(true)
+    const s = bodyToString(actual)
+    expect(s == null || s === '', 'body should be empty').toBe(true)
     return
   }
   if (expected.base64 !== undefined) {
-    const bytes = actual == null ? Buffer.alloc(0) : Buffer.from(actual)
+    // Byte-faithful: base64-encode the ORIGINAL body bytes, never a UTF-8
+    // round-trip (which maps invalid UTF-8 to U+FFFD and corrupts arbitrary
+    // binary). A string body is its UTF-8 bytes; a Uint8Array is used verbatim.
+    const bytes =
+      actual == null
+        ? Buffer.alloc(0)
+        : typeof actual === 'string'
+          ? Buffer.from(actual, 'utf8')
+          : Buffer.from(actual)
     expect(bytes.toString('base64'), 'body (base64)').toBe(expected.base64)
     return
   }
+  const actualStr = bodyToString(actual)
   const expText = expected.text ?? ''
   if (mode === 'json') {
-    expect(canonicalJson(JSON.parse(actual ?? 'null'))).toEqual(
+    expect(canonicalJson(JSON.parse(actualStr ?? 'null'))).toEqual(
       canonicalJson(JSON.parse(expText)),
     )
   } else if (mode === 'form') {
-    expect(parseForm(actual ?? '')).toEqual(parseForm(expText))
+    expect(parseForm(actualStr ?? '')).toEqual(parseForm(expText))
   } else {
-    expect(actual ?? '').toBe(expText)
+    expect(actualStr ?? '').toBe(expText)
   }
 }
 
@@ -307,7 +381,7 @@ function compareRequest(
     expected.headers,
     opts.ignoreHeaders ?? DEFAULT_IGNORE,
   )
-  compareBody(bodyToString(actual.body), expected.body, opts.bodyMode)
+  compareBody(actual.body, expected.body, opts.bodyMode)
 }
 
 /** Run the golden assertions for ONE case (exported for the tool's self-test). */
@@ -324,6 +398,30 @@ export async function matchCase(
       expect(added, 'instantiation should have succeeded').toBe(true)
     }
     expect(requests, 'no wire request expected').toHaveLength(0)
+    return
+  }
+
+  // Multi-request form: an ordered sequence with an independent count oracle.
+  if (c.expected.requests) {
+    const expectedReqs = c.expected.requests
+    const count = c.expected.expectedCount
+    expect(added, 'instantiation should succeed').toBe(true)
+    expect(
+      count,
+      'a `requests` fixture MUST declare a matching `expectedCount`',
+    ).toBe(expectedReqs.length)
+    // Independent count oracle: guards against a truncated sequence (a short
+    // upstream response short-circuiting) passing by mutual agreement.
+    expect(requests, `expected ${count} wire requests`).toHaveLength(
+      count as number,
+    )
+    for (let i = 0; i < expectedReqs.length; i++) {
+      compareRequest(
+        requests[i] as TransportRequest,
+        expectedReqs[i] as FixtureRequest,
+        opts,
+      )
+    }
     return
   }
 

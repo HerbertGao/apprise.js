@@ -173,6 +173,17 @@ export class NotifyXML extends NotifyBase {
     notifyType: NotifyType = NotifyType.INFO,
     options: SendOptions = {},
   ): Promise<boolean> {
+    // ponytail: native fetch forbids a GET/HEAD body (transport.ts drops it),
+    // but upstream custom_xml.py sends the XML payload as the body on ANY method
+    // (incl. GET/HEAD). Fail loud rather than silently ship an empty GET/HEAD
+    // and report success on the 2xx.
+    if (this.method === 'GET' || this.method === 'HEAD') {
+      throw new TypeError(
+        `xml:// cannot send a ${this.method} request: native fetch cannot ` +
+          'carry the XML payload as a GET/HEAD body (upstream does).',
+      )
+    }
+
     const headers: Record<string, string> = {
       'User-Agent': this.asset.appId,
       'Content-Type': 'application/xml',

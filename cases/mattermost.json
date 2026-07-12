@@ -1,0 +1,40 @@
+{
+  "plugin": "mattermost",
+  "cases": [
+    {
+      "name": "default",
+      "url": "mmost://host/token1",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "secure",
+      "url": "mmosts://host/token1",
+      "title": "hi",
+      "body": "hello body",
+      "type": "success"
+    },
+    {
+      "name": "port-subpath",
+      "url": "mmosts://host:8065/sub/path/token1",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "channel",
+      "url": "mmost://host/token1?channel=town-square",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "overflow-truncate",
+      "url": "mmost://host/token1?overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "A", "count": 4001 },
+      "type": "info"
+    }
+  ]
+}

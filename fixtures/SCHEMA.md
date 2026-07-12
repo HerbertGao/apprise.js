@@ -26,10 +26,13 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
       "body": "hello body",         // optional, default ""
       "type": "info",               // info|success|warning|failure, default info
       "attachments": [ /* descriptors, optional */ ],
+      "responses": [ /* CannedResponse[], optional; multi-step plugins */ ],
       "seeds": {                    // optional; defaults applied per field
         "uid": "itest-uid-0",       // -> asset._uid  (apprise-api X-Apprise-ID)
         "recursion": 0,             // -> asset._recursion (X-Apprise-Recursion-Count = +1)
-        "boundary": null            // multipart boundary pin (null = none this batch)
+        "boundary": null,           // multipart boundary pin (null = none this batch)
+        "txn": 0,                   // matrix login-mode txnId counter start (optional)
+        "uuid": "..."               // matrix raw-token fixed uuid4 (optional)
       }
     }
   ]
@@ -37,7 +40,34 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
 ```
 
 Defaults when a case omits `seeds` (or a field): `uid="itest-uid-0"`,
-`recursion=0`, `boundary=null`.
+`recursion=0`, `boundary=null`. `txn`/`uuid` are only echoed into the fixture
+when the case declares them (single-request fixtures stay byte-identical).
+
+### Multi-request plugins (`responses`, `expected.requests`, `expectedCount`)
+
+Stateful/multi-step plugins (rocketchat/matrix login→send→logout, overflow
+split) issue **N ordered requests per case**. A case declares `responses` — the
+per-request canned reply the recording transport returns so a later request can
+be built from an earlier response (login token, upload URL, …):
+
+```jsonc
+"responses": [
+  // response for the i-th request; beyond this list -> default 200 {}.
+  { "status": 200, "headers": { "...": "..." }, "body": { "text": "{\"token\":\"T0\"}" } },
+  { "status": 200, "body": { "text": "{}" } }   // body: {text|base64}|null (like request body)
+]
+```
+
+Response `body` MUST be **form-correct** for the upstream parse path (e.g.
+rocketchat login `{status:'success',data:{authToken,userId}}`, matrix login
+`{access_token,user_id,device_id}`, slack `chat.postMessage` `{channel}`); a
+missing field makes upstream short-circuit and truncate the sequence. Both the
+capture harness AND the TS diff replay the SAME `responses`.
+
+Determinism: pin matrix's login-mode txnId counter start with `seeds.txn`
+(default 0, increments after each send) and the raw-token fixed uuid with
+`seeds.uuid` (the harness monkeypatches `uuid.uuid4`; the TS store reads the
+seed via `setStoreSeeds`).
 
 ### Attachment descriptors (deterministic only)
 
@@ -89,11 +119,19 @@ Defaults when a case omits `seeds` (or a field): `uid="itest-uid-0"`,
 }
 ```
 
-### `expected` — two mutually exclusive shapes
+### `expected` — three mutually exclusive shapes
 
-- **`request`** `{ method, url, headers, body }` — a normal delivery. `headers`
-  is the full set upstream sent (transport defaults included); the TS diff test
-  compares only its per-plugin key set and ignores transport-default keys.
+- **`request`** `{ method, url, headers, body }` — a single normal delivery.
+  `headers` is the full set upstream sent (transport defaults included); the TS
+  diff test compares only its per-plugin key set and ignores transport-default
+  keys.
+- **`requests`** `[{ method, url, headers, body }, ...]` + **`expectedCount`** —
+  an ORDERED multi-request sequence (login/whoami/join/send/logout, split).
+  Emitted automatically when a case produces >1 request. `expectedCount` is an
+  independent request-count oracle (== `requests.length`); the TS diff asserts
+  the plugin issues exactly that many requests, then compares each field-by-field
+  in order. Guards against a truncated (short-circuited) capture passing by
+  mutual agreement with a matching-bug TS impl.
 - **`noRequest`** `{ reason }` — no wire request. `reason`:
   - `"instantiation-failed"` — upstream refused to construct the plugin
     (invalid `?method=`, bad token, ...). `.add()` returned False.

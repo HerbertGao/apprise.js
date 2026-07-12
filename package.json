@@ -70,6 +70,66 @@
         "default": "./dist/plugins/apprise-api.cjs"
       }
     },
+    "./plugins/mattermost": {
+      "import": {
+        "types": "./dist/plugins/mattermost.d.ts",
+        "default": "./dist/plugins/mattermost.js"
+      },
+      "require": {
+        "types": "./dist/plugins/mattermost.d.cts",
+        "default": "./dist/plugins/mattermost.cjs"
+      }
+    },
+    "./plugins/discord": {
+      "import": {
+        "types": "./dist/plugins/discord.d.ts",
+        "default": "./dist/plugins/discord.js"
+      },
+      "require": {
+        "types": "./dist/plugins/discord.d.cts",
+        "default": "./dist/plugins/discord.cjs"
+      }
+    },
+    "./plugins/slack": {
+      "import": {
+        "types": "./dist/plugins/slack.d.ts",
+        "default": "./dist/plugins/slack.js"
+      },
+      "require": {
+        "types": "./dist/plugins/slack.d.cts",
+        "default": "./dist/plugins/slack.cjs"
+      }
+    },
+    "./plugins/telegram": {
+      "import": {
+        "types": "./dist/plugins/telegram.d.ts",
+        "default": "./dist/plugins/telegram.js"
+      },
+      "require": {
+        "types": "./dist/plugins/telegram.d.cts",
+        "default": "./dist/plugins/telegram.cjs"
+      }
+    },
+    "./plugins/rocketchat": {
+      "import": {
+        "types": "./dist/plugins/rocketchat.d.ts",
+        "default": "./dist/plugins/rocketchat.js"
+      },
+      "require": {
+        "types": "./dist/plugins/rocketchat.d.cts",
+        "default": "./dist/plugins/rocketchat.cjs"
+      }
+    },
+    "./plugins/matrix": {
+      "import": {
+        "types": "./dist/plugins/matrix.d.ts",
+        "default": "./dist/plugins/matrix.js"
+      },
+      "require": {
+        "types": "./dist/plugins/matrix.d.cts",
+        "default": "./dist/plugins/matrix.cjs"
+      }
+    },
     "./plugins/all": {
       "import": {
         "types": "./dist/plugins/all.d.ts",
