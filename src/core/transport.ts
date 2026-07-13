@@ -42,6 +42,31 @@ export type Transport = (
   request: TransportRequest,
 ) => Promise<TransportResponse>
 
+/** The largest delay `AbortSignal.timeout()` handles without degrading it. */
+const MAX_TIMEOUT_MS = 2_147_483_647
+
+/**
+ * Turn the plugin's float-seconds-derived deadline into a delay
+ * `AbortSignal.timeout()` actually accepts.
+ *
+ * ponytail: three hazards, every one reachable from a URL upstream accepts.
+ *   - NON-INTEGER — `?cto=1.1&rto=2.2` sums to 3300.0000000000005: THROWS
+ *     ERR_OUT_OF_RANGE, i.e. every request on that plugin dies.
+ *   - NEGATIVE — upstream takes `?cto=-5` (Python `float("-5")`): THROWS.
+ *   - OVERFLOW — past 2**31-1 it throws, and 2147483648 itself does not throw
+ *     but silently degrades the delay to 1ms (TimeoutOverflowWarning).
+ * A non-finite value means NO deadline: upstream accepts `?cto=inf` and hands
+ * `timeout=inf` to `requests` (wait forever); `nan` must likewise not throw.
+ */
+function deadlineSignal(ms: number | undefined): AbortSignal | undefined {
+  if (ms === undefined || !Number.isFinite(ms)) {
+    return undefined
+  }
+  return AbortSignal.timeout(
+    Math.min(Math.max(Math.round(ms), 0), MAX_TIMEOUT_MS),
+  )
+}
+
 /** Default transport: a thin wrapper over the platform's global `fetch`. */
 async function nativeFetchTransport(
   req: TransportRequest,
@@ -58,8 +83,7 @@ async function nativeFetchTransport(
         : (req.body ?? undefined),
     // Native fetch has NO default timeout: without this a stalled server hangs
     // the notify() promise forever and leaks the socket.
-    signal:
-      req.timeout === undefined ? undefined : AbortSignal.timeout(req.timeout),
+    signal: deadlineSignal(req.timeout),
   })
 }
 

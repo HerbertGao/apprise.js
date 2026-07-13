@@ -121,28 +121,63 @@ export function urlencodePlus(query: EncodeInput): string {
   return urlencode(query).replaceAll('%20', '+')
 }
 
+/** `inf` / `infinity` / `nan`, optionally signed — Python `float()` takes all. */
+const PY_FLOAT_SPECIAL = /^([+-]?)(inf(?:inity)?|nan)$/i
+
+/**
+ * Python's decimal `float()` grammar: optional sign, then digits (single `_`
+ * separators BETWEEN digits only) with an optional `.` and fraction, or a
+ * leading `.` and fraction, then an optional exponent under the same digit
+ * rules. Accepts `1.`, `.5`, `1_000.5`, `1_0e2`; rejects `_1`, `1_`, `1__0`,
+ * `1e_3`, `.`, `1e`.
+ */
+const PY_FLOAT_DECIMAL =
+  /^[+-]?(?:\d(?:_?\d)*(?:\.(?:\d(?:_?\d)*)?)?|\.\d(?:_?\d)*)(?:[eE][+-]?\d(?:_?\d)*)?$/
+
 /**
  * Python `float(str)` semantics: leading/trailing whitespace is tolerated, an
  * empty or non-numeric string is a ValueError (here: `null`, letting the caller
- * warn and keep its default, per upstream url.py:292-309). Deliberately NOT
- * `parseFloat`, which would accept the `"5abc"` Python rejects.
+ * warn and keep its default, per upstream url.py:292-309).
+ *
+ * Deliberately NOT `Number()`, which is wrong in BOTH directions: it accepts
+ * `0x10` / `0o17` / `0b101` / `""` (Python raises on all four) and rejects
+ * `inf` / `nan` / `1_000.5` (Python takes all three). Also not `parseFloat`,
+ * which would accept the `"5abc"` Python rejects.
  */
 function pyFloat(value: string): number | null {
   const trimmed = value.trim()
-  if (!trimmed) {
+
+  const special = PY_FLOAT_SPECIAL.exec(trimmed)
+  if (special) {
+    if (special[2]?.toLowerCase() === 'nan') {
+      return Number.NaN
+    }
+    return special[1] === '-'
+      ? Number.NEGATIVE_INFINITY
+      : Number.POSITIVE_INFINITY
+  }
+
+  if (!PY_FLOAT_DECIMAL.test(trimmed)) {
     return null
   }
-  const parsed = Number(trimmed)
-  return Number.isNaN(parsed) ? null : parsed
+  return Number(trimmed.replaceAll('_', ''))
 }
 
 /**
  * Python `str(float)` formatting: an integral value keeps a `.0` suffix
- * (`str(float("5")) == "5.0"`, where JS `String(5)` gives `"5"`). Required so
- * `?rto=5` round-trips through {@link URLBase.url} as `rto=5.0`, byte-identical
- * to upstream.
+ * (`str(float("5")) == "5.0"`, where JS `String(5)` gives `"5"`), and the
+ * non-finite values {@link pyFloat} can now yield print as `inf` / `-inf` /
+ * `nan` (JS `String()` gives `Infinity` / `NaN`). Required so `?rto=5` and
+ * `?cto=inf` round-trip through {@link URLBase.url} byte-identically to
+ * upstream.
  */
 function pyFloatStr(value: number): string {
+  if (Number.isNaN(value)) {
+    return 'nan'
+  }
+  if (!Number.isFinite(value)) {
+    return value > 0 ? 'inf' : '-inf'
+  }
   const text = String(value)
   return /^-?\d+$/.test(text) ? `${text}.0` : text
 }

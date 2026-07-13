@@ -25,7 +25,11 @@ import { createServer, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { Apprise } from '../src/core/apprise.js'
-import { setTransport, type TransportRequest } from '../src/core/transport.js'
+import {
+  request,
+  setTransport,
+  type TransportRequest,
+} from '../src/core/transport.js'
 import '../src/plugins/custom-json.js'
 
 afterEach(() => {
@@ -50,6 +54,81 @@ function recorder(name: string) {
     },
   }
 }
+
+/**
+ * Drive the DEFAULT (native-fetch) transport with a raw deadline and return the
+ * `RequestInit` it handed to `fetch`. `AbortSignal.timeout()` is called inside
+ * that transport, so a deadline it rejects throws right here.
+ */
+async function fetchInit(timeout: number): Promise<RequestInit> {
+  const spy = vi
+    .spyOn(globalThis, 'fetch')
+    .mockResolvedValue(new Response('ok'))
+  spy.mockClear()
+  await request({ method: 'POST', url: 'http://localhost/x', timeout })
+  return spy.mock.calls.at(-1)?.[1] as RequestInit
+}
+
+describe('the deadline is normalised before AbortSignal.timeout()', () => {
+  // AbortSignal.timeout() throws ERR_OUT_OF_RANGE on a non-integer, on a
+  // negative, and past 2**31-1 — all three reachable from a URL upstream ACCEPTS.
+  test('a non-integer deadline (?cto=1.1&rto=2.2 -> 3300.0000000000005)', async () => {
+    const apprise = new Apprise()
+    expect(apprise.add('json://127.0.0.1:1/path?cto=1.1&rto=2.2')).toBe(true)
+    const plugin = apprise.servers[0]
+
+    // Python: request_timeout == (1.1, 2.2); the sum is not an integer number
+    // of milliseconds, which used to blow up EVERY request on this plugin.
+    expect(plugin?.requestTimeout).toEqual([1.1, 2.2])
+    expect(plugin?.requestTimeoutMs).toBe(3300.0000000000005)
+
+    const init = await fetchInit(plugin?.requestTimeoutMs ?? 0)
+    expect(init.signal).toBeInstanceOf(AbortSignal)
+
+    // End to end: a dead port is a connection failure folded into `false`, not
+    // an ERR_OUT_OF_RANGE thrown before the socket is even opened.
+    vi.restoreAllMocks()
+    expect(await apprise.notify({ body: 'hello' })).toBe(false)
+  })
+
+  test('a negative deadline (?cto=-5 -> -1000; upstream takes float("-5"))', async () => {
+    const apprise = new Apprise()
+    expect(apprise.add('json://localhost/path?cto=-5')).toBe(true)
+    const plugin = apprise.servers[0]
+
+    expect(plugin?.requestTimeout).toEqual([-5.0, 4.0])
+    // Python: str(float("-5")) == "-5.0"
+    expect(plugin?.url()).toContain('cto=-5.0')
+
+    // Clamped to 0 -> an immediate abort, but never a throw.
+    const init = await fetchInit(plugin?.requestTimeoutMs ?? 0)
+    expect(init.signal).toBeInstanceOf(AbortSignal)
+  })
+
+  test('a huge deadline is clamped, not degraded to 1ms', async () => {
+    // 2147483648 does not throw: it emits a TimeoutOverflowWarning and silently
+    // becomes a 1ms deadline. Anything larger (?cto=1e30) throws outright.
+    const warnings: string[] = []
+    const onWarning = (w: Error) => warnings.push(w.name)
+    process.on('warning', onWarning)
+    try {
+      expect((await fetchInit(2_147_483_648)).signal).toBeInstanceOf(
+        AbortSignal,
+      )
+      expect((await fetchInit(1e33)).signal).toBeInstanceOf(AbortSignal)
+      await new Promise((resolve) => setImmediate(resolve))
+    } finally {
+      process.off('warning', onWarning)
+    }
+    expect(warnings).not.toContain('TimeoutOverflowWarning')
+  })
+
+  test('a non-finite deadline attaches NO signal (?cto=inf waits forever)', async () => {
+    // Upstream hands `timeout=inf` straight to requests; NaN must not throw.
+    expect((await fetchInit(Number.POSITIVE_INFINITY)).signal).toBeUndefined()
+    expect((await fetchInit(Number.NaN)).signal).toBeUndefined()
+  })
+})
 
 describe('a stalled server no longer hangs notify()', () => {
   test('a connection that is accepted but never answered fails fast', {
@@ -78,6 +157,10 @@ describe('a stalled server no longer hangs notify()', () => {
       // aggregation folds into an overall `false` (never a hang, never a throw).
       expect(result).toBe(false)
       expect(elapsed).toBeLessThan(1000)
+      // ...and the abort FIRED at the deadline rather than the transport
+      // throwing on the spot: a `false` alone would also be satisfied by an
+      // AbortSignal.timeout() that rejected its delay before opening a socket.
+      expect(elapsed).toBeGreaterThanOrEqual(150)
     } finally {
       await new Promise<void>((resolve) => {
         server.closeAllConnections()
@@ -142,6 +225,59 @@ describe('cto / rto parsing', () => {
     )
   })
 
+  // Python's float() grammar, measured against the real 1.12.0 venv. JS
+  // `Number()` is wrong in BOTH directions — it takes 0x10/0o17/0b101/"" (all
+  // ValueErrors in Python) and rejects inf/nan/1_000.5 (all fine in Python).
+  test.each([
+    ['inf', Number.POSITIVE_INFINITY],
+    ['INF', Number.POSITIVE_INFINITY],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['-inf', Number.NEGATIVE_INFINITY],
+    ['1_000.5', 1000.5],
+    ['1_0', 10],
+    ['1.', 1],
+    ['.5', 0.5],
+    ['1e3', 1000],
+    ['1_0e2', 1000],
+    ['%2B5', 5],
+    ['-5', -5],
+    ['%20%201.5%20%20', 1.5],
+  ])('float(%s) is accepted', (raw, expected) => {
+    const apprise = new Apprise()
+    expect(apprise.add(`json://localhost/path?cto=${raw}`)).toBe(true)
+    expect(apprise.servers[0]?.socketConnectTimeout).toBe(expected)
+  })
+
+  test.each(['nan', 'NaN'])('float(%s) is accepted', (raw) => {
+    const apprise = new Apprise()
+    expect(apprise.add(`json://localhost/path?cto=${raw}`)).toBe(true)
+    expect(apprise.servers[0]?.socketConnectTimeout).toBeNaN()
+  })
+
+  test.each([
+    '_1',
+    '1_',
+    '1__0',
+    '1e_3',
+    '.',
+    '1e',
+    '0x10',
+    '0o17',
+    '0b101',
+    '5abc',
+    '',
+  ])('float(%s) is a ValueError -> warn + keep the 4.0 default', (raw) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const apprise = new Apprise()
+    expect(apprise.add(`json://localhost/path?cto=${raw}`)).toBe(true)
+
+    expect(apprise.servers[0]?.socketConnectTimeout).toBe(4.0)
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('Invalid socket connect timeout (cto)'),
+    )
+  })
+
   test('an empty / non-numeric cto likewise falls back to the default', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
 
@@ -179,6 +315,19 @@ describe('url() round-trip', () => {
     apprise.add('json://localhost/path?cto=1.5')
 
     expect(apprise.servers[0]?.url()).toContain('cto=1.5')
+  })
+
+  test('inf / nan print as Python does, not as JS does', () => {
+    // Python: str(float("inf")) == "inf"; JS String(Infinity) == "Infinity".
+    const infinite = new Apprise()
+    infinite.add('json://localhost/path?cto=inf')
+    const infUrl = infinite.servers[0]?.url() ?? ''
+    expect(infUrl).toContain('cto=inf')
+    expect(infUrl).not.toContain('Infinity')
+
+    const notANumber = new Apprise()
+    notANumber.add('json://localhost/path?cto=nan')
+    expect(notANumber.servers[0]?.url()).toContain('cto=nan')
   })
 
   test('the defaults are NOT emitted (parameters are on-demand only)', () => {
