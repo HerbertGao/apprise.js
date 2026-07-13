@@ -22,6 +22,19 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run typecheck
 
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      # Thresholds live in vitest.config.ts — this fails if coverage regresses.
+      - run: pnpm run test:coverage
+
   test:
     name: test + build (node ${{ matrix.node-version }})
     runs-on: ubuntu-latest

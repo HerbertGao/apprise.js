@@ -1,10 +1,16 @@
 {
   "name": "apprise.js",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A faithful TypeScript translation of caronc/apprise — push notifications to many services via a single URL contract.",
   "type": "module",
   "sideEffects": false,
   "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HerbertGao/apprise.js.git"
+  },
+  "homepage": "https://github.com/HerbertGao/apprise.js#readme",
+  "bugs": "https://github.com/HerbertGao/apprise.js/issues",
   "packageManager": "pnpm@11.11.0",
   "engines": {
     "node": ">=22"
@@ -154,6 +160,7 @@
     "prepack": "pnpm run build",
     "build": "tsup",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
@@ -163,12 +170,12 @@
     "@biomejs/biome": "2.5.3",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^26.1.1",
+    "@vitest/coverage-v8": "^4.1.10",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
   },
   "dependencies": {
-    "js-yaml": "^5.2.1",
     "markdown-it": "^14.3.0"
   }
 }

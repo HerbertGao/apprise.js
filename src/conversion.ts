@@ -234,6 +234,17 @@ function tokenizeHtml(
       continue
     }
 
+    // A tag only opens on `<[a-zA-Z]` (start) or `</` (end) — CPython's
+    // HTMLParser `starttagopen`. Anything else (`<>`, `< foo>`) is BOGUS: it
+    // emits the `<` as literal data and advances a single character
+    // (html.parser `goahead`: `self.handle_data("<"); k = i + 1`). Without this
+    // guard `<>` would be swallowed as an empty-named tag.
+    if (next !== '/' && !(next !== undefined && /[a-zA-Z]/.test(next))) {
+      onData('<')
+      i = lt + 1
+      continue
+    }
+
     const gt = html.indexOf('>', lt + 1)
     if (gt === -1) {
       // Unterminated tag: treat the remainder as text.
