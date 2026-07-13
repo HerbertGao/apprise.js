@@ -296,7 +296,12 @@ function decodeEntities(text: string): string {
           entity[1] === 'x' || entity[1] === 'X'
             ? Number.parseInt(entity.slice(2), 16)
             : Number.parseInt(entity.slice(1), 10)
-        return Number.isFinite(codePoint)
+        // A finite parse can still be an invalid code point (> U+10FFFF or a
+        // lone surrogate) that String.fromCodePoint rejects with a RangeError;
+        // leave such a malformed reference verbatim (NaN also fails the range).
+        return codePoint >= 0 &&
+          codePoint <= 0x10ffff &&
+          !(codePoint >= 0xd800 && codePoint <= 0xdfff)
           ? String.fromCodePoint(codePoint)
           : match
       }

@@ -88,6 +88,12 @@ describe('htmlToText (upstream HTMLConverter)', () => {
   test('ignored containers drop their own text', () => {
     expect(htmlToText('<title>gone</title><p>kept</p>')).toBe('kept')
   })
+
+  test('out-of-range / surrogate numeric refs stay verbatim (no RangeError)', () => {
+    expect(htmlToText('&#65;')).toBe('A')
+    expect(htmlToText('&#x110000;')).toBe('&#x110000;')
+    expect(htmlToText('&#xD800;')).toBe('&#xD800;')
+  })
 })
 
 describe('textToHtml (upstream escape_html, convert_new_lines=True)', () => {
