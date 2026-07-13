@@ -1,0 +1,48 @@
+{
+  "plugin": "discord",
+  "cases": [
+    {
+      "name": "default",
+      "url": "discord://10101010/abcdefghijklmnop",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "botname",
+      "url": "discord://Bob@10101010/abcdefghijklmnop",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "tts",
+      "url": "discord://10101010/abcdefghijklmnop?tts=yes",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "attachment",
+      "url": "discord://10101010/abcdefghijklmnop",
+      "title": "",
+      "body": "",
+      "type": "info",
+      "attachments": [
+        {
+          "memory": { "text": "the content" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ],
+      "seeds": { "boundary": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d" }
+    },
+    {
+      "name": "overflow-truncate",
+      "url": "discord://10101010/abcdefghijklmnop?overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "A", "count": 2001 },
+      "type": "info"
+    }
+  ]
+}

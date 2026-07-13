@@ -1,0 +1,62 @@
+{
+  "plugin": "telegram",
+  "cases": [
+    {
+      "name": "default",
+      "url": "tgram://123456789:ABCdef_ghi-jkl/12345",
+      "title": "Alert",
+      "body": "hello world",
+      "type": "info"
+    },
+    {
+      "name": "multi-target",
+      "expectedCount": 2,
+      "url": "tgram://123456789:ABCdef_ghi-jkl/@zulu/12345",
+      "title": "",
+      "body": "hi there",
+      "type": "info"
+    },
+    {
+      "name": "format-markdown",
+      "url": "tgram://123456789:ABCdef_ghi-jkl/12345?format=markdown",
+      "title": "",
+      "body": "hello *world*",
+      "type": "success"
+    },
+    {
+      "name": "silent",
+      "url": "tgram://123456789:ABCdef_ghi-jkl/12345?silent=yes",
+      "title": "",
+      "body": "quiet please",
+      "type": "warning"
+    },
+    {
+      "name": "topic",
+      "url": "tgram://123456789:ABCdef_ghi-jkl/12345?topic=42",
+      "title": "",
+      "body": "threaded",
+      "type": "info"
+    },
+    {
+      "name": "attachments-photo-pdf",
+      "expectedCount": 2,
+      "url": "tgram://123456789:ABCdef_ghi-jkl/12345",
+      "title": "",
+      "body": "see attached",
+      "type": "info",
+      "attachments": [
+        {
+          "memory": { "text": "the image bytes" },
+          "mimetype": "image/png",
+          "name": "photo.png"
+        },
+        {
+          "memory": { "text": "%PDF-1.4 fake pdf" },
+          "mimetype": "application/pdf",
+          "name": "doc.pdf"
+        }
+      ],
+      "seeds": { "boundary": "1234567890abcdef1234567890abcdef" }
+    }
+  ]
+}

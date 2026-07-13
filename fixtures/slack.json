@@ -1,0 +1,435 @@
+{
+  "plugin": "slack",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "webhook-default",
+      "input": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/?footer=no&image=no",
+        "title": "my title",
+        "body": "my body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://hooks.slack.com/services/T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "95"
+          },
+          "body": {
+            "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"my title\", \"text\": \"my body\", \"color\": \"#3AA3E3\"}]}"
+          }
+        }
+      }
+    },
+    {
+      "name": "webhook-attach-warn",
+      "input": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/?footer=no&image=no",
+        "title": "",
+        "body": "with attach",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "text": "hello slack"
+            },
+            "mimetype": "text/plain",
+            "name": "note.txt"
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://hooks.slack.com/services/T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "91"
+          },
+          "body": {
+            "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"\", \"text\": \"with attach\", \"color\": \"#3AA3E3\"}]}"
+          }
+        }
+      }
+    },
+    {
+      "name": "bot-chat",
+      "input": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/?footer=no&image=no",
+        "title": "",
+        "body": "bot hello",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+            "Content-Length": "112"
+          },
+          "body": {
+            "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"\", \"text\": \"bot hello\", \"color\": \"#3AA3E3\"}], \"channel\": \"#general\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "bot-attach",
+      "input": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/#test?footer=no&image=no",
+        "title": "",
+        "body": "file caption",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "text": "hello slack"
+            },
+            "mimetype": "text/plain",
+            "name": "note.txt"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"ok\":true,\"channel\":\"C0TESTCHAN\"}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"ok\":true,\"file_id\":\"F0FILEID\",\"upload_url\":\"https://files.slack.com/upload/v1/AbC123\"}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"ok\":true}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"ok\":true,\"files\":[{\"id\":\"F0FILEID\",\"title\":\"note.txt\"}]}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+        "uuid": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://slack.com/api/chat.postMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+              "Content-Length": "112"
+            },
+            "body": {
+              "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"\", \"text\": \"file caption\", \"color\": \"#3AA3E3\"}], \"channel\": \"#test\"}"
+            }
+          },
+          {
+            "method": "GET",
+            "url": "https://slack.com/api/files.getUploadURLExternal?filename=note.txt&length=11",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+              "Content-Length": "2"
+            },
+            "body": {
+              "text": "{}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://files.slack.com/upload/v1/AbC123",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+              "Content-Length": "155",
+              "Content-Type": "multipart/form-data; boundary=a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"
+            },
+            "body": {
+              "base64": "LS1hMWIyYzNkNGU1ZjZhMWIyYzNkNGU1ZjZhMWIyYzNkNA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9Im5vdGUudHh0Ig0KDQpoZWxsbyBzbGFjaw0KLS1hMWIyYzNkNGU1ZjZhMWIyYzNkNGU1ZjZhMWIyYzNkNC0tDQo="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://slack.com/api/files.completeUploadExternal",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+              "Content-Length": "80"
+            },
+            "body": {
+              "text": "{\"files\": [{\"id\": \"F0FILEID\", \"title\": \"note.txt\"}], \"channel_id\": \"C0TESTCHAN\"}"
+            }
+          }
+        ],
+        "expectedCount": 4
+      }
+    },
+    {
+      "name": "webhook-multi-thread",
+      "input": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/#general:1610000000.000100/@alice?footer=no&image=no",
+        "title": "",
+        "body": "multi",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://hooks.slack.com/services/T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "142"
+            },
+            "body": {
+              "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"\", \"text\": \"multi\", \"color\": \"#3AA3E3\"}], \"thread_ts\": \"1610000000.000100\", \"channel\": \"#general\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://hooks.slack.com/services/T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "106"
+            },
+            "body": {
+              "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"\", \"text\": \"multi\", \"color\": \"#3AA3E3\"}], \"channel\": \"@alice\"}"
+            }
+          }
+        ],
+        "expectedCount": 2
+      }
+    },
+    {
+      "name": "bot-email",
+      "input": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/user@example.com?footer=no&image=no",
+        "title": "",
+        "body": "email hello",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"ok\":true,\"user\":{\"id\":\"U0USERID\"}}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"ok\":true,\"channel\":\"U0USERID\"}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://slack.com/api/users.lookupByEmail?email=user%40example.com",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d"
+            },
+            "body": null
+          },
+          {
+            "method": "POST",
+            "url": "https://slack.com/api/chat.postMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "application/json",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+              "Content-Length": "114"
+            },
+            "body": {
+              "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"\", \"text\": \"email hello\", \"color\": \"#3AA3E3\"}], \"channel\": \"U0USERID\"}"
+            }
+          }
+        ],
+        "expectedCount": 2
+      }
+    },
+    {
+      "name": "bot-blocks",
+      "input": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/?blocks=yes&footer=no&image=no",
+        "title": "block title",
+        "body": "block body",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+            "Content-Length": "235"
+          },
+          "body": {
+            "text": "{\"attachments\": [{\"blocks\": [{\"type\": \"header\", \"text\": {\"type\": \"plain_text\", \"text\": \"block title\", \"emoji\": true}}, {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"block body\"}}], \"color\": \"#3AA3E3\"}], \"channel\": \"#general\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "webhook-footer-image",
+      "input": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/?timestamp=no",
+        "title": "hi",
+        "body": "footered",
+        "type": "success"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://hooks.slack.com/services/T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "346"
+          },
+          "body": {
+            "text": "{\"mrkdwn\": true, \"attachments\": [{\"title\": \"hi\", \"text\": \"footered\", \"color\": \"#3AA337\", \"footer_icon\": \"https://github.com/caronc/apprise/raw/master/apprise/assets/themes/default/apprise-success-72x72.png\", \"footer\": \"Apprise\"}], \"icon_url\": \"https://github.com/caronc/apprise/raw/master/apprise/assets/themes/default/apprise-success-72x72.png\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "bot-blocks-footer",
+      "input": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/?blocks=yes&timestamp=no",
+        "title": "hdr",
+        "body": "blk",
+        "type": "warning"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d",
+            "Content-Length": "569"
+          },
+          "body": {
+            "text": "{\"attachments\": [{\"blocks\": [{\"type\": \"header\", \"text\": {\"type\": \"plain_text\", \"text\": \"hdr\", \"emoji\": true}}, {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"blk\"}}, {\"type\": \"context\", \"elements\": [{\"type\": \"image\", \"image_url\": \"https://github.com/caronc/apprise/raw/master/apprise/assets/themes/default/apprise-warning-72x72.png\", \"alt_text\": \"warning\"}, {\"type\": \"mrkdwn\", \"text\": \"Apprise\"}]}], \"color\": \"#CACF29\"}], \"icon_url\": \"https://github.com/caronc/apprise/raw/master/apprise/assets/themes/default/apprise-warning-72x72.png\", \"channel\": \"#general\"}"
+          }
+        }
+      }
+    }
+  ]
+}

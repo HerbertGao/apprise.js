@@ -43,7 +43,13 @@ async function nativeFetchTransport(
   return fetch(req.url, {
     method: req.method,
     headers: req.headers,
-    body: req.body ?? undefined,
+    // ponytail: native fetch throws TypeError on a GET/HEAD carrying a body, so
+    // drop it (upstream slack's files.getUploadURLExternal is a GET with an
+    // ignored `{}` body — the param it needs already rides in the query string).
+    body:
+      req.method === 'GET' || req.method === 'HEAD'
+        ? undefined
+        : (req.body ?? undefined),
   })
 }
 

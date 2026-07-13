@@ -114,3 +114,55 @@ describe('golden diff tool self-test (task 5.3)', () => {
     await expect(matchCase(c, { bodyMode: 'json' })).rejects.toThrow()
   })
 })
+
+// A plugin that emits a RAW non-UTF-8 binary body, to prove the base64 body
+// comparison encodes the ORIGINAL bytes and not a lossy UTF-8 round-trip.
+const BINARY_BODY = new Uint8Array([0xff, 0xfe, 0x00, 0x80])
+
+class SynthBinaryPlugin extends NotifyBase {
+  override async send(): Promise<boolean> {
+    const res = await request({
+      method: 'POST',
+      url: 'http://synth.local/bin',
+      headers: { 'User-Agent': 'Apprise' },
+      body: BINARY_BODY,
+    })
+    return res.status >= 200 && res.status < 300
+  }
+
+  static override parseUrl(url: string): ParsedUrlResults | null {
+    return URLBase.parseUrl(url)
+  }
+}
+
+registerPlugin('synthbin', SynthBinaryPlugin as unknown as PluginConstructor)
+
+describe('golden base64 body compares raw bytes, not a UTF-8 round-trip', () => {
+  const correctBase64 = Buffer.from(BINARY_BODY).toString('base64')
+
+  test('a non-UTF-8 binary body matches its exact base64', async () => {
+    const c: FixtureCase = {
+      name: 'binary',
+      input: { url: 'synthbin://host/x', body: 'hi' },
+      expected: {
+        request: {
+          method: 'POST',
+          url: 'http://synth.local/bin',
+          headers: { 'User-Agent': 'Apprise' },
+          body: { base64: correctBase64 },
+        },
+      },
+    }
+    await expect(matchCase(c, { bodyMode: 'raw' })).resolves.toBeUndefined()
+  })
+
+  test('the old UTF-8 round-trip would have corrupted these bytes', () => {
+    // Decoding invalid UTF-8 maps 0xFF/0xFE/0x80 to U+FFFD, so re-encoding the
+    // string diverges from the truth — the exact false-green the fix removes.
+    const roundTripped = Buffer.from(
+      Buffer.from(BINARY_BODY).toString('utf8'),
+      'utf8',
+    ).toString('base64')
+    expect(roundTripped).not.toBe(correctBase64)
+  })
+})

@@ -187,6 +187,18 @@ export class NotifyForm extends NotifyBase {
       return res.status >= 200 && res.status < 300
     }
 
+    // ponytail: native fetch forbids a HEAD body (transport.ts drops it), but
+    // upstream custom_form.py sends the form payload as the body on any non-GET
+    // method (incl. HEAD). Fail loud rather than silently ship an empty HEAD and
+    // report success on the 2xx. (GET is query-mapped above and stays correct;
+    // DELETE/PUT/PATCH/UPDATE/OPTIONS legitimately carry a body on native fetch.)
+    if (this.method === 'HEAD') {
+      throw new TypeError(
+        'form:// cannot send a HEAD request: native fetch cannot carry the ' +
+          'form payload as a HEAD body (upstream does).',
+      )
+    }
+
     // Non-GET: payload is the form-encoded body; `-` params ride in the query
     // (quote_plus-encoded like requests params=, distinct from the body encoder).
     const query = urlencodePlus(this.params)

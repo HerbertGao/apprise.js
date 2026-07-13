@@ -87,31 +87,55 @@ CASES_DIR = ROOT / "cases"
 FIXTURES_DIR = ROOT / "fixtures"
 
 
-def _fake_response(request):
-    """A canned 200 OK so upstream `send()` believes the post succeeded and
-    does not retry / short-circuit before we have captured the request."""
+def _fake_response(request, spec=None):
+    """A canned response so upstream `send()` believes the post succeeded and
+    does not retry / short-circuit before we have captured the request.
+
+    Default (spec=None): 200 OK with a ``{}`` JSON body. For multi-step plugins
+    a case supplies a per-request ``spec`` (``{"status", "headers", "body"}``)
+    so login/whoami/getUploadURL etc. return a FORM-CORRECT body (containing the
+    token/channel/url the next request is built from); a missing field would make
+    upstream short-circuit and truncate the captured sequence. ``body`` is the
+    self-describing ``{"text"|"base64": ...}`` shape (or null)."""
     resp = requests.models.Response()
-    resp.status_code = 200
+    resp.status_code = 200 if spec is None else spec.get("status", 200)
     resp.reason = "OK"
-    resp._content = b"{}"
+    if spec is None:
+        resp._content = b"{}"
+        resp.headers["Content-Type"] = "application/json"
+    else:
+        body = spec.get("body")
+        if body is None:
+            resp._content = b""
+        elif "text" in body:
+            resp._content = body["text"].encode("utf-8")
+        else:
+            resp._content = base64.b64decode(body["base64"])
+        for key, value in (spec.get("headers") or {}).items():
+            resp.headers[key] = value
     resp.url = request.url
     resp.request = request
-    resp.headers["Content-Type"] = "application/json"
     return resp
 
 
 @contextlib.contextmanager
-def intercept(boundary=None):
+def intercept(boundary=None, responses=None, uuid_seed=None):
     """Patch the adapter layer to capture PreparedRequests without network I/O.
 
-    Optionally pin the multipart boundary. Everything is restored on exit.
+    The i-th captured request gets ``responses[i]`` as its canned response (see
+    ``_fake_response``); beyond that list it falls back to the default 200 `{}`.
+    Optionally pin the multipart boundary and ``uuid.uuid4`` (matrix raw-token
+    txnId). Everything is restored on exit.
     """
     captured = []
+    responses = responses or []
     orig_send = requests.adapters.HTTPAdapter.send
 
     def patched_send(self, request, **kwargs):  # noqa: ARG001
+        idx = len(captured)
         captured.append(request)
-        return _fake_response(request)
+        spec = responses[idx] if idx < len(responses) else None
+        return _fake_response(request, spec)
 
     requests.adapters.HTTPAdapter.send = patched_send
 
@@ -126,6 +150,16 @@ def intercept(boundary=None):
         orig_boundary = _fp.choose_boundary
         _fp.choose_boundary = lambda: boundary
 
+    # Pin matrix raw-token txnId: force uuid.uuid4() to a fixed value (same
+    # approach as the boundary pin above) so the captured `PUT .../send/{txnId}`
+    # URL is deterministic. Restored on exit.
+    orig_uuid4 = None
+    if uuid_seed is not None:
+        import uuid as _uuid
+
+        orig_uuid4 = _uuid.uuid4
+        _uuid.uuid4 = lambda: _uuid.UUID(uuid_seed)
+
     try:
         yield captured
     finally:
@@ -134,6 +168,10 @@ def intercept(boundary=None):
             import urllib3.filepost as _fp
 
             _fp.choose_boundary = orig_boundary
+        if orig_uuid4 is not None:
+            import uuid as _uuid
+
+            _uuid.uuid4 = orig_uuid4
 
 
 def norm_body(body):
@@ -197,8 +235,11 @@ def capture_case(case):
     uid = seeds.get("uid", DEFAULT_UID)
     recursion = seeds.get("recursion", DEFAULT_RECURSION)
     boundary = seeds.get("boundary")
+    uuid_seed = seeds.get("uuid")
 
     attachments = case.get("attachments") or []
+    # Per-request canned responses for multi-step plugins (login/send/...).
+    responses = case.get("responses")
 
     # `body_gen` compactly expresses a large body (e.g. overflow cases) as a
     # {char, count} pair so the hand-authored case stays small; the full body is
@@ -223,11 +264,22 @@ def capture_case(case):
     }
     if attachments:
         input_echo["attachments"] = attachments
+    if responses:
+        # Echoed so the TS diff side replays the SAME per-request responses.
+        input_echo["responses"] = responses
+
+    # Backward-compatible seeds block: only add txn/uuid when the case declares
+    # them, so existing single-request fixtures stay byte-identical.
+    seeds_echo = {"uid": uid, "recursion": recursion, "boundary": boundary}
+    if "txn" in seeds:
+        seeds_echo["txn"] = seeds.get("txn", 0)
+    if "uuid" in seeds:
+        seeds_echo["uuid"] = uuid_seed
 
     entry = {
         "name": case["name"],
         "input": input_echo,
-        "seeds": {"uid": uid, "recursion": recursion, "boundary": boundary},
+        "seeds": seeds_echo,
     }
 
     if not added or len(ap) == 0:
@@ -236,7 +288,9 @@ def capture_case(case):
         return entry
 
     attach = build_attach(attachments)
-    with intercept(boundary=boundary) as captured:
+    with intercept(
+        boundary=boundary, responses=responses, uuid_seed=uuid_seed
+    ) as captured:
         ap.notify(
             body=body,
             title=case.get("title", ""),
@@ -244,14 +298,34 @@ def capture_case(case):
             attach=attach,
         )
 
+    # Author-declared oracle: a multi-request case states how many requests it
+    # SHOULD make. Check it against the ACTUAL capture BEFORE writing anything. A
+    # malformed canned response that short-circuits the sequence would otherwise
+    # yield a self-consistent (captured == stored) short fixture; an independent,
+    # hand-authored count turns that false-green into a hard failure.
+    declared_count = case.get("expectedCount")
+    if declared_count is not None and len(captured) != declared_count:
+        raise SystemExit(
+            f"ERROR: case {case['name']!r} declared expectedCount="
+            f"{declared_count} but upstream produced {len(captured)} request(s); "
+            "refusing to write a truncated/self-consistent fixture."
+        )
+
     if not captured:
         # Constructed fine but produced no request (e.g. empty content).
         entry["expected"] = {"noRequest": {"reason": "no-request"}}
         return entry
 
-    entry["expected"] = {"request": dump_request(captured[0])}
-    if len(captured) > 1:
-        entry["expected"]["note"] = f"{len(captured)} requests captured; stored first"
+    if len(captured) == 1:
+        # Single-request form (backward-compatible with core-foundation).
+        entry["expected"] = {"request": dump_request(captured[0])}
+    else:
+        # Multi-request form: ordered sequence + independent count oracle so a
+        # truncated (short-circuited) capture cannot pass by mutual agreement.
+        entry["expected"] = {
+            "requests": [dump_request(r) for r in captured],
+            "expectedCount": len(captured),
+        }
     return entry
 
 
@@ -266,7 +340,10 @@ def process_plugin(plugin):
     }
     out = FIXTURES_DIR / f"{plugin}.json"
     out.write_text(json.dumps(fixture, indent=2, ensure_ascii=False) + "\n")
-    n_req = sum("request" in c["expected"] for c in fixture["cases"])
+    n_req = sum(
+        "request" in c["expected"] or "requests" in c["expected"]
+        for c in fixture["cases"]
+    )
     n_no = len(fixture["cases"]) - n_req
     print(f"{plugin}: {len(fixture['cases'])} cases -> {out.relative_to(ROOT)} "
           f"({n_req} request, {n_no} noRequest)")
@@ -274,8 +351,12 @@ def process_plugin(plugin):
 
 def main(argv):
     if apprise.__version__ != EXPECTED_APPRISE_VERSION:
-        print(f"WARNING: apprise {apprise.__version__} != pinned "
-              f"{EXPECTED_APPRISE_VERSION}; fixtures may drift.", file=sys.stderr)
+        # Fail closed: a different upstream version would silently capture
+        # drifted golden bytes. Refuse rather than overwrite the fixtures.
+        print(f"ERROR: apprise {apprise.__version__} != pinned "
+              f"{EXPECTED_APPRISE_VERSION}; refusing to (re)capture fixtures.",
+              file=sys.stderr)
+        return 1
 
     if argv:
         plugins = argv

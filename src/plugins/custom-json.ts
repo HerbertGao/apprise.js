@@ -93,6 +93,17 @@ export class NotifyJSON extends NotifyBase {
     notifyType: NotifyType = NotifyType.INFO,
     options: SendOptions = {},
   ): Promise<boolean> {
+    // ponytail: native fetch forbids a GET/HEAD body (transport.ts drops it),
+    // but upstream custom_json.py:315 sends the JSON payload as the body on ANY
+    // method (incl. GET/HEAD). Fail loud rather than silently ship an empty
+    // GET/HEAD and report success on the 2xx.
+    if (this.method === 'GET' || this.method === 'HEAD') {
+      throw new TypeError(
+        `json:// cannot send a ${this.method} request: native fetch cannot ` +
+          'carry the JSON payload as a GET/HEAD body (upstream does).',
+      )
+    }
+
     const headers: Record<string, string> = {
       'User-Agent': this.asset.appId,
       'Content-Type': 'application/json',

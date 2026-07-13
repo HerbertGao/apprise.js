@@ -79,6 +79,33 @@ describe('custom-form body is quote_plus byte-faithful (C2-1)', () => {
   })
 })
 
+describe('custom-form ?method=head fails loud (sibling of custom-json GET/HEAD)', () => {
+  afterEach(() => {
+    setTransport(null)
+  })
+
+  test('form://host?method=head add()s but notify() folds to false, no wire request', async () => {
+    const seen: TransportRequest[] = []
+    setTransport(async (req) => {
+      seen.push(req)
+      return {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        headers: new Headers(),
+        text: async () => '{}',
+      }
+    })
+
+    const app = new Apprise()
+    expect(app.add('form://localhost/path?method=head')).toBe(true)
+    // send() throws on HEAD (native fetch would drop the body); allSettled folds
+    // the rejection to an overall false, and nothing reaches the transport.
+    expect(await app.notify({ title: 'hi', body: 'hello' })).toBe(false)
+    expect(seen).toHaveLength(0)
+  })
+})
+
 describe('custom-form multipart attachment (batch-1 deferred behaviour)', () => {
   afterEach(() => {
     setTransport(null)

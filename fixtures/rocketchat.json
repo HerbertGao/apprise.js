@@ -1,0 +1,234 @@
+{
+  "plugin": "rocketchat",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "basic-login-flow",
+      "input": {
+        "url": "rocket://user:pass@localhost/#general",
+        "title": "",
+        "body": "hello world",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"status\":\"success\",\"data\":{\"authToken\":\"itest-auth-token-0\",\"userId\":\"itest-user-id-0\"}}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/login",
+            "headers": {
+              "User-Agent": "python-requests/2.34.2",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "27",
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            "body": {
+              "text": "username=user&password=pass"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/chat.postMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "X-Auth-Token": "itest-auth-token-0",
+              "X-User-Id": "itest-user-id-0",
+              "Content-Type": "application/json",
+              "Content-Length": "46"
+            },
+            "body": {
+              "text": "{\"text\": \"hello world\", \"channel\": \"#general\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/logout",
+            "headers": {
+              "User-Agent": "python-requests/2.34.2",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "X-Auth-Token": "itest-auth-token-0",
+              "X-User-Id": "itest-user-id-0",
+              "Content-Length": "0"
+            },
+            "body": null
+          }
+        ],
+        "expectedCount": 3
+      }
+    },
+    {
+      "name": "token-direct",
+      "input": {
+        "url": "rocket://user:abcdefghijklmnopqrstuvwxyz0123456789@localhost/#channel?avatar=no",
+        "title": "",
+        "body": "hello world",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/api/v1/chat.postMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "X-User-Id": "user",
+            "X-Auth-Token": "abcdefghijklmnopqrstuvwxyz0123456789",
+            "Content-Type": "application/json",
+            "Content-Length": "46"
+          },
+          "body": {
+            "text": "{\"text\": \"hello world\", \"channel\": \"#channel\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "webhook-direct",
+      "input": {
+        "url": "rocket://tokenaaa/tokenbbb@localhost",
+        "title": "",
+        "body": "hello world",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://localhost/hooks/tokenaaa/tokenbbb",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "136"
+          },
+          "body": {
+            "text": "{\"text\": \"hello world\", \"avatar\": \"https://github.com/caronc/apprise/raw/master/apprise/assets/themes/default/apprise-info-128x128.png\"}"
+          }
+        }
+      }
+    },
+    {
+      "name": "basic-multi-target",
+      "input": {
+        "url": "rocket://user:pass@localhost/#alpha/@bravo",
+        "title": "",
+        "body": "hi there",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"status\":\"success\",\"data\":{\"authToken\":\"itest-auth-token-0\",\"userId\":\"itest-user-id-0\"}}"
+            }
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/login",
+            "headers": {
+              "User-Agent": "python-requests/2.34.2",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "27",
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            "body": {
+              "text": "username=user&password=pass"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/chat.postMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "X-Auth-Token": "itest-auth-token-0",
+              "X-User-Id": "itest-user-id-0",
+              "Content-Type": "application/json",
+              "Content-Length": "41"
+            },
+            "body": {
+              "text": "{\"text\": \"hi there\", \"channel\": \"@bravo\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/chat.postMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "X-Auth-Token": "itest-auth-token-0",
+              "X-User-Id": "itest-user-id-0",
+              "Content-Type": "application/json",
+              "Content-Length": "41"
+            },
+            "body": {
+              "text": "{\"text\": \"hi there\", \"channel\": \"#alpha\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://localhost/api/v1/logout",
+            "headers": {
+              "User-Agent": "python-requests/2.34.2",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "X-Auth-Token": "itest-auth-token-0",
+              "X-User-Id": "itest-user-id-0",
+              "Content-Length": "0"
+            },
+            "body": null
+          }
+        ],
+        "expectedCount": 4
+      }
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "plugin": "telegram",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "default",
+      "input": {
+        "url": "tgram://123456789:ABCdef_ghi-jkl/12345",
+        "title": "Alert",
+        "body": "hello world",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "144"
+          },
+          "body": {
+            "text": "{\"disable_notification\": false, \"disable_web_page_preview\": true, \"parse_mode\": \"HTML\", \"text\": \"<b>Alert</b>\\r\\nhello world\", \"chat_id\": 12345}"
+          }
+        }
+      }
+    },
+    {
+      "name": "multi-target",
+      "input": {
+        "url": "tgram://123456789:ABCdef_ghi-jkl/@zulu/12345",
+        "title": "",
+        "body": "hi there",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "125"
+            },
+            "body": {
+              "text": "{\"disable_notification\": false, \"disable_web_page_preview\": true, \"parse_mode\": \"HTML\", \"text\": \"hi there\", \"chat_id\": 12345}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendMessage",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "127"
+            },
+            "body": {
+              "text": "{\"disable_notification\": false, \"disable_web_page_preview\": true, \"parse_mode\": \"HTML\", \"text\": \"hi there\", \"chat_id\": \"@zulu\"}"
+            }
+          }
+        ],
+        "expectedCount": 2
+      }
+    },
+    {
+      "name": "format-markdown",
+      "input": {
+        "url": "tgram://123456789:ABCdef_ghi-jkl/12345?format=markdown",
+        "title": "",
+        "body": "hello *world*",
+        "type": "success"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "134"
+          },
+          "body": {
+            "text": "{\"disable_notification\": false, \"disable_web_page_preview\": true, \"parse_mode\": \"MARKDOWN\", \"text\": \"hello *world*\", \"chat_id\": 12345}"
+          }
+        }
+      }
+    },
+    {
+      "name": "silent",
+      "input": {
+        "url": "tgram://123456789:ABCdef_ghi-jkl/12345?silent=yes",
+        "title": "",
+        "body": "quiet please",
+        "type": "warning"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "128"
+          },
+          "body": {
+            "text": "{\"disable_notification\": true, \"disable_web_page_preview\": true, \"parse_mode\": \"HTML\", \"text\": \"quiet please\", \"chat_id\": 12345}"
+          }
+        }
+      }
+    },
+    {
+      "name": "topic",
+      "input": {
+        "url": "tgram://123456789:ABCdef_ghi-jkl/12345?topic=42",
+        "title": "",
+        "body": "threaded",
+        "type": "info"
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendMessage",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "150"
+          },
+          "body": {
+            "text": "{\"disable_notification\": false, \"disable_web_page_preview\": true, \"parse_mode\": \"HTML\", \"text\": \"threaded\", \"chat_id\": 12345, \"message_thread_id\": 42}"
+          }
+        }
+      }
+    },
+    {
+      "name": "attachments-photo-pdf",
+      "input": {
+        "url": "tgram://123456789:ABCdef_ghi-jkl/12345",
+        "title": "",
+        "body": "see attached",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "text": "the image bytes"
+            },
+            "mimetype": "image/png",
+            "name": "photo.png"
+          },
+          {
+            "memory": {
+              "text": "%PDF-1.4 fake pdf"
+            },
+            "mimetype": "application/pdf",
+            "name": "doc.pdf"
+          }
+        ]
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "1234567890abcdef1234567890abcdef"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendPhoto",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "653",
+              "Content-Type": "multipart/form-data; boundary=1234567890abcdef1234567890abcdef"
+            },
+            "body": {
+              "base64": "LS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJjYXB0aW9uIg0KDQpzZWUgYXR0YWNoZWQNCi0tMTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTBhYmNkZWYNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic2hvd19jYXB0aW9uX2Fib3ZlX21lZGlhIg0KDQpUcnVlDQotLTEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVmDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InBhcnNlX21vZGUiDQoNCkhUTUwNCi0tMTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTBhYmNkZWYNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCnBob3RvLnBuZw0KLS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJjaGF0X2lkIg0KDQoxMjM0NQ0KLS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJwaG90byI7IGZpbGVuYW1lPSJwaG90by5wbmciDQoNCnRoZSBpbWFnZSBieXRlcw0KLS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZi0tDQo="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.telegram.org/bot123456789:ABCdef_ghi-jkl/sendDocument",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "350",
+              "Content-Type": "multipart/form-data; boundary=1234567890abcdef1234567890abcdef"
+            },
+            "body": {
+              "base64": "LS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0aXRsZSINCg0KZG9jLnBkZg0KLS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJjaGF0X2lkIg0KDQoxMjM0NQ0KLS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJkb2N1bWVudCI7IGZpbGVuYW1lPSJkb2MucGRmIg0KDQolUERGLTEuNCBmYWtlIHBkZg0KLS0xMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZi0tDQo="
+            }
+          }
+        ],
+        "expectedCount": 2
+      }
+    }
+  ]
+}

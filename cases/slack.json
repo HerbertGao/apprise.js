@@ -1,0 +1,118 @@
+{
+  "plugin": "slack",
+  "cases": [
+    {
+      "name": "webhook-default",
+      "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/?footer=no&image=no",
+      "title": "my title",
+      "body": "my body",
+      "type": "info"
+    },
+    {
+      "name": "webhook-attach-warn",
+      "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/?footer=no&image=no",
+      "title": "",
+      "body": "with attach",
+      "type": "info",
+      "attachments": [
+        {
+          "memory": { "text": "hello slack" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ]
+    },
+    {
+      "name": "bot-chat",
+      "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/?footer=no&image=no",
+      "title": "",
+      "body": "bot hello",
+      "type": "info"
+    },
+    {
+      "name": "bot-attach",
+      "expectedCount": 4,
+      "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/#test?footer=no&image=no",
+      "title": "",
+      "body": "file caption",
+      "type": "info",
+      "seeds": {
+        "boundary": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+        "uuid": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"
+      },
+      "attachments": [
+        {
+          "memory": { "text": "hello slack" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "body": { "text": "{\"ok\":true,\"channel\":\"C0TESTCHAN\"}" }
+        },
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"ok\":true,\"file_id\":\"F0FILEID\",\"upload_url\":\"https://files.slack.com/upload/v1/AbC123\"}"
+          }
+        },
+        { "status": 200, "body": { "text": "{\"ok\":true}" } },
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"ok\":true,\"files\":[{\"id\":\"F0FILEID\",\"title\":\"note.txt\"}]}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "webhook-multi-thread",
+      "expectedCount": 2,
+      "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/#general:1610000000.000100/@alice?footer=no&image=no",
+      "title": "",
+      "body": "multi",
+      "type": "info"
+    },
+    {
+      "name": "bot-email",
+      "expectedCount": 2,
+      "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/user@example.com?footer=no&image=no",
+      "title": "",
+      "body": "email hello",
+      "type": "info",
+      "responses": [
+        {
+          "status": 200,
+          "body": { "text": "{\"ok\":true,\"user\":{\"id\":\"U0USERID\"}}" }
+        },
+        {
+          "status": 200,
+          "body": { "text": "{\"ok\":true,\"channel\":\"U0USERID\"}" }
+        }
+      ]
+    },
+    {
+      "name": "bot-blocks",
+      "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/?blocks=yes&footer=no&image=no",
+      "title": "block title",
+      "body": "block body",
+      "type": "info"
+    },
+    {
+      "name": "webhook-footer-image",
+      "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/?timestamp=no",
+      "title": "hi",
+      "body": "footered",
+      "type": "success"
+    },
+    {
+      "name": "bot-blocks-footer",
+      "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/?blocks=yes&timestamp=no",
+      "title": "hdr",
+      "body": "blk",
+      "type": "warning"
+    }
+  ]
+}
