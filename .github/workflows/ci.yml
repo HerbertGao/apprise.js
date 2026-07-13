@@ -60,3 +60,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm run build
+      # Needs dist/. Proves a real bundler does not tree-shake away the plugin
+      # registration side effects (invisible to the Node suite — see the script).
+      - run: pnpm run test:bundle

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A faithful TypeScript translation of caronc/apprise — push notifications to many services via a single URL contract.",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": true,
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
@@ -164,7 +164,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "test:bundle": "node scripts/check-bundler-sideeffects.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.3",
@@ -173,7 +174,8 @@
     "@vitest/coverage-v8": "4.1.10",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
-    "vitest": "4.1.10"
+    "vitest": "4.1.10",
+    "esbuild": "^0.28.1"
   },
   "dependencies": {
     "markdown-it": "^14.3.0"
