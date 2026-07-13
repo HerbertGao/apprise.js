@@ -165,7 +165,9 @@ describe('apprise-api failure paths', () => {
     expect(seen).toHaveLength(0)
   })
 
-  test('an attachment with method=form is refused (multipart deferred) — no request', async () => {
+  // No `?method=` here on purpose: this pins that the DEFAULT method is `form`
+  // (upstream apprise_api.py METHODS[0]), which is what refuses the attachment.
+  test('an attachment with the default method (form) is refused (multipart deferred) — no request', async () => {
     const seen = stub({ status: 200 })
     expect(
       await build('apprise://localhost/abc123').notify({

@@ -170,7 +170,7 @@
     "@biomejs/biome": "2.5.3",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^26.1.1",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "4.1.10",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
