@@ -94,6 +94,44 @@ describe('htmlToText (upstream HTMLConverter)', () => {
     expect(htmlToText('&#x110000;')).toBe('&#x110000;')
     expect(htmlToText('&#xD800;')).toBe('&#xD800;')
   })
+
+  test('an unrecognised named entity is left verbatim', () => {
+    // Python's html.unescape("&bogus;") is a no-op — it is not a valid charref.
+    expect(htmlToText('&bogus;')).toBe('&bogus;')
+  })
+
+  test('hr renders a rule on its own line and eats the space before it', () => {
+    // upstream handle_starttag("hr"): `self._result[-1].rstrip(" ")` then "\n---\n".
+    expect(htmlToText('a <hr> b')).toBe('a\n---\n b')
+  })
+
+  test('blockquote prefixes its text with " >"', () => {
+    // upstream handle_starttag("blockquote") appends " >"; close() strips.
+    expect(htmlToText('<blockquote>quoted</blockquote>')).toBe('>quoted')
+  })
+
+  test('comments are dropped (HTMLParser has no handle_comment override)', () => {
+    expect(htmlToText('<p>a<!-- hidden -->b</p>')).toBe('ab')
+  })
+
+  test('a doctype / processing instruction is dropped', () => {
+    expect(htmlToText('<!DOCTYPE html><p>x</p>')).toBe('x')
+    expect(htmlToText('<?xml version="1.0"?><p>x</p>')).toBe('x')
+  })
+
+  test('an unterminated tag at EOF becomes plain data', () => {
+    // CPython's HTMLParser.goahead() flushes incomplete markup via handle_data
+    // when close() is called.
+    expect(htmlToText('a <b')).toBe('a <b')
+  })
+
+  test('a bogus `<` (not `<[a-zA-Z]` / `</`) survives as literal text', () => {
+    // CPython's HTMLParser only opens a tag on `starttagopen = <[a-zA-Z]`; any
+    // other `<` is bogus and goahead() does `handle_data("<"); k = i + 1`, so
+    // the characters survive as text instead of being swallowed as a tag.
+    expect(htmlToText('a<>b')).toBe('a<>b')
+    expect(htmlToText('a< b>c')).toBe('a< b>c')
+  })
 })
 
 describe('textToHtml (upstream escape_html, convert_new_lines=True)', () => {

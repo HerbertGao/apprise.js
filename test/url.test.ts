@@ -6,7 +6,10 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { NotifyFormat, NotifyType, OverflowMode } from '../src/common.js'
 import {
+  isHostname,
+  isIpAddr,
   type ParsedUrlResults,
+  PrivacyMode,
   parseBool,
   parseUrl,
   quote,
@@ -265,5 +268,110 @@ describe('URLBase.url() round-trips', () => {
   test('default port is elided; verify=yes (default) is not emitted', () => {
     const u = fromParsed('https://host/x').url()
     expect(u).toBe('https://host/x') // 443 elided, no verify param
+  })
+})
+
+// --- host / IP validation (upstream parse.py is_ipaddr / is_hostname) --------
+
+describe('isIpAddr / isHostname', () => {
+  test('an IPv4 address is returned verbatim', () => {
+    expect(isIpAddr('192.168.1.1')).toBe('192.168.1.1')
+  })
+
+  test('an IPv6 address is returned wrapped in [] (RFC 2732)', () => {
+    // upstream: 'return "[{}]".format(match.group("ip"))' — brackets are added
+    // whether or not the input carried them.
+    expect(isIpAddr('::1')).toBe('[::1]')
+    expect(isIpAddr('[::1]')).toBe('[::1]')
+  })
+
+  test('a non-address returns false', () => {
+    expect(isIpAddr('not.an.ip.addr')).toBe(false)
+  })
+
+  test('ipv4 can be disabled independently', () => {
+    expect(isIpAddr('192.168.1.1', false, false)).toBe(false)
+  })
+
+  test('a trailing period is stripped from a hostname', () => {
+    expect(isHostname('example.com.')).toBe('example.com')
+  })
+
+  test('four numeric labels take the IPv4 fast path', () => {
+    expect(isHostname('10.0.0.1')).toBe('10.0.0.1')
+    // ...and an out-of-range quad is NOT a hostname either.
+    expect(isHostname('10.0.0.999')).toBe(false)
+  })
+
+  test('an empty / over-long hostname is rejected', () => {
+    expect(isHostname('')).toBe(false)
+    expect(isHostname('a'.repeat(254))).toBe(false)
+  })
+})
+
+// --- parse_url edge cases ----------------------------------------------------
+
+describe('parseUrl: path edges', () => {
+  test('a fragment is dropped from the path (urlparse semantics)', () => {
+    const r = parseUrl('http://host/path#frag') as NonNullable<
+      ReturnType<typeof parseUrl>
+    >
+    expect(r.fullpath).toBe('/path')
+  })
+
+  test('a caller-supplied trailing slash survives tidy_path', () => {
+    const r = parseUrl('http://host/a/b/') as NonNullable<
+      ReturnType<typeof parseUrl>
+    >
+    expect(r.fullpath).toBe('/a/b/')
+  })
+})
+
+describe('parseUrl: port handling', () => {
+  test('strictPort rejects a port outside 1..65535', () => {
+    expect(parseUrl('http://host:70000/', { strictPort: true })).toBeNull()
+    expect(parseUrl('http://host:0/', { strictPort: true })).toBeNull()
+    expect(parseUrl('http://host:8080/', { strictPort: true })).not.toBeNull()
+  })
+
+  test('a non-numeric port with verifyHost=false folds back into the host', () => {
+    // upstream: result['host'] = f"{host}:{port}" and result['port'] = None.
+    const r = parseUrl('http://host:abc/x', {
+      verifyHost: false,
+    }) as NonNullable<ReturnType<typeof parseUrl>>
+    expect(r.host).toBe('host:abc')
+    expect(r.port).toBeNull()
+  })
+})
+
+// --- URLBase.pprint ----------------------------------------------------------
+
+describe('URLBase.pprint (upstream url.py:650-693)', () => {
+  test('privacy=false quotes the content (or returns it raw when quote=false)', () => {
+    expect(URLBase.pprint('a b', false)).toBe('a%20b')
+    expect(
+      URLBase.pprint('a b', false, PrivacyMode.Outer, { quote: false }),
+    ).toBe('a b')
+    expect(
+      URLBase.pprint(null, false, PrivacyMode.Outer, { quote: false }),
+    ).toBe('')
+  })
+
+  test('Secret masks to **** regardless of content', () => {
+    expect(URLBase.pprint('supersecret', true, PrivacyMode.Secret)).toBe('****')
+    expect(URLBase.pprint(null, true, PrivacyMode.Secret)).toBe('****')
+  })
+
+  test('Tail keeps the trailing four characters', () => {
+    expect(URLBase.pprint('abcdefgh', true, PrivacyMode.Tail)).toBe('...efgh')
+  })
+
+  test('Outer keeps the first and last character', () => {
+    expect(URLBase.pprint('abcdefgh', true, PrivacyMode.Outer)).toBe('a...h')
+  })
+
+  test('an empty/absent secret masks to an empty string (non-Secret modes)', () => {
+    expect(URLBase.pprint('', true, PrivacyMode.Outer)).toBe('')
+    expect(URLBase.pprint(null, true, PrivacyMode.Tail)).toBe('')
   })
 })

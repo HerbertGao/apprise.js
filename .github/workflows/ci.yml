@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # No job here pushes or publishes — don't leave the token in .git/config.
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -21,6 +24,22 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run typecheck
+
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # No job here pushes or publishes — don't leave the token in .git/config.
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      # Thresholds live in vitest.config.ts — this fails if coverage regresses.
+      - run: pnpm run test:coverage
 
   test:
     name: test + build (node ${{ matrix.node-version }})
@@ -31,6 +50,9 @@ jobs:
         node-version: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
+        with:
+          # No job here pushes or publishes — don't leave the token in .git/config.
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
