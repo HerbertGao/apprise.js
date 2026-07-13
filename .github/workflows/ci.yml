@@ -60,6 +60,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm run build
-      # Needs dist/. Proves a real bundler does not tree-shake away the plugin
-      # registration side effects (invisible to the Node suite — see the script).
+      # Both need dist/, and both are invisible to the Node suite (vitest runs
+      # src/, never the built artifact). Orthogonal: one asks whether a bundler
+      # tree-shakes registration away, the other whether registration lands in
+      # the same table across ESM/CJS load combinations.
       - run: pnpm run test:bundle
+      - run: pnpm run test:formats

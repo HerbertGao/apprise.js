@@ -165,7 +165,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "test:bundle": "node scripts/check-bundler-sideeffects.mjs"
+    "test:bundle": "node scripts/check-bundler-sideeffects.mjs",
+    "test:formats": "node scripts/check-dual-format.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.3",

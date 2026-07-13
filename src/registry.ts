@@ -18,7 +18,30 @@ export type PluginConstructor = new (
   args: Record<string, unknown>,
 ) => NotifyBase
 
-const registry = new Map<string, PluginConstructor>()
+// The registry is a PROCESS-WIDE singleton, not module state. A dual-published
+// package is loaded twice by any graph that mixes formats — Node keeps separate
+// module caches for ESM and CJS (the dual package hazard), and a bundler may
+// inline a copy per entry. Module-scoped state would give each copy its own Map:
+// a plugin would register into a registry that `Apprise` never reads, `add()`
+// would return false, and `notify()` would report a plain delivery failure.
+//
+// `@0` is a compatibility key for the SHAPE of `PluginConstructor`, not the
+// package version: two copies sharing this symbol assert their constructors are
+// interchangeable. Change that shape and the key MUST bump, or an older copy
+// resolves schemes to constructors it cannot call.
+//
+// Scope is the current realm — worker_threads / vm contexts each hold their own
+// symbol registry and must import plugins themselves.
+const REGISTRY_KEY = Symbol.for('apprise.js/registry@0')
+
+const globalRegistry = globalThis as unknown as Record<
+  symbol,
+  Map<string, PluginConstructor> | undefined
+>
+
+const registry: Map<string, PluginConstructor> =
+  globalRegistry[REGISTRY_KEY] ?? new Map<string, PluginConstructor>()
+globalRegistry[REGISTRY_KEY] = registry
 
 /** Register a plugin constructor under one or more (lower-cased) schemes. */
 export function registerPlugin(
