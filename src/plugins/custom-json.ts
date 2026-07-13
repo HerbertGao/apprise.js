@@ -16,7 +16,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   mapUnquoteMap,
@@ -180,7 +179,7 @@ export class NotifyJSON extends NotifyBase {
       url += `?${query}`
     }
 
-    const res = await request({
+    const res = await this.request({
       method: this.method,
       url,
       headers,

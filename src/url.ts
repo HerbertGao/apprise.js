@@ -122,6 +122,32 @@ export function urlencodePlus(query: EncodeInput): string {
 }
 
 /**
+ * Python `float(str)` semantics: leading/trailing whitespace is tolerated, an
+ * empty or non-numeric string is a ValueError (here: `null`, letting the caller
+ * warn and keep its default, per upstream url.py:292-309). Deliberately NOT
+ * `parseFloat`, which would accept the `"5abc"` Python rejects.
+ */
+function pyFloat(value: string): number | null {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return null
+  }
+  const parsed = Number(trimmed)
+  return Number.isNaN(parsed) ? null : parsed
+}
+
+/**
+ * Python `str(float)` formatting: an integral value keeps a `.0` suffix
+ * (`str(float("5")) == "5.0"`, where JS `String(5)` gives `"5"`). Required so
+ * `?rto=5` round-trips through {@link URLBase.url} as `rto=5.0`, byte-identical
+ * to upstream.
+ */
+function pyFloatStr(value: number): string {
+  const text = String(value)
+  return /^-?\d+$/.test(text) ? `${text}.0` : text
+}
+
+/**
  * String-based boolean parsing. Mirrors upstream `parse_bool` (parse.py:868-909)
  * exactly, including the first-two-character prefix table; unrecognised strings
  * fall back to `defaultValue`.
@@ -528,6 +554,10 @@ export interface UrlBaseArgs {
   fullpath?: string | null
   /** SSL certificate verification flag (already `parseBool`-normalised). */
   verify?: boolean
+  /** Socket connect timeout in seconds (`?cto=`, already float-normalised). */
+  cto?: number
+  /** Socket read timeout in seconds (`?rto=`, already float-normalised). */
+  rto?: number
 }
 
 /**
@@ -538,6 +568,10 @@ export interface ParsedUrlResults extends ParsedUrl {
   secure: boolean
   /** SSL verification flag (parse_bool of `?verify=`, default true). */
   verify: boolean
+  /** Effective `?cto=` — present only when a valid float was supplied. */
+  cto?: number
+  /** Effective `?rto=` — present only when a valid float was supplied. */
+  rto?: number
   /** Effective `?format=` — present only when a valid value was supplied. */
   format?: NotifyFormat
   /** Effective `?overflow=` — present only when a valid value was supplied. */
@@ -563,6 +597,12 @@ export class URLBase {
   /** Secure sites are verified against a Certificate Authority by default. */
   static verifyCertificate = true
 
+  /** Seconds to wait for the connection to be established (url.py:109). */
+  static socketConnectTimeout = 4.0
+
+  /** Seconds to wait for the server to send a response (url.py:113). */
+  static socketReadTimeout = 4.0
+
   schema: string
   secure: boolean
   host: string
@@ -571,6 +611,8 @@ export class URLBase {
   password: string | null
   fullpath: string | null
   verifyCertificate: boolean
+  socketConnectTimeout: number
+  socketReadTimeout: number
 
   constructor(args: UrlBaseArgs = {}) {
     this.schema = (args.schema ?? 'unknown').toLowerCase()
@@ -590,6 +632,35 @@ export class URLBase {
       args.verify ?? URLBase.verifyCertificate,
       URLBase.verifyCertificate,
     )
+
+    // The class defaults are read off the CONCRETE class so a plugin can
+    // override them (upstream class attributes); `?cto=`/`?rto=` then override
+    // per instance (url.py:290-309).
+    const cls = this.constructor as typeof URLBase
+    this.socketConnectTimeout = args.cto ?? cls.socketConnectTimeout
+    this.socketReadTimeout = args.rto ?? cls.socketReadTimeout
+  }
+
+  /**
+   * The (connect, read) timeout pair, mirroring upstream's `request_timeout`
+   * property (url.py:821-825) which feeds `requests`' `timeout=` keyword.
+   */
+  get requestTimeout(): [number, number] {
+    return [this.socketConnectTimeout, this.socketReadTimeout]
+  }
+
+  /**
+   * The single request deadline handed to the transport, in milliseconds.
+   *
+   * ponytail: `requests` takes a SEPARATE connect and read timeout; native
+   * `fetch` exposes only one `AbortSignal`, i.e. a total-request deadline, so a
+   * 1:1 port is impossible. Both values are still parsed and round-tripped
+   * faithfully; on the wire they are summed into one deadline (default
+   * 4.0 + 4.0 = 8s). A consumer needing true split connect/read semantics
+   * injects an undici-Agent-backed transport (`new Apprise({ transport })`).
+   */
+  get requestTimeoutMs(): number {
+    return (this.socketConnectTimeout + this.socketReadTimeout) * 1000
   }
 
   /**
@@ -639,18 +710,51 @@ export class URLBase {
       }
     }
 
+    // rto / cto: `float()` coercion. An invalid value WARNS and keeps the class
+    // default — upstream catches the (TypeError, ValueError) rather than
+    // rejecting the URL (url.py:291-309).
+    if ('rto' in results.qsd) {
+      const value = pyFloat(results.qsd.rto ?? '')
+      if (value === null) {
+        warn(
+          `Invalid socket read timeout (rto) was specified ${results.qsd.rto}`,
+        )
+      } else {
+        results.rto = value
+      }
+    }
+
+    if ('cto' in results.qsd) {
+      const value = pyFloat(results.qsd.cto ?? '')
+      if (value === null) {
+        warn(
+          `Invalid socket connect timeout (cto) was specified ${results.qsd.cto}`,
+        )
+      } else {
+        results.cto = value
+      }
+    }
+
     return results
   }
 
   /**
    * Provides the default set of query parameters for {@link url}. At the
-   * URLBase level only `verify` is emitted (and only when non-default);
-   * NotifyBase layers `format`/`overflow` on top. Mirrors
-   * `URLBase.url_parameters` (url.py:850-880), minus the rto/cto/redirect
-   * parameters that are out of scope for batch-1.
+   * URLBase level only `rto`/`cto`/`verify` are emitted (each ONLY when it
+   * differs from the URLBase default — compared against the base class, not the
+   * concrete plugin, exactly as upstream does); NotifyBase layers
+   * `format`/`overflow` on top. Mirrors `URLBase.url_parameters`
+   * (url.py:850-880) including the emission order, minus the `redirect`
+   * parameter that is out of scope for batch-1.
    */
   urlParameters(): Record<string, string> {
     const params: Record<string, string> = {}
+    if (this.socketReadTimeout !== URLBase.socketReadTimeout) {
+      params.rto = pyFloatStr(this.socketReadTimeout)
+    }
+    if (this.socketConnectTimeout !== URLBase.socketConnectTimeout) {
+      params.cto = pyFloatStr(this.socketConnectTimeout)
+    }
     if (this.verifyCertificate !== URLBase.verifyCertificate) {
       params.verify = this.verifyCertificate ? 'yes' : 'no'
     }

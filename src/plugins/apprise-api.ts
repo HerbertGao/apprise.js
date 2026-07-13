@@ -21,7 +21,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -182,7 +181,12 @@ export class NotifyAppriseAPI extends NotifyBase {
     // Success is EXACTLY 200 (apprise_api.py:406, `!= requests.codes.ok` fails);
     // a 201/202 is a failure here, unlike the custom-json/form/xml plugins which
     // accept any 2xx.
-    const res = await request({ method: 'POST', url, headers, body: wireBody })
+    const res = await this.request({
+      method: 'POST',
+      url,
+      headers,
+      body: wireBody,
+    })
     return res.status === 200
   }
 

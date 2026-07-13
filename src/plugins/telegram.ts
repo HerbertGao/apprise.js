@@ -28,7 +28,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -426,7 +425,7 @@ export class NotifyTelegram extends NotifyBase {
         continue
       }
 
-      const res = await request({
+      const res = await this.request({
         method: 'POST',
         url,
         headers,
@@ -512,7 +511,7 @@ export class NotifyTelegram extends NotifyBase {
       'Content-Type': `multipart/form-data; boundary=${boundary}`,
     }
 
-    const res = await request({ method: 'POST', url, headers, body })
+    const res = await this.request({ method: 'POST', url, headers, body })
     return res.status === 200
   }
 

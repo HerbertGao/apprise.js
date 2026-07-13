@@ -16,6 +16,12 @@ export interface TransportRequest {
   /** Semantic headers the plugin sets explicitly (e.g. `User-Agent`). */
   headers?: Record<string, string>
   body?: string | Uint8Array | null
+  /**
+   * Total request deadline in MILLISECONDS. Filled in by `NotifyBase.request()`
+   * from the plugin's `?cto=`/`?rto=` (default 8000); a custom transport is
+   * free to interpret it (e.g. split it back into connect/read timeouts).
+   */
+  timeout?: number
 }
 
 /**
@@ -50,6 +56,10 @@ async function nativeFetchTransport(
       req.method === 'GET' || req.method === 'HEAD'
         ? undefined
         : (req.body ?? undefined),
+    // Native fetch has NO default timeout: without this a stalled server hangs
+    // the notify() promise forever and leaks the socket.
+    signal:
+      req.timeout === undefined ? undefined : AbortSignal.timeout(req.timeout),
   })
 }
 
@@ -58,6 +68,11 @@ let active: Transport = nativeFetchTransport
 /**
  * Replace the active transport (e.g. inject a recorder in tests). Passing
  * `null` restores the default native-fetch transport.
+ *
+ * INTERNAL — deliberately NOT part of the public surface (`src/index.ts` does
+ * not re-export it): `active` is a process global, so two consumers sharing a
+ * process would clobber each other. A consumer injects a transport PER
+ * INSTANCE instead: `new Apprise({ transport })`.
  */
 export function setTransport(transport: Transport | null): void {
   active = transport ?? nativeFetchTransport

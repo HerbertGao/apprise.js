@@ -28,7 +28,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -547,7 +546,7 @@ export class NotifySlack extends NotifyBase {
     // ponytail: upstream sends a JSON body even on the GET (files.getUploadURL);
     // faithful to the fixture. Native fetch rejects a GET body — a transport
     // concern out of scope here (the golden suite records, never fetches).
-    const res = await request({
+    const res = await this.request({
       method: httpMethod.toUpperCase(),
       url: finalUrl,
       headers,
@@ -597,7 +596,7 @@ export class NotifySlack extends NotifyBase {
       Authorization: `Bearer ${this.accessToken}`,
     }
     const url = `${API_URL}users.lookupByEmail?${urlencodePlus({ email })}`
-    const res = await request({ method: 'GET', url, headers })
+    const res = await this.request({ method: 'GET', url, headers })
 
     const text = await res.text()
     let response: Record<string, unknown> = { ok: false }

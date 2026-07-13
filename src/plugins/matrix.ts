@@ -32,7 +32,6 @@ import {
   type SendOptions,
 } from '../core/notify-base.js'
 import { PersistentStoreStub } from '../core/store.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -331,7 +330,7 @@ export class NotifyMatrix extends NotifyBase {
     const url = `${T2BOT_URL}/${this.accessToken}`
     const payload = this.t2botPayload(body, title, notifyType)
 
-    const res = await request({
+    const res = await this.request({
       method: 'POST',
       url,
       headers,
@@ -614,7 +613,7 @@ export class NotifyMatrix extends NotifyBase {
     // dumps(payload): null -> "null" (whoami GET body), {} -> "{}", obj -> JSON.
     const body = JSON.stringify(payload ?? null)
 
-    const res = await request({ method, url, headers, body })
+    const res = await this.request({ method, url, headers, body })
     let response: Record<string, unknown> = {}
     try {
       const parsed: unknown = JSON.parse(await res.text())
