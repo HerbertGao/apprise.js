@@ -66,6 +66,8 @@ const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 
 Runtime handlers can also be registered without a plugin class via `Apprise.register(scheme, handler)`.
 
+> **Do not add `"sideEffects": false` to `package.json`.** Each plugin registers its scheme through a *top-level module side effect*, and the imports above are bare (no used bindings) — declaring the package side-effect-free licenses a bundler to elide them, after which the scheme never registers, `add()` returns `false`, and `notify()` reports a plain delivery failure. It does not reproduce under plain Node (which never tree-shakes), so `pnpm run test:bundle` runs a real bundler over a real consumer to guard the contract.
+
 ## Dev
 
 Requires Node ≥22 and pnpm (via `corepack enable`).
