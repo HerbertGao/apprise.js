@@ -338,8 +338,12 @@ def process_plugin(plugin):
 
 def main(argv):
     if apprise.__version__ != EXPECTED_APPRISE_VERSION:
-        print(f"WARNING: apprise {apprise.__version__} != pinned "
-              f"{EXPECTED_APPRISE_VERSION}; fixtures may drift.", file=sys.stderr)
+        # Fail closed: a different upstream version would silently capture
+        # drifted golden bytes. Refuse rather than overwrite the fixtures.
+        print(f"ERROR: apprise {apprise.__version__} != pinned "
+              f"{EXPECTED_APPRISE_VERSION}; refusing to (re)capture fixtures.",
+              file=sys.stderr)
+        return 1
 
     if argv:
         plugins = argv

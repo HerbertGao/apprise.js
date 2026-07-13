@@ -24,6 +24,7 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
       "url": "json://user:pass@localhost/path",
       "title": "hi",                // optional, default ""
       "body": "hello body",         // optional, default ""
+      "body_gen": { "char": "A", "count": 4001 }, // optional; expands to char*count in place of `body` (compact large/overflow bodies)
       "type": "info",               // info|success|warning|failure, default info
       "attachments": [ /* descriptors, optional */ ],
       "responses": [ /* CannedResponse[], optional; multi-step plugins */ ],

@@ -34,7 +34,7 @@ Importing the `apprise.js` barrel registers the four generic webhook meta-plugin
 | Scheme                       | Plugin             | Sends                         |
 | ---------------------------- | ------------------ | ----------------------------- |
 | `json://` / `jsons://`       | `NotifyJSON`       | JSON body                     |
-| `form://` / `forms://`       | `NotifyForm`       | `multipart` / form-urlencoded |
+| `form://` / `forms://`       | `NotifyForm`       | form-urlencoded (multipart attach deferred) |
 | `xml://` / `xmls://`         | `NotifyXML`        | XML (SOAP) body               |
 | `apprise://` / `apprises://` | `NotifyAppriseAPI` | Apprise API server            |
 
