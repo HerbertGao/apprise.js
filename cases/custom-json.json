@@ -1,0 +1,96 @@
+{
+  "plugin": "custom-json",
+  "cases": [
+    {
+      "name": "default",
+      "url": "json://user:pass@localhost/path",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "secure",
+      "url": "jsons://localhost/spath",
+      "title": "hi",
+      "body": "hello body",
+      "type": "success"
+    },
+    {
+      "name": "user-only",
+      "url": "json://user@localhost/path",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "no-path",
+      "url": "json://localhost",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "method-put",
+      "url": "json://localhost/path?method=put",
+      "title": "hi",
+      "body": "hello body",
+      "type": "warning"
+    },
+    {
+      "name": "invalid-method",
+      "url": "json://localhost/path?method=BOGUS",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "prefixes",
+      "url": "json://localhost/path?+X-Token=abc&-baz=qux&:foo=bar",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "minus-star-tilde",
+      "url": "json://localhost/path?-x=a*b~c",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "colon-rename-message",
+      "url": "json://localhost/path?:message=msg",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "colon-delete-title",
+      "url": "json://localhost/path?:title=",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "attachment",
+      "url": "json://localhost/path",
+      "title": "hi",
+      "body": "see attached",
+      "type": "info",
+      "attachments": [
+        {
+          "memory": { "text": "the content" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ]
+    },
+    {
+      "name": "overflow-truncate",
+      "url": "json://localhost/path?overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "A", "count": 32769 },
+      "type": "info"
+    }
+  ]
+}

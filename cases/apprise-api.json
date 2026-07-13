@@ -1,0 +1,68 @@
+{
+  "plugin": "apprise-api",
+  "cases": [
+    {
+      "name": "default-form",
+      "url": "apprise://user:pass@localhost/abc123",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "secure",
+      "url": "apprises://localhost/abc123",
+      "title": "hi",
+      "body": "hello body",
+      "type": "success"
+    },
+    {
+      "name": "user-only",
+      "url": "apprise://user@localhost/abc123",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "method-json",
+      "url": "apprise://localhost/abc123?method=json",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "json-attachment",
+      "url": "apprise://localhost/abc123?method=json",
+      "title": "hi",
+      "body": "see attached",
+      "type": "info",
+      "attachments": [
+        {
+          "memory": { "text": "the content" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ]
+    },
+    {
+      "name": "invalid-method",
+      "url": "apprise://localhost/abc123?method=bogus",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "invalid-token",
+      "url": "apprise://localhost/bad.token",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    },
+    {
+      "name": "prefix-plus-ignores-minus-colon",
+      "url": "apprise://localhost/abc123?+X-H=1&-foo=bar&:baz=qux",
+      "title": "hi",
+      "body": "hello body",
+      "type": "info"
+    }
+  ]
+}
