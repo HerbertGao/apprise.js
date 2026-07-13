@@ -22,7 +22,7 @@
 
 import type { AppriseAttachment, AttachBase } from '../attachment/base.js'
 import { NotifyFormat, NotifyType } from '../common.js'
-import { chooseBoundary } from '../core/multipart.js'
+import { chooseBoundary, escapeMultipartFilename } from '../core/multipart.js'
 import {
   NotifyBase,
   type NotifyBaseArgs,
@@ -200,7 +200,7 @@ function buildMultipart(
   }
   parts.push(
     Buffer.from(
-      `--${boundary}\r\nContent-Disposition: form-data; name="${fileKey}"; filename="${fileName}"\r\n\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="${fileKey}"; filename="${escapeMultipartFilename(fileName)}"\r\n\r\n`,
       'utf8',
     ),
     fileBytes,

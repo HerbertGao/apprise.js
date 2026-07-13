@@ -175,7 +175,11 @@ export class NotifyMattermost extends NotifyBase {
       this.invalidTargets.push(target)
     }
 
-    this.includeImage = args.include_image ?? false
+    // ponytail: upstream's constructor signature defaults include_image=False
+    // (mattermost.py:240) but its URL/template default is True (mattermost.py:214);
+    // parseUrl always supplies an explicit value, so align direct construction
+    // with the URL path (True) rather than the bare Python signature.
+    this.includeImage = args.include_image ?? true
     this.iconUrl = typeof args.icon_url === 'string' ? args.icon_url : null
   }
 

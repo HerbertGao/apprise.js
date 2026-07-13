@@ -269,6 +269,17 @@ export class NotifyMatrix extends NotifyBase {
       this.discovery = false
     }
 
+    // ponytail: secure server discovery (`.well-known` + `/versions`) is deferred;
+    // for a direct matrixs:// URL it resolves a DIFFERENT base_url than the bare
+    // host (base.py:3284-3306), so baseUrl() would silently hit the wrong endpoint.
+    // Fail loud instead. Upstream only runs discovery when secure (base.py:3284),
+    // so gate on secure — a `?discovery=no` URL (all in-scope fixtures) is fine.
+    if (this.mode === 'off' && this.secure && this.discovery) {
+      throw new TypeError(
+        'Matrix server discovery is not implemented yet; add ?discovery=no.',
+      )
+    }
+
     // Restore session state from the store (empty per notify -> all null).
     if (this.mode !== 't2bot') {
       this.homeServer = this.store.get<string | null>('home_server', null)
@@ -357,6 +368,18 @@ export class NotifyMatrix extends NotifyBase {
     title: string,
     _notifyType: NotifyType,
   ): Promise<boolean> {
+    // ponytail: E2EE (olm/megolm) is deferred — apprise.js can never encrypt this
+    // batch. Upstream is SILENT when its crypto lib is absent (base.py:900 gates
+    // the whole e2ee path on MATRIX_E2EE_SUPPORT and only warns when the lib IS
+    // present but setup fails); we surface the downgrade as the honest security
+    // minimum. Plaintext is still sent (upstream's spec-approved fallback), so the
+    // wire — and every fixture — is unchanged.
+    if (this.e2ee && this.secure) {
+      console.warn(
+        'apprise.js: Matrix E2EE was requested but is not supported yet; sending plaintext.',
+      )
+    }
+
     // Raw access-token auth: password is the token, reuse a single uuid txnId.
     if (this.accessToken === null && this.password && !this.user) {
       this.accessToken = this.password

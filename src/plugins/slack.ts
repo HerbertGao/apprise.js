@@ -22,7 +22,7 @@
 
 import type { AppriseAttachment } from '../attachment/base.js'
 import { NotifyFormat, NotifyImageSize, NotifyType } from '../common.js'
-import { chooseBoundary } from '../core/multipart.js'
+import { chooseBoundary, escapeMultipartFilename } from '../core/multipart.js'
 import {
   NotifyBase,
   type NotifyBaseArgs,
@@ -141,7 +141,7 @@ function buildMultipart(
 ): Buffer {
   // A 2-tuple file field carries NO per-part Content-Type (slack.py passes
   // `(name, fp)`), so the part header is Content-Disposition only.
-  const head = `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\n\r\n`
+  const head = `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${escapeMultipartFilename(filename)}"\r\n\r\n`
   const tail = `\r\n--${boundary}--\r\n`
   return Buffer.concat([
     Buffer.from(head, 'utf8'),

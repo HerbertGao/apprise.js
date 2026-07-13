@@ -298,6 +298,19 @@ def capture_case(case):
             attach=attach,
         )
 
+    # Author-declared oracle: a multi-request case states how many requests it
+    # SHOULD make. Check it against the ACTUAL capture BEFORE writing anything. A
+    # malformed canned response that short-circuits the sequence would otherwise
+    # yield a self-consistent (captured == stored) short fixture; an independent,
+    # hand-authored count turns that false-green into a hard failure.
+    declared_count = case.get("expectedCount")
+    if declared_count is not None and len(captured) != declared_count:
+        raise SystemExit(
+            f"ERROR: case {case['name']!r} declared expectedCount="
+            f"{declared_count} but upstream produced {len(captured)} request(s); "
+            "refusing to write a truncated/self-consistent fixture."
+        )
+
     if not captured:
         # Constructed fine but produced no request (e.g. empty content).
         entry["expected"] = {"noRequest": {"reason": "no-request"}}

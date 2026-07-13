@@ -47,8 +47,11 @@ describe('PersistentStoreStub', () => {
   })
 
   test('transactionUuid returns the pinned uuid when seeded, else a real uuid', () => {
-    setStoreSeeds({ uuid: 'fixed-uuid-0000' })
-    expect(new PersistentStoreStub().transactionUuid()).toBe('fixed-uuid-0000')
+    // A realizable cross-language value: Python's uuid.UUID(...) must parse it.
+    setStoreSeeds({ uuid: '00000000-0000-4000-8000-000000000000' })
+    expect(new PersistentStoreStub().transactionUuid()).toBe(
+      '00000000-0000-4000-8000-000000000000',
+    )
     clearStoreSeeds()
     const uuid = new PersistentStoreStub().transactionUuid()
     expect(uuid).toMatch(

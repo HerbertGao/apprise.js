@@ -23,3 +23,20 @@ export function setMultipartBoundarySeed(b: string | null): void {
 export function chooseBoundary(): string {
   return seed ?? randomBytes(16).toString('hex')
 }
+
+/**
+ * Escape a filename for a multipart `Content-Disposition` header value. A raw
+ * `"`, CR, or LF in the name would close the `filename="..."` quoted param or
+ * terminate the header line, letting an attacker inject headers — percent-encode
+ * exactly those three so the value can never break out.
+ *
+ * ponytail: upstream (urllib3) escapes these too, but exact special-char parity
+ * is uncoverable by fixture (every golden fixture uses a clean name, so this is
+ * a no-op there); this is the injection-safe minimum for the header boundary.
+ */
+export function escapeMultipartFilename(name: string): string {
+  return name
+    .replaceAll('"', '%22')
+    .replaceAll('\r', '%0D')
+    .replaceAll('\n', '%0A')
+}

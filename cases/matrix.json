@@ -10,6 +10,7 @@
     },
     {
       "name": "raw-token-whoami-send",
+      "expectedCount": 3,
       "url": "matrixs://rawtokenABC123@matrix.example.com/!abc:matrix.example.com?discovery=no",
       "title": "hi",
       "body": "hello body",
@@ -24,6 +25,7 @@
     },
     {
       "name": "login-join-send",
+      "expectedCount": 3,
       "url": "matrixs://user:pass@matrix.example.com/!abc:matrix.example.com?discovery=no",
       "title": "hi",
       "body": "hello body",
@@ -39,6 +41,7 @@
     },
     {
       "name": "login-multi-room-txn-counter",
+      "expectedCount": 5,
       "url": "matrixs://user:pass@matrix.example.com/!r1:matrix.example.com/!r2:matrix.example.com?discovery=no",
       "title": "hi",
       "body": "hello body",
@@ -54,6 +57,7 @@
     },
     {
       "name": "login-format-html",
+      "expectedCount": 3,
       "url": "matrixs://user:pass@matrix.example.com/!abc:matrix.example.com?discovery=no&format=html",
       "title": "hi",
       "body": "hello body",

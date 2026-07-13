@@ -50,7 +50,7 @@ describe('matrix url(privacy) masks secrets', () => {
   test('direct: password is masked, never emitted verbatim under privacy', () => {
     const plugin = new NotifyMatrix(
       NotifyMatrix.parseUrl(
-        'matrixs://user:SECRETPASS@matrix.example.com/!abc:matrix.example.com',
+        'matrixs://user:SECRETPASS@matrix.example.com/!abc:matrix.example.com?discovery=no',
       ) as unknown as NotifyMatrixArgs,
     )
     expect(plugin.url(true)).not.toContain('SECRETPASS')
@@ -81,6 +81,14 @@ describe('matrix construction guards', () => {
 
   test('a short (non-64-char) t2bot token is rejected', () => {
     expect(new Apprise().add('matrix://tooshort')).toBe(false)
+  })
+
+  test('a direct secure URL without ?discovery=no is rejected (discovery deferred)', () => {
+    expect(
+      new Apprise().add(
+        'matrixs://user:pass@matrix.example.com/!abc:matrix.example.com',
+      ),
+    ).toBe(false)
   })
 
   test('unwired webhook modes (matrix/slack/hookshot) are rejected at construction', () => {

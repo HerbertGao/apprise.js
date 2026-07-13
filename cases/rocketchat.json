@@ -3,6 +3,7 @@
   "cases": [
     {
       "name": "basic-login-flow",
+      "expectedCount": 3,
       "url": "rocket://user:pass@localhost/#general",
       "title": "",
       "body": "hello world",
@@ -32,6 +33,7 @@
     },
     {
       "name": "basic-multi-target",
+      "expectedCount": 4,
       "url": "rocket://user:pass@localhost/#alpha/@bravo",
       "title": "",
       "body": "hi there",

@@ -10,6 +10,7 @@
     },
     {
       "name": "multi-target",
+      "expectedCount": 2,
       "url": "tgram://123456789:ABCdef_ghi-jkl/@zulu/12345",
       "title": "",
       "body": "hi there",
@@ -38,6 +39,7 @@
     },
     {
       "name": "attachments-photo-pdf",
+      "expectedCount": 2,
       "url": "tgram://123456789:ABCdef_ghi-jkl/12345",
       "title": "",
       "body": "see attached",

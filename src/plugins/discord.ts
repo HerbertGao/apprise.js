@@ -17,7 +17,7 @@
 
 import type { AttachBase } from '../attachment/base.js'
 import { NotifyFormat, NotifyImageSize, NotifyType } from '../common.js'
-import { chooseBoundary } from '../core/multipart.js'
+import { chooseBoundary, escapeMultipartFilename } from '../core/multipart.js'
 import {
   NotifyBase,
   type NotifyBaseArgs,
@@ -173,7 +173,7 @@ function buildMultipart(
     const disposition =
       f.filename === null || f.filename === ''
         ? `Content-Disposition: form-data; name="${f.field}"`
-        : `Content-Disposition: form-data; name="${f.field}"; filename="${f.filename}"`
+        : `Content-Disposition: form-data; name="${f.field}"; filename="${escapeMultipartFilename(f.filename)}"`
     chunks.push(
       Buffer.from(
         `--${boundary}${CRLF}${disposition}${CRLF}Content-Type: ${f.mimetype}${CRLF}${CRLF}`,

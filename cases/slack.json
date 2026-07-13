@@ -31,6 +31,7 @@
     },
     {
       "name": "bot-attach",
+      "expectedCount": 4,
       "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/#test?footer=no&image=no",
       "title": "",
       "body": "file caption",
@@ -68,6 +69,7 @@
     },
     {
       "name": "webhook-multi-thread",
+      "expectedCount": 2,
       "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/#general:1610000000.000100/@alice?footer=no&image=no",
       "title": "",
       "body": "multi",
@@ -75,6 +77,7 @@
     },
     {
       "name": "bot-email",
+      "expectedCount": 2,
       "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/user@example.com?footer=no&image=no",
       "title": "",
       "body": "email hello",
