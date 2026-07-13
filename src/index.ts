@@ -25,6 +25,14 @@ export { convertBetween } from './conversion.js'
 export type { NotifyOptions } from './core/apprise.js'
 export { Apprise } from './core/apprise.js'
 export { NotifyBase } from './core/notify-base.js'
+// The transport TYPES only: a consumer writes a conforming transport and hands
+// it to `new Apprise({ transport })`. The module-level `setTransport()` stays
+// internal on purpose — it mutates a process global.
+export type {
+  Transport,
+  TransportRequest,
+  TransportResponse,
+} from './core/transport.js'
 export { NotifyAppriseAPI } from './plugins/apprise-api.js'
 export { NotifyForm } from './plugins/custom-form.js'
 export { NotifyJSON } from './plugins/custom-json.js'

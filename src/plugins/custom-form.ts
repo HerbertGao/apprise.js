@@ -18,7 +18,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   mapUnquoteMap,
@@ -183,7 +182,12 @@ export class NotifyForm extends NotifyBase {
       if (query) {
         url += `?${query}`
       }
-      const res = await request({ method: 'GET', url, headers, body: null })
+      const res = await this.request({
+        method: 'GET',
+        url,
+        headers,
+        body: null,
+      })
       return res.status >= 200 && res.status < 300
     }
 
@@ -206,7 +210,7 @@ export class NotifyForm extends NotifyBase {
       url += `?${query}`
     }
     headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    const res = await request({
+    const res = await this.request({
       method: this.method,
       url,
       headers,

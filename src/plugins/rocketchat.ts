@@ -25,7 +25,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -296,7 +295,7 @@ export class NotifyRocketChat extends NotifyBase {
       'User-Agent': this.asset.appId,
       'Content-Type': 'application/json',
     }
-    const res = await request({
+    const res = await this.request({
       method: 'POST',
       url: `${this.apiUrl}/${path}`,
       headers,
@@ -312,7 +311,7 @@ export class NotifyRocketChat extends NotifyBase {
       ['username', this.user ?? ''],
       ['password', this.password ?? ''],
     ])
-    const res = await request({
+    const res = await this.request({
       method: 'POST',
       url: `${this.apiUrl}/api/v1/login`,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -338,7 +337,7 @@ export class NotifyRocketChat extends NotifyBase {
   /** Log the cached session off (rocketchat.py:687-734). Result is not folded
    *  into the notification outcome upstream, so it is likewise ignored here. */
   private async logout(): Promise<void> {
-    await request({
+    await this.request({
       method: 'POST',
       url: `${this.apiUrl}/api/v1/logout`,
       headers: { ...this.headers },

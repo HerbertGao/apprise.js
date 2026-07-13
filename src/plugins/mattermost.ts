@@ -20,7 +20,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -220,7 +219,7 @@ export class NotifyMattermost extends NotifyBase {
         payload.channel = value
       }
 
-      const res = await request({
+      const res = await this.request({
         method: 'POST',
         url,
         headers,

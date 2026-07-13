@@ -20,6 +20,7 @@ import {
 } from '../registry.js'
 import type { NotifyBase } from './notify-base.js'
 import { NotifyBase as NotifyBaseClass } from './notify-base.js'
+import type { Transport } from './transport.js'
 
 /** Options accepted by {@link Apprise.notify}. */
 export interface NotifyOptions {
@@ -87,9 +88,17 @@ export class Apprise {
   readonly servers: NotifyBase[] = []
   /** Presentation asset applied to every target added. */
   asset: AppriseAsset
+  /**
+   * HTTP transport applied to every target added (see {@link Transport}). Scoped
+   * to THIS instance, so two Apprise objects in one process can use different
+   * transports (a proxy, an undici Agent with split connect/read timeouts, a
+   * recorder) without interfering.
+   */
+  transport?: Transport
 
-  constructor(options: { asset?: AppriseAsset } = {}) {
+  constructor(options: { asset?: AppriseAsset; transport?: Transport } = {}) {
     this.asset = options.asset ?? new AppriseAsset()
+    this.transport = options.transport
   }
 
   /**
@@ -155,7 +164,7 @@ export class Apprise {
     }
 
     try {
-      return new ctor({ ...args, asset: this.asset })
+      return new ctor({ ...args, asset: this.asset, transport: this.transport })
     } catch {
       return null
     }

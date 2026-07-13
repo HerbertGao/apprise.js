@@ -23,7 +23,6 @@ import {
   type NotifyBaseArgs,
   type SendOptions,
 } from '../core/notify-base.js'
-import { request } from '../core/transport.js'
 import { type PluginConstructor, registerPlugin } from '../registry.js'
 import {
   type ParsedUrlResults,
@@ -409,7 +408,12 @@ export class NotifyDiscord extends NotifyBase {
       wireBody = pyJson(payload)
     }
 
-    const res = await request({ method: 'POST', url, headers, body: wireBody })
+    const res = await this.request({
+      method: 'POST',
+      url,
+      headers,
+      body: wireBody,
+    })
     // Discord accepts 200 (wait=true) or 204 (no content) (discord.py:855-858).
     return res.status === 200 || res.status === 204
   }

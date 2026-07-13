@@ -15,6 +15,12 @@ import { AppriseAsset } from '../asset.js'
 import { AppriseAttachment, type AttachmentInput } from '../attachment/base.js'
 import { NotifyFormat, NotifyType, OverflowMode } from '../common.js'
 import { URLBase, type UrlBaseArgs } from '../url.js'
+import {
+  request as moduleRequest,
+  type Transport,
+  type TransportRequest,
+  type TransportResponse,
+} from './transport.js'
 
 // --- Python-style whitespace stripping --------------------------------------
 
@@ -244,6 +250,13 @@ export interface NotifyBaseArgs extends UrlBaseArgs {
   overflow?: OverflowMode
   /** Presentation asset; a default is created when omitted. */
   asset?: AppriseAsset
+  /**
+   * Per-instance HTTP transport. When omitted, the module-level transport is
+   * used. `Apprise` threads its own `transport` option into every plugin it
+   * creates, so two Apprise instances in one process can carry different
+   * transports without clobbering each other.
+   */
+  transport?: Transport
 }
 
 /** Options accepted by {@link NotifyBase.notify}. */
@@ -294,6 +307,7 @@ export class NotifyBase extends URLBase {
   // Per-instance overrides applied from the URL (`?format=` / `?overflow=`).
   #formatOverride?: NotifyFormat
   #overflowOverride?: OverflowMode
+  #transport?: Transport
 
   constructor(args: NotifyBaseArgs = {}) {
     super(args)
@@ -304,6 +318,25 @@ export class NotifyBase extends URLBase {
     if (args.overflow !== undefined) {
       this.#overflowOverride = args.overflow
     }
+    if (args.transport !== undefined) {
+      this.#transport = args.transport
+    }
+  }
+
+  /**
+   * Issue a wire request. Every plugin's `send()` goes through here so that the
+   * per-instance transport (when one was injected) is honoured, and so that no
+   * request can ever be issued without a deadline: an unset `timeout` is filled
+   * in from this instance's `?cto=` + `?rto=` (default 8000ms).
+   */
+  protected request(req: TransportRequest): Promise<TransportResponse> {
+    const withTimeout =
+      req.timeout === undefined
+        ? { ...req, timeout: this.requestTimeoutMs }
+        : req
+    return this.#transport
+      ? this.#transport(withTimeout)
+      : moduleRequest(withTimeout)
   }
 
   /** The concrete class, used to read the static (subclass-overridable) defaults. */

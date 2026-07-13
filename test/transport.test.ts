@@ -52,29 +52,58 @@ describe('transport seam', () => {
   })
 
   test('the default transport drops a GET/HEAD body but keeps POST (fetch limit)', async () => {
-    // nativeFetchTransport is the active default here (afterEach reset it). Stub
-    // the global fetch to capture the init it receives.
-    const inits: (RequestInit | undefined)[] = []
-    const original = globalThis.fetch
-    globalThis.fetch = (async (_url: string, init?: RequestInit) => {
-      inits.push(init)
-      return {
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        headers: new Headers(),
-        text: async () => '',
-      }
-    }) as unknown as typeof fetch
-    try {
-      await request({ method: 'GET', url: 'https://example.test/', body: 'x' })
-      await request({ method: 'HEAD', url: 'https://example.test/', body: 'x' })
-      await request({ method: 'POST', url: 'https://example.test/', body: 'x' })
-    } finally {
-      globalThis.fetch = original
-    }
+    const inits = await captureFetchInits(() => [
+      request({ method: 'GET', url: 'https://example.test/', body: 'x' }),
+      request({ method: 'HEAD', url: 'https://example.test/', body: 'x' }),
+      request({ method: 'POST', url: 'https://example.test/', body: 'x' }),
+    ])
     expect(inits[0]?.body).toBeUndefined()
     expect(inits[1]?.body).toBeUndefined()
     expect(inits[2]?.body).toBe('x')
   })
+
+  test('a timeout becomes an AbortSignal on the fetch (native fetch has none)', async () => {
+    const inits = await captureFetchInits(() => [
+      request({ method: 'POST', url: 'https://example.test/', timeout: 200 }),
+      request({ method: 'POST', url: 'https://example.test/' }),
+    ])
+
+    const signal = inits[0]?.signal
+    expect(signal).toBeInstanceOf(AbortSignal)
+    expect(signal?.aborted).toBe(false)
+    // It really is a 200ms deadline, not an inert signal.
+    await new Promise((resolve) => setTimeout(resolve, 260))
+    expect(signal?.aborted).toBe(true)
+
+    // No timeout requested -> no signal (unchanged legacy behaviour).
+    expect(inits[1]?.signal).toBeUndefined()
+  })
 })
+
+/** Run requests against the default transport with `fetch` stubbed, and return
+ *  the `init` each call received. */
+async function captureFetchInits(
+  run: () => Array<Promise<unknown>>,
+): Promise<Array<RequestInit | undefined>> {
+  const inits: (RequestInit | undefined)[] = []
+  const original = globalThis.fetch
+  globalThis.fetch = (async (_url: string, init?: RequestInit) => {
+    inits.push(init)
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers(),
+      text: async () => '',
+    }
+  }) as unknown as typeof fetch
+  try {
+    // Sequential: each call must push its own init before the next stubs read it.
+    for (const pending of run()) {
+      await pending
+    }
+  } finally {
+    globalThis.fetch = original
+  }
+  return inits
+}
