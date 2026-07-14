@@ -67,7 +67,7 @@ const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 Runtime handlers can also be registered without a plugin class via `Apprise.register(scheme, handler)`.
 
 > **Do not add `"sideEffects": false` to `package.json`.** Each plugin registers its scheme through a *top-level module side effect*, and the imports above are bare (no used bindings) — declaring the package side-effect-free licenses a bundler to elide them, after which the scheme never registers and `add()` returns `false` — surfacing, if a diagnostic sink is attached (see [Diagnostics](#diagnostics)), as `unregistered-scheme`. It does not reproduce under plain Node (which never tree-shakes), so `pnpm run test:bundle` runs a real bundler over a real consumer to guard the contract.
-
+>
 > **The registry is a process-wide singleton, not module state.** Node caches ESM and CJS separately, so a mixed-format graph would otherwise load it twice and a plugin would register into a table `Apprise` never reads (the dual package hazard). Pinning it to `Symbol.for('apprise.js/registry@0')` makes every load combination — including an ESM app whose transitive dep `require()`s a plugin — share one table. `pnpm run test:formats` executes the built artifact in all six combinations to guard this. The `@0` suffix keys the *shape* of the plugin constructor: change that shape and it must bump.
 
 ## Diagnostics
