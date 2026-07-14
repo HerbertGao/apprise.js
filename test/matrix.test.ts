@@ -14,6 +14,7 @@
 // discovery (fixtures pin ?discovery=no), and cross-call persistence.
 
 import { describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { Apprise } from '../src/core/apprise.js'
 // Side-effect import registers the matrix/matrixs schemes.
 import { NotifyMatrix, type NotifyMatrixArgs } from '../src/plugins/matrix.js'
@@ -72,33 +73,46 @@ describe('matrix url(privacy) masks secrets', () => {
 
 describe('matrix construction guards', () => {
   test('an invalid ?version= is rejected (add returns false)', () => {
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
     expect(
-      new Apprise().add(
+      new Apprise({ asset }).add(
         'matrixs://user:pass@matrix.example.com/!a:h?version=v2',
       ),
     ).toBe(false)
+    expect(kinds).toContain('plugin-error')
   })
 
   test('a short (non-64-char) t2bot token is rejected', () => {
-    expect(new Apprise().add('matrix://tooshort')).toBe(false)
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    expect(new Apprise({ asset }).add('matrix://tooshort')).toBe(false)
+    expect(kinds).toContain('plugin-error')
   })
 
   test('a direct secure URL without ?discovery=no is rejected (discovery deferred)', () => {
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
     expect(
-      new Apprise().add(
+      new Apprise({ asset }).add(
         'matrixs://user:pass@matrix.example.com/!abc:matrix.example.com',
       ),
     ).toBe(false)
+    expect(kinds).toContain('plugin-error')
   })
 
   test('unwired webhook modes (matrix/slack/hookshot) are rejected at construction', () => {
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
     for (const mode of ['matrix', 'slack', 'hookshot']) {
       expect(
-        new Apprise().add(
+        new Apprise({ asset }).add(
           `matrixs://user:pass@matrix.example.com/!a:h?mode=${mode}&discovery=no`,
         ),
       ).toBe(false)
     }
+    expect(kinds).toContain('plugin-error')
+    expect(kinds).toHaveLength(3)
   })
 
   test('the native t2bot.io webhook URL is recognised', () => {

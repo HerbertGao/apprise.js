@@ -238,16 +238,21 @@ export function isIpAddr(
 }
 
 const HOSTNAME_LABEL_RE = /^([a-z0-9][a-z0-9_-]{1,62}|[a-z_-])$/i
+const HOSTNAME_LABEL_NO_US_RE = /^([a-z0-9][a-z0-9-]{1,62}|[a-z-])$/i
 const HOSTNAME_LABEL_NO_EDGE_RE = /[_-]$/
+const HOSTNAME_LABEL_NO_EDGE_NO_US_RE = /-$/
 
 /**
  * Validate a hostname, returning the (possibly IP-normalised) host or `false`.
- * Mirrors `is_hostname` (parse.py:231-272) with `underscore=true`.
+ * Mirrors `is_hostname` (parse.py:231-272). `underscore` toggles whether `_` is
+ * a permitted label character (upstream `is_hostname(..., underscore=True)`
+ * default); `cwe312_word` calls it with `underscore=false`.
  */
 export function isHostname(
   hostname: string,
   ipv4 = true,
   ipv6 = true,
+  underscore = true,
 ): string | false {
   if (hostname.length > 253 || hostname.length === 0) {
     return false
@@ -266,9 +271,12 @@ export function isHostname(
     return isIpAddr(host, ipv4, false)
   }
 
+  const labelRe = underscore ? HOSTNAME_LABEL_RE : HOSTNAME_LABEL_NO_US_RE
+  const edgeRe = underscore
+    ? HOSTNAME_LABEL_NO_EDGE_RE
+    : HOSTNAME_LABEL_NO_EDGE_NO_US_RE
   const labelsValid = labels.every(
-    (label) =>
-      HOSTNAME_LABEL_RE.test(label) && !HOSTNAME_LABEL_NO_EDGE_RE.test(label),
+    (label) => labelRe.test(label) && !edgeRe.test(label),
   )
 
   if (!labelsValid) {

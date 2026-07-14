@@ -5,6 +5,7 @@
 // the fuller matrix; these lock the core algorithm.
 
 import { describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { AttachMemory } from '../src/attachment/memory.js'
 import { NotifyFormat, NotifyType, OverflowMode } from '../src/common.js'
 import { NotifyBase, type SendOptions } from '../src/core/notify-base.js'
@@ -473,18 +474,32 @@ describe('body_max_line_count', () => {
 
 describe('notify() guards (upstream _build_send_calls TypeErrors -> False)', () => {
   test('no body and no attachment -> false, nothing sent', async () => {
-    const plugin = make()
+    const kinds: string[] = []
+    const plugin = new SizedPlugin({
+      schema: 'x',
+      host: 'h',
+      asset: new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) }),
+    })
     expect(await plugin.notify({})).toBe(false)
     expect(plugin.sent).toHaveLength(0)
+    // Pin the NotifyBase emit site (not just the boolean) — this kind is emitted
+    // here, distinct from the same string at the Apprise aggregate level.
+    expect(kinds).toContain('empty-content')
   })
 
   test('an attachment source that cannot be instantiated -> false, nothing sent', async () => {
-    const plugin = make()
+    const kinds: string[] = []
+    const plugin = new SizedPlugin({
+      schema: 'x',
+      host: 'h',
+      asset: new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) }),
+    })
     // An unregistered scheme makes AppriseAttachment throw (upstream: TypeError).
     expect(await plugin.notify({ body: 'x', attach: 'memory://nope' })).toBe(
       false,
     )
     expect(plugin.sent).toHaveLength(0)
+    expect(kinds).toContain('bad-attachment')
   })
 
   test('a raw attachment is wrapped into a container and delivered', async () => {

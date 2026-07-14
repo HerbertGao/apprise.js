@@ -12,6 +12,7 @@
 // every _send request sets `application/json`, so it is not uniformly comparable.
 
 import { describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { Apprise } from '../src/core/apprise.js'
 import { NotifySlack, type NotifySlackArgs } from '../src/plugins/slack.js'
 import { runGolden } from './golden.js'
@@ -85,11 +86,21 @@ describe('slack mode detection & validation', () => {
   })
 
   test('a deferred mode (workflow) is rejected', () => {
-    expect(new Apprise().add('slack://T1/A2/B3?mode=workflow')).toBe(false)
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    expect(new Apprise({ asset }).add('slack://T1/A2/B3?mode=workflow')).toBe(
+      false,
+    )
+    expect(kinds).toContain('plugin-error')
   })
 
   test('an invalid webhook token is rejected', () => {
-    expect(new Apprise().add('slack://T1/A2/bad.token.here')).toBe(false)
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    expect(new Apprise({ asset }).add('slack://T1/A2/bad.token.here')).toBe(
+      false,
+    )
+    expect(kinds).toContain('plugin-error')
   })
 
   test('a ?template= URL fails loud (Block-Kit templating deferred)', () => {

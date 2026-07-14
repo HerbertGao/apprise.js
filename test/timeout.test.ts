@@ -24,6 +24,7 @@
 import { createServer, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { Apprise } from '../src/core/apprise.js'
 import {
   request,
@@ -73,7 +74,10 @@ describe('the deadline is normalised before AbortSignal.timeout()', () => {
   // AbortSignal.timeout() throws ERR_OUT_OF_RANGE on a non-integer, on a
   // negative, and past 2**31-1 — all three reachable from a URL upstream ACCEPTS.
   test('a non-integer deadline (?cto=1.1&rto=2.2 -> 3300.0000000000005)', async () => {
-    const apprise = new Apprise()
+    const kinds: string[] = []
+    const apprise = new Apprise({
+      asset: new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) }),
+    })
     expect(apprise.add('json://127.0.0.1:1/path?cto=1.1&rto=2.2')).toBe(true)
     const plugin = apprise.servers[0]
 
@@ -89,6 +93,9 @@ describe('the deadline is normalised before AbortSignal.timeout()', () => {
     // an ERR_OUT_OF_RANGE thrown before the socket is even opened.
     vi.restoreAllMocks()
     expect(await apprise.notify({ body: 'hello' })).toBe(false)
+    // The false is a real connection failure (a surfaced rejection), not a
+    // throw that escaped before the socket opened.
+    expect(kinds).toContain('unhandled-exception')
   })
 
   test('a negative deadline (?cto=-5 -> -1000; upstream takes float("-5"))', async () => {

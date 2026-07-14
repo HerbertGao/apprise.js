@@ -6,6 +6,7 @@
 import { randomUUID } from 'node:crypto'
 import type { NotifyFormat } from './common.js'
 import { NotifyImageSize, type NotifyType } from './common.js'
+import { type Diagnostic, defaultDiagnostic, safeSink } from './diagnostics.js'
 
 const IMAGE_URL_MASK =
   'https://github.com/caronc/apprise/raw/master/apprise/assets/' +
@@ -30,6 +31,10 @@ export interface AppriseAssetOptions {
   uid?: string
   /** Pinnable (apprise-api `X-Apprise-Recursion-Count` = `recursion + 1`). */
   recursion?: number
+  /** CWE-312 secure logging (upstream `asset.py:191` `secure_logging`). */
+  secureLogging?: boolean
+  /** Per-instance diagnostic sink (design.md D1); default writes `console`. */
+  diagnostic?: Diagnostic
 }
 
 /**
@@ -58,6 +63,12 @@ export class AppriseAsset {
   /** Recursion counter — apprise-api emits `recursion + 1`. Pinnable. */
   recursion = 0
 
+  /** CWE-312 secure logging switch (upstream `asset.py:191`). Set in ctor. */
+  secureLogging = true
+
+  /** Per-instance diagnostic sink (design.md D1). Set in ctor. */
+  diagnostic: Diagnostic = defaultDiagnostic
+
   // ponytail: non-target no-op placeholders (asset.py:170-218). PGP/PEM key
   // autogen and persistent storage are batch-1 non-goals; kept only so the
   // public shape acknowledges them. They carry no behaviour and are not part
@@ -68,6 +79,18 @@ export class AppriseAsset {
 
   constructor(options: AppriseAssetOptions = {}) {
     Object.assign(this, options)
+    // D6: these two MUST NOT ride the blanket assign above — a present-but-
+    // undefined key (e.g. `{ secureLogging: undefined }`, easily produced by
+    // diagnostic wiring) would overwrite the default with `undefined`, making
+    // `secureLogging` falsy and fail-open (CWE-312). Nullish-guard restores the
+    // default whenever the value is null/undefined; only an explicit `false` /
+    // custom sink survives.
+    this.secureLogging = options.secureLogging ?? true
+    // Wrap so a throwing consumer sink can never turn a graceful `false` /
+    // `Promise<boolean>` into an exception (the sink explains failure, it does
+    // not create one). Covers every emit site — Apprise and NotifyBase both
+    // reach the sink only through `this.diagnostic`.
+    this.diagnostic = safeSink(options.diagnostic ?? defaultDiagnostic)
   }
 
   /**

@@ -1,0 +1,46 @@
+{
+  "_source": "apprise==1.12.0 apprise.utils.cwe312.cwe312_url",
+  "_note": "parseable-only oracle; unparseable cases are pinned fail-closed in the golden test (upstream fail-opens on them)",
+  "parseable": [
+    {
+      "url": "json://localhost/path",
+      "expected": "json://localhost/path"
+    },
+    {
+      "url": "http://user:password@localhost/",
+      "expected": "http://user:p...d@localhost/"
+    },
+    {
+      "url": "json://h/p?token=SECRET123456",
+      "expected": "json://h/p?token=S...6"
+    },
+    {
+      "url": "json://h/p?apikey=abcdef123456",
+      "expected": "json://h/p?apikey=a...6"
+    },
+    {
+      "url": "json://h/p?to=user@example.com",
+      "expected": "json://h/p?to=u...m"
+    },
+    {
+      "url": "json://h/p?channel=general",
+      "expected": "json://h/p?channel=general"
+    },
+    {
+      "url": "http://my_host/path",
+      "expected": "http://m...t/path"
+    },
+    {
+      "url": "json://h/p?data=héllo",
+      "expected": "json://h/p?data=h...o"
+    },
+    {
+      "url": "json://h/p?x=abcdefghijklmnopqrstuvwxyz",
+      "expected": "json://h/p?x=a...z"
+    },
+    {
+      "url": "slack://user:token@workspace",
+      "expected": "slack://user:t...n@workspace"
+    }
+  ]
+}
