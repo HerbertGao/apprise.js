@@ -9,8 +9,8 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       reporter: ['text', 'json-summary', 'html'],
       reportsDirectory: 'coverage',
-      // Ratchet floor, pinned just under the measured level (91.24 / 79.32 /
-      // 95.65 / 91.20). CI fails if coverage REGRESSES; raise these as gaps
+      // Ratchet floor, pinned just under the measured level (92.09 / 81.35 /
+      // 96.37 / 92.05). CI fails if coverage REGRESSES; raise these as gaps
       // close. Deliberately not 100%: chasing it invites vacuous assertions,
       // and the golden-differential fixtures — not this number — are the
       // correctness oracle. Coverage only answers "what is untested".
