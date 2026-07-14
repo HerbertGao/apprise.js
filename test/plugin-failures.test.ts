@@ -117,8 +117,9 @@ describe('discord failure paths', () => {
   })
 
   test('a 201 response fails (only 200/204 are accepted)', async () => {
-    stub({ status: 201 })
+    const seen = stub({ status: 201 })
     expect(await build().notify({ body: 'b' })).toBe(false)
+    expect(seen).toHaveLength(1)
   })
 
   test('an inaccessible attachment aborts after the text post', async () => {
@@ -141,10 +142,11 @@ describe('apprise-api failure paths', () => {
     )
 
   test('success is EXACTLY 200 — a 201 fails (unlike custom-json, which takes any 2xx)', async () => {
-    stub({ status: 201 })
+    const seen = stub({ status: 201 })
     expect(
       await build('apprise://localhost/abc123').notify({ body: 'b' }),
     ).toBe(false)
+    expect(seen).toHaveLength(1)
   })
 
   test('a 200 succeeds', async () => {
@@ -232,18 +234,24 @@ describe('slack failure paths', () => {
   })
 
   test('webhook: a 200 whose body is NOT "ok" fails (upstream r.content == b"ok")', async () => {
-    stub({ status: 200, body: 'invalid_payload' })
+    const seen = stub({ status: 200, body: 'invalid_payload' })
     expect(await build(WEBHOOK).notify({ body: 'b' })).toBe(false)
+    expect(seen).toHaveLength(1)
   })
 
   test('webhook: a 500 fails even with an "ok" body', async () => {
-    stub({ status: 500, body: 'ok' })
+    const seen = stub({ status: 500, body: 'ok' })
     expect(await build(WEBHOOK).notify({ body: 'b' })).toBe(false)
+    expect(seen).toHaveLength(1)
   })
 
   test('bot: a 200 carrying {"ok": false} fails', async () => {
-    stub({ status: 200, body: '{"ok": false, "error": "not_in_channel"}' })
+    const seen = stub({
+      status: 200,
+      body: '{"ok": false, "error": "not_in_channel"}',
+    })
     expect(await build(BOT).notify({ body: 'b' })).toBe(false)
+    expect(seen).toHaveLength(1)
   })
 
   test('bot: a 200 carrying {"ok": true} succeeds', async () => {

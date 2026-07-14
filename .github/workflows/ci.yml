@@ -24,6 +24,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run typecheck
+      # Static scan of the test sources: a failure-path `notify()/add() === false`
+      # holds for every failure reason, so on its own it pins nothing. Each must
+      # sit beside a mechanism assertion (diagnostic kind, request count, elapsed).
+      - run: pnpm run test:assertions
 
   coverage:
     name: coverage

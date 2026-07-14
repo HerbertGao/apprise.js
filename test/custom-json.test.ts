@@ -7,6 +7,7 @@
 // `+`/`-`/`:` prefixes, and a base64-embedded attachment.
 
 import { afterEach, describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { AppriseAttachment } from '../src/attachment/base.js'
 import { AttachMemory } from '../src/attachment/memory.js'
 import { Apprise } from '../src/core/apprise.js'
@@ -47,9 +48,14 @@ describe('GET/HEAD fails loud (native fetch cannot carry the JSON body)', () => 
   // allSettled into notify() -> false.
   for (const method of ['get', 'head']) {
     test(`json://host?method=${method}: add() true, notify() false`, async () => {
-      const app = new Apprise()
+      const kinds: string[] = []
+      const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+      const app = new Apprise({ asset })
       expect(app.add(`json://localhost/path?method=${method}`)).toBe(true)
       expect(await app.notify({ body: 'hi' })).toBe(false)
+      // send() throws rather than shipping an empty GET/HEAD; the rejection is
+      // surfaced as a diagnostic before allSettled folds it to false.
+      expect(kinds).toContain('unhandled-exception')
     })
   }
 })

@@ -33,6 +33,11 @@ export type {
   TransportRequest,
   TransportResponse,
 } from './core/transport.js'
+export type {
+  Diagnostic,
+  DiagnosticKind,
+  DiagnosticLevel,
+} from './diagnostics.js'
 export { NotifyAppriseAPI } from './plugins/apprise-api.js'
 export { NotifyForm } from './plugins/custom-form.js'
 export { NotifyJSON } from './plugins/custom-json.js'

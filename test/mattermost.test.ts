@@ -6,6 +6,7 @@
 // agnostic). Also covers the url() round-trip and privacy masking of the token.
 
 import { describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { Apprise } from '../src/core/apprise.js'
 // Side-effect import registers the mmost/mmosts schemes.
 import {
@@ -37,8 +38,16 @@ describe('mattermost url() round-trip', () => {
   })
 
   test('bot mode is deferred: ?mode=bot / ?team= throw at construction', () => {
-    expect(new Apprise().add('mmost://host/token1?mode=bot')).toBe(false)
-    expect(new Apprise().add('mmost://host/token1?team=myteam')).toBe(false)
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    expect(new Apprise({ asset }).add('mmost://host/token1?mode=bot')).toBe(
+      false,
+    )
+    expect(new Apprise({ asset }).add('mmost://host/token1?team=myteam')).toBe(
+      false,
+    )
+    // Both fail at construction (the ctor throws) -> plugin-error, not a silent skip.
+    expect(kinds).toEqual(['plugin-error', 'plugin-error'])
   })
 })
 

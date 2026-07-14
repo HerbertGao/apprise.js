@@ -12,6 +12,7 @@
 // golden fixture and is verified by the url()/wire unit tests below instead.
 
 import { afterEach, describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { Apprise } from '../src/core/apprise.js'
 import { setTransport, type TransportRequest } from '../src/core/transport.js'
 import { NotifyXML, type NotifyXMLArgs } from '../src/plugins/custom-xml.js'
@@ -79,9 +80,13 @@ describe('custom-xml `-` params (parsed + url()-echoed, never sent)', () => {
   test('GET/HEAD fails loud: xml://host?method=get add() true, notify() false', async () => {
     // Parses & constructs (url() round-trips), but send() throws rather than
     // silently shipping an empty GET; the throw folds via allSettled to false.
-    const app = new Apprise()
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    const app = new Apprise({ asset })
     expect(app.add('xml://localhost/path?method=get')).toBe(true)
     expect(await app.notify({ body: 'hi' })).toBe(false)
+    // The thrown send is surfaced as a diagnostic, not swallowed into a bare false.
+    expect(kinds).toContain('unhandled-exception')
   })
 
   test('the -k param does NOT appear in the wire request URL', async () => {

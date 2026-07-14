@@ -439,6 +439,11 @@ export class NotifyBase extends URLBase {
         attach = new AppriseAttachment(raw)
       } catch {
         // Bad attachments (upstream re-raises TypeError -> notify() False).
+        this.asset.diagnostic({
+          level: 'error',
+          kind: 'bad-attachment',
+          message: 'Could not load the specified attachment(s).',
+        })
         return null
       }
       body = body ? body : ''
@@ -446,12 +451,23 @@ export class NotifyBase extends URLBase {
       attach = raw ?? null
       if (!(body || attach?.valid)) {
         // No body and no (valid) attachment.
+        this.asset.diagnostic({
+          level: 'error',
+          kind: 'empty-content',
+          message: 'No message content was specified; nothing to deliver.',
+        })
         return null
       }
     }
 
     if (!body && !this.attachmentSupport) {
       // Attachment present but this plugin can't send attachments; skip it.
+      this.asset.diagnostic({
+        level: 'error',
+        kind: 'unsupported-attachment',
+        message:
+          'Attachment(s) are not supported by this service; content was not sent.',
+      })
       return null
     }
 

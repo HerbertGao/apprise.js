@@ -10,6 +10,7 @@
 // The shared golden harness pins each case's `seeds.boundary` before driving.
 
 import { describe, expect, test } from 'vitest'
+import { AppriseAsset } from '../src/asset.js'
 import { NotifyFormat } from '../src/common.js'
 import { Apprise } from '../src/core/apprise.js'
 import {
@@ -82,7 +83,12 @@ describe('telegram url(privacy) masks the bot token', () => {
 describe('telegram invalid bot token is rejected', () => {
   test('a non-token host is not instantiable', () => {
     // No digits:alnum token -> parse_url regex fails -> add() returns false.
-    expect(new Apprise().add('tgram://not-a-valid-token/12345')).toBe(false)
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    expect(new Apprise({ asset }).add('tgram://not-a-valid-token/12345')).toBe(
+      false,
+    )
+    expect(kinds).toContain('unparseable-url')
   })
 })
 
@@ -90,17 +96,23 @@ describe('telegram deferred combos fail loud (regression pins)', () => {
   test('?image=yes add()s but notify() folds to false (include_image throw)', async () => {
     // ?image= icon delivery is deferred; send() throws rather than silently drop
     // the icon, and allSettled folds the rejection to an overall false.
-    const app = new Apprise()
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    const app = new Apprise({ asset })
     expect(app.add('tgram://123456789:ABCdef_ghi-jkl/12345?image=yes')).toBe(
       true,
     )
     expect(await app.notify({ title: 'hi', body: 'hello' })).toBe(false)
+    // The thrown send is surfaced as a diagnostic, not swallowed into a bare false.
+    expect(kinds).toContain('unhandled-exception')
   })
 
   test('markdown target + HTML-source body folds to false (CommonMark deferral)', async () => {
     // notify_format==MARKDOWN AND body_format==HTML triggers the deferred
     // CommonMark->Telegram-Markdown conversion; send() throws and folds to false.
-    const app = new Apprise()
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    const app = new Apprise({ asset })
     expect(
       app.add('tgram://123456789:ABCdef_ghi-jkl/12345?format=markdown'),
     ).toBe(true)
@@ -111,5 +123,7 @@ describe('telegram deferred combos fail loud (regression pins)', () => {
         bodyFormat: NotifyFormat.HTML,
       }),
     ).toBe(false)
+    // The thrown CommonMark deferral surfaces as a diagnostic, not a bare false.
+    expect(kinds).toContain('unhandled-exception')
   })
 })

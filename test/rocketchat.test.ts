@@ -249,7 +249,12 @@ describe('rocketchat auth-mode detection', () => {
 
   test('single-segment WEBHOOK@host is NOT a webhook (falls to basic → rejected)', () => {
     // No `/` -> not a webhook; basic needs user+password -> construction fails.
-    expect(new Apprise().add('rocket://webhooktoken@localhost')).toBe(false)
+    const kinds: string[] = []
+    const asset = new AppriseAsset({ diagnostic: (e) => kinds.push(e.kind) })
+    expect(new Apprise({ asset }).add('rocket://webhooktoken@localhost')).toBe(
+      false,
+    )
+    expect(kinds).toContain('plugin-error')
   })
 
   test('basic multi-target parses @user and #channel', () => {
