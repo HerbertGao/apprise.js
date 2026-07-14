@@ -15,10 +15,10 @@ export default defineConfig({
       // and the golden-differential fixtures — not this number — are the
       // correctness oracle. Coverage only answers "what is untested".
       thresholds: {
-        statements: 91,
-        branches: 79,
-        functions: 95,
-        lines: 91,
+        statements: 92,
+        branches: 81,
+        functions: 96,
+        lines: 92,
       },
     },
   },
