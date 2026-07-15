@@ -1,0 +1,14 @@
+{
+  "plugin": "custom-form",
+  "_note": "url()-only seeds. wire matrix already covers +/-/: ; oracle-verify-rto-cto activates non-default verify/rto/cto. oracle-attach-as activates the deferred `attach-as` key (upstream form serialises it when non-default; form.ts constructs-but-drops it) so rule 2 actually compares a case where it is emitted — form-only (json/xml never emit it).",
+  "cases": [
+    {
+      "name": "oracle-verify-rto-cto",
+      "url": "form://localhost/path?verify=no&rto=5&cto=10"
+    },
+    {
+      "name": "oracle-attach-as",
+      "url": "form://localhost/?attach-as=invoice"
+    }
+  ]
+}

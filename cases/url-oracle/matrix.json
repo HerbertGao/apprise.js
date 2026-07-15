@@ -1,0 +1,10 @@
+{
+  "plugin": "matrix",
+  "_note": "url()-only seed. oracle-e2ee-verify-rto-cto activates e2ee=no plus non-default verify/rto/cto (t2bot mode). The `path` key is NOT covered: it emits only in hookshot mode, which is deferred this batch (matrix.ts constructs throw), so no constructible case can activate it -- it is excluded from the conditional inventory as a deferred-feature key.",
+  "cases": [
+    {
+      "name": "oracle-e2ee-verify-rto-cto",
+      "url": "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789?verify=no&rto=5&cto=10&e2ee=no"
+    }
+  ]
+}

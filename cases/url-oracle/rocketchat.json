@@ -1,0 +1,10 @@
+{
+  "plugin": "rocketchat",
+  "_note": "url()-only seed. Activates non-default verify/rto/cto; the #general base target also anchors the D1 'literal # in base' split (query lives after the first ?).",
+  "cases": [
+    {
+      "name": "oracle-verify-rto-cto",
+      "url": "rocket://user:pass@localhost/#general?verify=no&rto=5&cto=10"
+    }
+  ]
+}

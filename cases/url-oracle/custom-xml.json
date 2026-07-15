@@ -1,0 +1,10 @@
+{
+  "plugin": "custom-xml",
+  "_note": "url()-only seeds. wire matrix covers + and : but NOT the - GET-param family; this activates -x plus non-default verify/rto/cto. The space in -x=a b exercises %20-vs-+ value encoding for the D1 rule-1 anti-vacuous check.",
+  "cases": [
+    {
+      "name": "oracle-minus-verify-rto-cto",
+      "url": "xml://localhost/path?-x=a b&verify=no&rto=5&cto=10"
+    }
+  ]
+}

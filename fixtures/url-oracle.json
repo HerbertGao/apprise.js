@@ -1,0 +1,904 @@
+{
+  "_source": "apprise==1.12.0 plugin.url() / url(privacy=True) + two-stage re-serialization (parse->url()->parse->url())",
+  "_note": "sidecar oracle for url() serialization (NOT a wire fixture; wire fixtures stay byte-identical). Keyed by (plugin, caseName) over the union of cases/<plugin>.json (url() only) and cases/url-oracle/<plugin>.json (url()-only source). reserialize=[stage1, stage2] is upstream parse->url()->parse->url() for D4. In inventory, a bare '+'/'-'/':' conditional entry is the custom prefix-mapping FAMILY, not a literal key.",
+  "apprise_version": "1.12.0",
+  "inventory": {
+    "custom-json": {
+      "static": [
+        "method",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "+",
+        "-",
+        ":"
+      ]
+    },
+    "custom-form": {
+      "static": [
+        "method",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "+",
+        "-",
+        ":",
+        "attach-as"
+      ]
+    },
+    "custom-xml": {
+      "static": [
+        "method",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "+",
+        "-",
+        ":"
+      ]
+    },
+    "apprise-api": {
+      "static": [
+        "method",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "+",
+        "tags"
+      ]
+    },
+    "mattermost": {
+      "static": [
+        "image",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "icon_url",
+        "to"
+      ]
+    },
+    "discord": {
+      "static": [
+        "tts",
+        "avatar",
+        "footer",
+        "footer_logo",
+        "image",
+        "fields",
+        "batch",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "avatar_url",
+        "flags",
+        "href",
+        "thread",
+        "ping",
+        "template"
+      ]
+    },
+    "slack": {
+      "static": [
+        "image",
+        "footer",
+        "timestamp",
+        "blocks",
+        "mode",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "telegram": {
+      "static": [
+        "image",
+        "detect",
+        "silent",
+        "preview",
+        "content",
+        "mdv",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "topic"
+      ]
+    },
+    "rocketchat": {
+      "static": [
+        "avatar",
+        "mode",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "matrix": {
+      "static": [
+        "image",
+        "mode",
+        "version",
+        "msgtype",
+        "discovery",
+        "hsreq",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto",
+        "e2ee"
+      ]
+    }
+  },
+  "oracle": {
+    "custom-json": {
+      "default": {
+        "url": "json://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "json://user:****@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "json://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "json://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "secure": {
+        "url": "jsons://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "jsons://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "jsons://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "jsons://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "user-only": {
+        "url": "json://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "json://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "json://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "json://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "no-path": {
+        "url": "json://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "json://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "json://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "json://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "method-put": {
+        "url": "json://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "json://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "json://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "json://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "prefixes": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-baz=qux&%3Afoo=bar",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-baz=qux&%3Afoo=bar",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-baz=qux&%3Afoo=bar",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-baz=qux&%3Afoo=bar"
+        ]
+      },
+      "minus-star-tilde": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-x=a%2Ab~c",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-x=a%2Ab~c",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-x=a%2Ab~c",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-x=a%2Ab~c"
+        ]
+      },
+      "colon-rename-message": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg"
+        ]
+      },
+      "colon-delete-title": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle="
+        ]
+      },
+      "attachment": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "overflow-truncate": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "json://localhost/path?method=POST&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify-off": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto-cto-5": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=5.0",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=5.0",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=5.0",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=5.0"
+        ]
+      },
+      "oracle-rto-cto-1e20": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=1e%2B20&cto=1e%2B20",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=1e%2B20&cto=1e%2B20",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=1e%2B20&cto=1e%2B20",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=1e%2B20&cto=1e%2B20"
+        ]
+      },
+      "oracle-rto-cto-negzero": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-0.0&cto=-0.0",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-0.0&cto=-0.0",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-0.0&cto=-0.0",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-0.0&cto=-0.0"
+        ]
+      },
+      "oracle-rto-cto-inf": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=inf&cto=inf",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=inf&cto=inf",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=inf&cto=inf",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=inf&cto=inf"
+        ]
+      },
+      "oracle-rto-cto-neginf": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-inf&cto=-inf",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-inf&cto=-inf",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-inf&cto=-inf",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=-inf&cto=-inf"
+        ]
+      },
+      "oracle-rto-cto-nan": {
+        "url": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=nan&cto=nan",
+        "urlPrivacy": "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=nan&cto=nan",
+        "reserialize": [
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=nan&cto=nan",
+          "json://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=nan&cto=nan"
+        ]
+      }
+    },
+    "custom-form": {
+      "default": {
+        "url": "form://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "form://user:****@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "form://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "form://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "secure": {
+        "url": "forms://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "forms://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "forms://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "forms://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "user-only": {
+        "url": "form://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "form://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "form://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "form://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "method-get": {
+        "url": "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "prefixes": {
+        "url": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-tag=alpha&%3Aextra=val",
+        "urlPrivacy": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-tag=alpha&%3Aextra=val",
+        "reserialize": [
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-tag=alpha&%3Aextra=val",
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&-tag=alpha&%3Aextra=val"
+        ]
+      },
+      "get-with-minus": {
+        "url": "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-extra=z",
+        "urlPrivacy": "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-extra=z",
+        "reserialize": [
+          "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-extra=z",
+          "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&-extra=z"
+        ]
+      },
+      "colon-rename-message": {
+        "url": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg",
+        "urlPrivacy": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg",
+        "reserialize": [
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg",
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Amessage=msg"
+        ]
+      },
+      "colon-delete-title": {
+        "url": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=",
+        "urlPrivacy": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=",
+        "reserialize": [
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=",
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle="
+        ]
+      },
+      "form-body-encoding": {
+        "url": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Aextra=a%2Ab~c",
+        "urlPrivacy": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Aextra=a%2Ab~c",
+        "reserialize": [
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Aextra=a%2Ab~c",
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Aextra=a%2Ab~c"
+        ]
+      },
+      "int-field-order-form-body": {
+        "url": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=1&%3Amessage=2",
+        "urlPrivacy": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=1&%3Amessage=2",
+        "reserialize": [
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=1&%3Amessage=2",
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3Atitle=1&%3Amessage=2"
+        ]
+      },
+      "int-extras-reverse-get-query": {
+        "url": "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=y&%3A1=x",
+        "urlPrivacy": "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=y&%3A1=x",
+        "reserialize": [
+          "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=y&%3A1=x",
+          "form://localhost/path?method=GET&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=y&%3A1=x"
+        ]
+      },
+      "oracle-verify-rto-cto": {
+        "url": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "urlPrivacy": "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "reserialize": [
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+          "form://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      },
+      "oracle-attach-as": {
+        "url": "form://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&attach-as=invoice",
+        "urlPrivacy": "form://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&attach-as=invoice",
+        "reserialize": [
+          "form://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&attach-as=invoice",
+          "form://localhost/?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&attach-as=invoice"
+        ]
+      }
+    },
+    "custom-xml": {
+      "default": {
+        "url": "xml://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "xml://user:****@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "xml://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "xml://user:pass@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "secure": {
+        "url": "xmls://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "xmls://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "xmls://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "xmls://localhost/spath?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "user-only": {
+        "url": "xml://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "xml://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "xml://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "xml://user@localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "method-put": {
+        "url": "xml://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "xml://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "xml://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "xml://localhost/path?method=PUT&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "escape": {
+        "url": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "prefixes": {
+        "url": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&%3Afoo=bar",
+        "urlPrivacy": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&%3Afoo=bar",
+        "reserialize": [
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&%3Afoo=bar",
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%2BX-Token=abc&%3Afoo=bar"
+        ]
+      },
+      "payload-order-int": {
+        "url": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=a&%3A1=b",
+        "urlPrivacy": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=a&%3A1=b",
+        "reserialize": [
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=a&%3A1=b",
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&%3A2=a&%3A1=b"
+        ]
+      },
+      "attachment": {
+        "url": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-minus-verify-rto-cto": {
+        "url": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&-x=a%20b",
+        "urlPrivacy": "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&-x=a%20b",
+        "reserialize": [
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&-x=a%20b",
+          "xml://localhost/path?method=POST&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&-x=a%20b"
+        ]
+      }
+    },
+    "apprise-api": {
+      "default-form": {
+        "url": "apprise://user:pass@localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "urlPrivacy": "apprise://user:****@localhost/a...3/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "reserialize": [
+          "apprise://user:pass@localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+          "apprise://user:pass@localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0"
+        ]
+      },
+      "secure": {
+        "url": "apprises://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "urlPrivacy": "apprises://localhost/a...3/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "reserialize": [
+          "apprises://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+          "apprises://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0"
+        ]
+      },
+      "user-only": {
+        "url": "apprise://user@localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "urlPrivacy": "apprise://user@localhost/a...3/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "reserialize": [
+          "apprise://user@localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+          "apprise://user@localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0"
+        ]
+      },
+      "method-json": {
+        "url": "apprise://localhost/abc123/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "urlPrivacy": "apprise://localhost/a...3/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "reserialize": [
+          "apprise://localhost/abc123/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+          "apprise://localhost/abc123/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0"
+        ]
+      },
+      "json-attachment": {
+        "url": "apprise://localhost/abc123/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "urlPrivacy": "apprise://localhost/a...3/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+        "reserialize": [
+          "apprise://localhost/abc123/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0",
+          "apprise://localhost/abc123/?method=json&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0"
+        ]
+      },
+      "prefix-plus-ignores-minus-colon": {
+        "url": "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&%2BX-H=1",
+        "urlPrivacy": "apprise://localhost/a...3/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&%2BX-H=1",
+        "reserialize": [
+          "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&%2BX-H=1",
+          "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&%2BX-H=1"
+        ]
+      },
+      "oracle-verify-cto": {
+        "url": "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=7.0&cto=5.0&verify=no",
+        "urlPrivacy": "apprise://localhost/a...3/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=7.0&cto=5.0&verify=no",
+        "reserialize": [
+          "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=7.0&cto=5.0&verify=no",
+          "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=7.0&cto=5.0&verify=no"
+        ]
+      },
+      "oracle-tags": {
+        "url": "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&tags=bar%2Cfoo",
+        "urlPrivacy": "apprise://localhost/a...3/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&tags=bar%2Cfoo",
+        "reserialize": [
+          "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&tags=bar%2Cfoo",
+          "apprise://localhost/abc123/?method=form&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=30.0&tags=bar%2Cfoo"
+        ]
+      }
+    },
+    "mattermost": {
+      "default": {
+        "url": "mmost://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "mmost://host/t...1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "mmost://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "mmost://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "secure": {
+        "url": "mmosts://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "mmosts://host/t...1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "mmosts://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "mmosts://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "port-subpath": {
+        "url": "mmosts://host:8065/sub/path/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "mmosts://host:8065/sub/path/t...1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "mmosts://host:8065/sub/path/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "mmosts://host:8065/sub/path/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "channel": {
+        "url": "mmost://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&to=%23town-square",
+        "urlPrivacy": "mmost://host/t...1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&to=%23town-square",
+        "reserialize": [
+          "mmost://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&to=%23town-square",
+          "mmost://host/token1/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&to=%23town-square"
+        ]
+      },
+      "overflow-truncate": {
+        "url": "mmost://host/token1/?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "mmost://host/t...1/?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "mmost://host/token1/?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "mmost://host/token1/?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-icon-verify-rto-cto": {
+        "url": "mmost://host/token1/?image=yes&icon_url=https%3A%2F%2Fx%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&to=%23town-square",
+        "urlPrivacy": "mmost://host/t...1/?image=yes&icon_url=https%3A%2F%2Fx%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&to=%23town-square",
+        "reserialize": [
+          "mmost://host/token1/?image=yes&icon_url=https%3A%2F%2Fx%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&to=%23town-square",
+          "mmost://host/token1/?image=yes&icon_url=https%3A%2F%2Fx%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no&to=%23town-square"
+        ]
+      }
+    },
+    "discord": {
+      "default": {
+        "url": "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "discord://1...0/a...p/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "botname": {
+        "url": "discord://Bob@10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "discord://Bob@1...0/a...p/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "discord://Bob@10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "discord://Bob@10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "tts": {
+        "url": "discord://10101010/abcdefghijklmnop/?tts=yes&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "discord://1...0/a...p/?tts=yes&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "discord://10101010/abcdefghijklmnop/?tts=yes&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "discord://10101010/abcdefghijklmnop/?tts=yes&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "attachment": {
+        "url": "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "discord://1...0/a...p/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "overflow-truncate": {
+        "url": "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "discord://1...0/a...p/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-rich": {
+        "url": "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&avatar_url=https%3A%2F%2Fx%2Fy.png&flags=4&href=https%3A%2F%2Fe.com&thread=99887766&ping=%3C%40111%3E&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "urlPrivacy": "discord://1...0/a...p/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&avatar_url=https%3A%2F%2Fx%2Fy.png&flags=4&href=https%3A%2F%2Fe.com&thread=99887766&ping=%3C%40111%3E&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "reserialize": [
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&avatar_url=https%3A%2F%2Fx%2Fy.png&flags=4&href=https%3A%2F%2Fe.com&thread=99887766&ping=%3C%40111%3E&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&avatar_url=https%3A%2F%2Fx%2Fy.png&flags=4&href=https%3A%2F%2Fe.com&thread=99887766&ping=%3C%40111%3E&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      },
+      "oracle-template": {
+        "url": "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&template=https%253A%252F%252Ftpl.example%252Fhook%253Fcache%253Dyes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "discord://1...0/a...p/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&template=https%253A%252F%252Ftpl.example%252Fhook%253Fcache%253Dyes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&template=https%253A%252F%252Ftpl.example%252Fhook%253Fcache%253Dyes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "discord://10101010/abcdefghijklmnop/?tts=no&avatar=yes&footer=no&footer_logo=yes&image=no&fields=yes&batch=yes&template=https%253A%252F%252Ftpl.example%252Fhook%253Fcache%253Dyes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      }
+    },
+    "slack": {
+      "webhook-default": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://T...2/A...D/T...7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "webhook-attach-warn": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://T...2/A...D/T...7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "bot-chat": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://x...d/%23general/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "bot-attach": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23test/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://x...d/%23test/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23test/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23test/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "webhook-multi-thread": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/%23general%3A1610000000.000100/%40alice/?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://T...2/A...D/T...7/%23general%3A1610000000.000100/%40alice/?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/%23general%3A1610000000.000100/%40alice/?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7/%23general%3A1610000000.000100/%40alice/?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "bot-email": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/user%40example.com/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://x...d/user%40example.com/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/user%40example.com/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/user%40example.com/?image=no&footer=no&timestamp=yes&blocks=no&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "bot-blocks": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=no&footer=no&timestamp=yes&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://x...d/%23general/?image=no&footer=no&timestamp=yes&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=no&footer=no&timestamp=yes&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=no&footer=no&timestamp=yes&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "webhook-footer-image": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=yes&footer=yes&timestamp=no&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://T...2/A...D/T...7//?image=yes&footer=yes&timestamp=no&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=yes&footer=yes&timestamp=no&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=yes&footer=yes&timestamp=no&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "bot-blocks-footer": {
+        "url": "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=yes&footer=yes&timestamp=no&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "slack://x...d/%23general/?image=yes&footer=yes&timestamp=no&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=yes&footer=yes&timestamp=no&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "slack://xoxb-1234-1234-4ddbc191d40ee098cbaae6f3523ada2d/%23general/?image=yes&footer=yes&timestamp=no&blocks=yes&mode=bot&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify-rto-cto": {
+        "url": "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "urlPrivacy": "slack://T...2/A...D/T...7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "reserialize": [
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+          "slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7//?image=no&footer=no&timestamp=yes&blocks=no&mode=hook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      }
+    },
+    "telegram": {
+      "default": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "tgram://1...l/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "multi-target": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345/@zulu/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "tgram://1...l/12345/@zulu/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/@zulu/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/@zulu/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "format-markdown": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "tgram://1...l/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "silent": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=yes&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "tgram://1...l/12345/?image=False&detect=no&silent=yes&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=yes&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=yes&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "topic": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345:42/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&topic=42&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "tgram://1...l/12345:42/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&topic=42&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345:42/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&topic=42&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345:42/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&topic=42&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "attachments-photo-pdf": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "tgram://1...l/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify-rto-cto": {
+        "url": "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "urlPrivacy": "tgram://1...l/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "reserialize": [
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+          "tgram://123456789%3AABCdef_ghi-jkl/12345/?image=False&detect=no&silent=no&preview=no&content=before&mdv=v1&format=html&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      }
+    },
+    "rocketchat": {
+      "basic-login-flow": {
+        "url": "rocket://user:pass@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "rocket://user:****@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "rocket://user:pass@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "rocket://user:pass@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "token-direct": {
+        "url": "rocket://user:abcdefghijklmnopqrstuvwxyz0123456789@localhost/#channel/?avatar=no&mode=token&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "rocket://user:****@localhost/#channel/?avatar=no&mode=token&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "rocket://user:abcdefghijklmnopqrstuvwxyz0123456789@localhost/#channel/?avatar=no&mode=token&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "rocket://user:abcdefghijklmnopqrstuvwxyz0123456789@localhost/#channel/?avatar=no&mode=token&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "webhook-direct": {
+        "url": "rocket://tokenaaa%2Ftokenbbb@localhost//?avatar=yes&mode=webhook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "rocket://****@localhost//?avatar=yes&mode=webhook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "rocket://tokenaaa%2Ftokenbbb@localhost//?avatar=yes&mode=webhook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "rocket://tokenaaa%2Ftokenbbb@localhost//?avatar=yes&mode=webhook&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "basic-multi-target": {
+        "url": "rocket://user:pass@localhost/#alpha/@bravo/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "rocket://user:****@localhost/#alpha/@bravo/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "rocket://user:pass@localhost/#alpha/@bravo/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "rocket://user:pass@localhost/#alpha/@bravo/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify-rto-cto": {
+        "url": "rocket://user:pass@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "urlPrivacy": "rocket://user:****@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "reserialize": [
+          "rocket://user:pass@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+          "rocket://user:pass@localhost/#general/?avatar=no&mode=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      }
+    },
+    "matrix": {
+      "t2bot-webhook": {
+        "url": "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "matrix://a...9/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "raw-token-whoami-send": {
+        "url": "matrixs://rawtokenABC123@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "matrixs://rawtokenABC123@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "matrixs://rawtokenABC123@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "matrixs://rawtokenABC123@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "login-join-send": {
+        "url": "matrixs://user:pass@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "matrixs://user:****@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "matrixs://user:pass@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "matrixs://user:pass@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "login-multi-room-txn-counter": {
+        "url": "matrixs://user:pass@matrix.example.com/%21r1%3Amatrix.example.com/%21r2%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "matrixs://user:****@matrix.example.com/%21r1%3Amatrix.example.com/%21r2%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "matrixs://user:pass@matrix.example.com/%21r1%3Amatrix.example.com/%21r2%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "matrixs://user:pass@matrix.example.com/%21r1%3Amatrix.example.com/%21r2%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "login-format-html": {
+        "url": "matrixs://user:pass@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "matrixs://user:****@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "matrixs://user:pass@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "matrixs://user:pass@matrix.example.com/%21abc%3Amatrix.example.com?image=no&mode=off&version=3&msgtype=text&discovery=no&hsreq=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-e2ee-verify-rto-cto": {
+        "url": "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "urlPrivacy": "matrix://a...9/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+        "reserialize": [
+          "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
+          "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      }
+    }
+  }
+}

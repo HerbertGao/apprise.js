@@ -63,6 +63,10 @@ export interface NotifyAppriseAPIArgs extends NotifyBaseArgs {
 export class NotifyAppriseAPI extends NotifyBase {
   static override attachmentSupport = true
 
+  /** Upstream raises the read timeout to 30s (apprise_api.py:79); url() emits
+   * it as the non-default `rto=30.0`. */
+  static override socketReadTimeout = 30.0
+
   token: string
   method: string
   headers: Record<string, string>

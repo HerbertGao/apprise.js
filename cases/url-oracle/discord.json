@@ -1,0 +1,14 @@
+{
+  "plugin": "discord",
+  "_note": "url()-only seed. oracle-rich activates every rich conditional key (avatar_url/flags/href/thread/ping) plus non-default verify/rto/cto. oracle-template activates the deferred `template` key (upstream serialises it, discord.ts constructs-but-drops it) so rule 2 actually compares a case where it is emitted.",
+  "cases": [
+    {
+      "name": "oracle-rich",
+      "url": "discord://10101010/abcdefghijklmnop?verify=no&rto=5&cto=10&avatar_url=https://x/y.png&flags=4&href=https://e.com&thread=99887766&ping=<@111>"
+    },
+    {
+      "name": "oracle-template",
+      "url": "discord://10101010/abcdefghijklmnop?template=https://tpl.example/hook"
+    }
+  ]
+}
