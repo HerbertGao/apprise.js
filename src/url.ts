@@ -178,6 +178,30 @@ function pyFloatStr(value: number): string {
   if (!Number.isFinite(value)) {
     return value > 0 ? 'inf' : '-inf'
   }
+  // Signed zero: JS `String(-0)` is `"0"` (sign lost); Python `str(-0.0)` keeps
+  // it as `"-0.0"`. Match upstream so `?rto=-0.0` round-trips byte-identically.
+  if (Object.is(value, -0)) {
+    return '-0.0'
+  }
+  // Python `str(float)` uses scientific notation when the leading-digit decimal
+  // exponent `e` satisfies `e >= 16` or `e <= -5` (abs >= 1e16, or 0 < abs <
+  // 1e-4); JS `String()` switches at different thresholds (1e21 / 1e-7). Reuse
+  // the shared shortest-digit mantissa from `toExponential()` and reformat to
+  // Python's `d[.ddd]e±NN` (sign always, >=2 exponent digits, no extra zeros).
+  if (value !== 0) {
+    const m = /^(\d)(?:\.(\d+))?e([+-]\d+)$/.exec(
+      Math.abs(value).toExponential(),
+    )
+    const lead = m?.[1]
+    const e = m ? Number(m[3]) : 0
+    if (lead !== undefined && (e >= 16 || e <= -5)) {
+      const mantissa = m?.[2] ? `${lead}.${m[2]}` : lead
+      const exp = `${e < 0 ? '-' : '+'}${String(Math.abs(e)).padStart(2, '0')}`
+      return `${value < 0 ? '-' : ''}${mantissa}e${exp}`
+    }
+  }
+  // Fixed range: JS `String()` already matches Python across it; add `.0` on an
+  // integral value (`str(float("5")) == "5.0"`).
   const text = String(value)
   return /^-?\d+$/.test(text) ? `${text}.0` : text
 }

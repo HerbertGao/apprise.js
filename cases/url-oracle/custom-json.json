@@ -1,0 +1,34 @@
+{
+  "plugin": "custom-json",
+  "_note": "url()-only seeds (NEVER fed to wire capture). Carries the pyFloatStr float matrix (task 1.4) + non-default verify. Names are oracle-* so (plugin, caseName) never collides with the wire matrix.",
+  "cases": [
+    {
+      "name": "oracle-verify-off",
+      "url": "json://localhost/path?verify=no"
+    },
+    {
+      "name": "oracle-rto-cto-5",
+      "url": "json://localhost/path?rto=5&cto=5"
+    },
+    {
+      "name": "oracle-rto-cto-1e20",
+      "url": "json://localhost/path?rto=1e20&cto=1e20"
+    },
+    {
+      "name": "oracle-rto-cto-negzero",
+      "url": "json://localhost/path?rto=-0.0&cto=-0.0"
+    },
+    {
+      "name": "oracle-rto-cto-inf",
+      "url": "json://localhost/path?rto=inf&cto=inf"
+    },
+    {
+      "name": "oracle-rto-cto-neginf",
+      "url": "json://localhost/path?rto=-inf&cto=-inf"
+    },
+    {
+      "name": "oracle-rto-cto-nan",
+      "url": "json://localhost/path?rto=nan&cto=nan"
+    }
+  ]
+}

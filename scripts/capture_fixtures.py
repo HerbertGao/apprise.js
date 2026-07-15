@@ -55,8 +55,15 @@ Then run with that interpreter::
     scripts/.venv/bin/python scripts/capture_fixtures.py            # all cases/*.json
     scripts/.venv/bin/python scripts/capture_fixtures.py custom-json  # one plugin
 
-Input  : cases/<plugin>.json      (hand-authored; see fixtures/SCHEMA.md)
-Output : fixtures/<plugin>.json    (generated golden fixture)
+Input  : cases/<plugin>.json            (hand-authored; see fixtures/SCHEMA.md)
+         cases/url-oracle/<plugin>.json (url()-only seeds; NEVER wire-captured)
+Output : fixtures/<plugin>.json          (generated golden WIRE fixture)
+         fixtures/url-oracle.json        (url() sidecar oracle; NOT a wire fixture)
+
+The url() sidecar (change `url-serialization-anchors`) records upstream's
+`url()` / `url(privacy=True)` and its two-stage re-serialization for every case
+whose instance CONSTRUCTS; it never touches any wire fixture's bytes. See
+`capture_url_oracle` below.
 
 `scripts/.venv/` is git-ignored (dev-only, never committed).
 """
@@ -67,6 +74,7 @@ import base64
 import contextlib
 import json
 import sys
+import urllib.parse
 from pathlib import Path
 
 import requests
@@ -84,7 +92,112 @@ DEFAULT_RECURSION = 0
 
 ROOT = Path(__file__).resolve().parent.parent
 CASES_DIR = ROOT / "cases"
+URL_ORACLE_CASES_DIR = CASES_DIR / "url-oracle"
 FIXTURES_DIR = ROOT / "fixtures"
+URL_ORACLE_OUT = FIXTURES_DIR / "url-oracle.json"
+
+# Per-plugin url() emitted-key inventory (task 1.3), read straight off each
+# plugin's url() in src/plugins/*.ts. `static` keys are always emitted; each
+# `conditional` key is emitted only under a non-default condition and MUST be
+# activated by >=1 captured case (mechanically asserted in
+# `_assert_inventory_covered`). A bare "+"/"-"/":" conditional entry denotes the
+# custom prefix-mapping FAMILY (any query key whose DECODED name starts with that
+# char), not a literal key. `_assert_inventory_covered` enforces declared ⊆
+# effective (every declared conditional is activated by a seed); the OTHER
+# direction (effective ⊆ declared — no upstream-emitted key escapes inventory ∪ D)
+# is verified out-of-band by `scripts/url_key_completeness_sweep.py` (run it when a
+# plugin or query arg is added — that reverse gap is how tags/template/attach-as
+# each shipped uncompared until a review round caught them).
+URL_KEY_INVENTORY = {
+    "custom-json": {
+        "static": ["method", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto", "+", "-", ":"],
+    },
+    "custom-form": {
+        # `attach-as` (multipart attachment filename) is upstream-serialised when
+        # non-default (custom_form.py:497) but TS-deferred (form.ts constructs, drops
+        # it — deferred multipart). It IS constructible, so like discord `template`
+        # it joins design.md D1's D and gets an active `oracle-attach-as` seed.
+        # json/xml never emit `attach-as` (form-only), so it stays out of their
+        # inventories. The `+`/`-`/`:` families are the custom prefix maps TS emits.
+        "static": ["method", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto", "+", "-", ":", "attach-as"],
+    },
+    "custom-xml": {
+        "static": ["method", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto", "+", "-", ":"],
+    },
+    "apprise-api": {
+        # apprise-api url() only echoes the + header family (never -/:), and
+        # emits rto=30.0 by default (its default differs from the URLBase base).
+        # `tags` is emitted (sorted, comma-joined) when routing tags are supplied;
+        # TS defers tag forwarding (design.md D1's D), so rule 2 tolerates it.
+        "static": ["method", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto", "+", "tags"],
+    },
+    "mattermost": {
+        # `mode` is NOT here: upstream emits it only for value `bot` (webhook, the
+        # default, is unemitted), and TS mattermost construct-REJECTS `?mode=bot`
+        # ("bot mode is not supported in this batch"). So no constructible seed can
+        # activate a non-default `mode` — excluded like slack `template`/matrix `path`.
+        "static": ["image", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto", "icon_url", "to"],
+    },
+    "discord": {
+        # `template` (webhook template URL) is upstream-serialised but TS-deferred
+        # (discord.ts constructs, drops it — rejection is in send(), not the ctor).
+        # It IS constructible, so unlike matrix `path` it gets an active seed and
+        # joins design.md D1's D (see DEFERRED in url-oracle.test.ts). The `:{k}`
+        # overflow-substitution tokens are also upstream-emitted-but-TS-dropped, but
+        # canNOT join D: they serialise as `%3A<name>` (arbitrary <name>) — not an
+        # exact member, and not a `%3A`-prefix family either, since the custom plugins
+        # IMPLEMENT `:payload` and TS emits those same `%3A<name>` keys (a prefix defer
+        # would trip rule 3 against them). Documented model boundary, no seed activates
+        # them (rule 2 fails loud if one ever does).
+        "static": [
+            "tts", "avatar", "footer", "footer_logo",
+            "image", "fields", "batch", "format", "overflow",
+        ],
+        "conditional": [
+            "verify", "rto", "cto",
+            "avatar_url", "flags", "href", "thread", "ping", "template",
+        ],
+    },
+    "slack": {
+        # `template` (Block-Kit templating) is construct-REJECTED (slack.ts throws),
+        # so no case can activate it — safe, excluded like matrix `path`. The `:{k}`
+        # overflow-substitution tokens construct but are upstream-emitted-but-TS-
+        # dropped; they serialise as `%3A<name>` and cannot join D — same `%3A`-family
+        # collision with the custom plugins' implemented `:payload` as discord (a
+        # documented model boundary, no seed activates them).
+        "static": [
+            "image", "footer", "timestamp", "blocks", "mode",
+            "format", "overflow",
+        ],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "telegram": {
+        "static": [
+            "image", "detect", "silent", "preview", "content", "mdv",
+            "format", "overflow",
+        ],
+        "conditional": ["verify", "rto", "cto", "topic"],
+    },
+    "rocketchat": {
+        "static": ["avatar", "mode", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "matrix": {
+        "static": [
+            "image", "mode", "version", "msgtype", "discovery", "hsreq",
+            "format", "overflow",
+        ],
+        # `path` (hookshot-only) is a DEFERRED-feature key: hookshot mode is not
+        # implemented this batch (matrix.ts constructs throw), so no constructible
+        # case can activate it — excluded from the must-activate conditional set.
+        "conditional": ["verify", "rto", "cto", "e2ee"],
+    },
+}
 
 
 def _fake_response(request, spec=None):
@@ -349,6 +462,175 @@ def process_plugin(plugin):
           f"({n_req} request, {n_no} noRequest)")
 
 
+# --------------------------------------------------------------------------- #
+# url() sidecar oracle (change `url-serialization-anchors`, task group 1)
+#
+# A SEPARATE sidecar `fixtures/url-oracle.json` — NEVER a wire fixture. url() is a
+# pure read, so we drive it for every case whose instance CONSTRUCTS (only
+# construction failures are skipped, not every "no wire request" case). We iterate
+# the union of two case sources, both fed to url() only (never wire capture):
+#   * cases/<plugin>.json            (the wire matrix; reused for url() coverage)
+#   * cases/url-oracle/<plugin>.json (url()-only seeds for uncovered keys)
+# (plugin, caseName) MUST be globally unique across both sources or a sidecar
+# entry would silently overwrite / mis-pair the D4 two-stage capture.
+# --------------------------------------------------------------------------- #
+
+
+def _instance(url, uid=DEFAULT_UID, recursion=DEFAULT_RECURSION):
+    """Construct one plugin instance from `url` with the SAME determinism pins as
+    the wire capture (`_uid`/`_recursion`), or None if upstream rejects it. url()
+    is asset-independent for these plugins, but pinning keeps the sidecar byte-
+    reproducible regardless."""
+    asset = apprise.AppriseAsset()
+    asset._uid = uid
+    asset._recursion = recursion
+    ap = apprise.Apprise(asset=asset)
+    if not ap.add(url) or len(ap) == 0:
+        return None
+    return ap[0]
+
+
+def url_oracle_entry(seed_url, uid, recursion):
+    """Capture url()/url(privacy=True) + the two-stage re-serialization for one
+    seed, or None when the seed fails to construct (the ONLY skip condition).
+
+    `reserialize` = ``[stage1, stage2]`` is upstream's own
+    ``parse -> url() -> parse -> url()`` (D4): stage1 == `url` (parse(seed).url());
+    stage2 re-parses stage1 through upstream's real `add()` pipeline (which applies
+    the same '#channel' handling) and calls url() again. Both parses MUST be
+    non-null, mirroring D4's guard."""
+    inst = _instance(seed_url, uid, recursion)
+    if inst is None:
+        return None
+    stage1 = inst.url()
+    priv = inst.url(privacy=True)
+    reinst = _instance(stage1, uid, recursion)
+    if reinst is None:
+        raise SystemExit(
+            "ERROR: upstream re-parse of stage-1 url() failed (D4 needs both "
+            f"parses non-null):\n  seed={seed_url!r}\n  stage1={stage1!r}"
+        )
+    stage2 = reinst.url()
+    return {"url": stage1, "urlPrivacy": priv, "reserialize": [stage1, stage2]}
+
+
+def _load_cases(path):
+    return json.loads(path.read_text())["cases"] if path.exists() else []
+
+
+def _query_keys(url):
+    """Decoded query-parameter names per the D1 split: base = up to the first
+    '?', query = after it. Split on the first '?' (NOT urlsplit) so rocketchat's
+    literal '#channel' in the BASE is not mis-parsed as a fragment that would
+    hide the query. `parse_qsl` decodes keys, so '%2BX'->'+X', '%3A2'->':2', and
+    the '+'/'-'/':' prefix families are detectable transparently."""
+    if "?" not in url:
+        return []
+    query = url.split("?", 1)[1]
+    return [k for k, _ in urllib.parse.parse_qsl(query, keep_blank_values=True)]
+
+
+def _assert_inventory_covered(oracle):
+    """Fail closed if any declared conditional key is never activated by a
+    captured case — otherwise its serialization would ship uncompared (task 1.3
+    mechanical assertion)."""
+    for plugin, inv in URL_KEY_INVENTORY.items():
+        seen = set()
+        for entry in oracle.get(plugin, {}).values():
+            seen.update(_query_keys(entry["url"]))
+        for key in inv["conditional"]:
+            if key in ("+", "-", ":"):
+                ok = any(k.startswith(key) for k in seen)
+            else:
+                ok = key in seen
+            if not ok:
+                raise SystemExit(
+                    f"ERROR: plugin {plugin!r} conditional key {key!r} never "
+                    "appears in any captured url() — no case activates it, so its "
+                    "serialization would ship uncompared. Add a url-oracle seed "
+                    f"under {URL_ORACLE_CASES_DIR.relative_to(ROOT)}/{plugin}.json."
+                )
+
+
+def capture_url_oracle():
+    """Build and write `fixtures/url-oracle.json` over all in-scope plugins."""
+    oracle = {}
+    # URL_KEY_INVENTORY's keys ARE the 10 in-scope plugins, insertion-ordered;
+    # iterating it here fixes the sidecar's plugin key order (`_multireq_smoke`
+    # is a synthetic wire-only smoke with no url() inventory, so it is absent by
+    # design).
+    for plugin in URL_KEY_INVENTORY:
+        entries = {}
+        seen = set()
+        wire_cases = _load_cases(CASES_DIR / f"{plugin}.json")
+        extra_cases = _load_cases(URL_ORACLE_CASES_DIR / f"{plugin}.json")
+        # `curated=True` marks the hand-authored url-oracle source: its seeds
+        # MUST always construct, so a construction failure there fails LOUD
+        # (below) instead of silently shrinking coverage. Wire cases may
+        # legitimately reject (e.g. invalid-method/invalid-token) and stay
+        # skipped.
+        for cases, curated in ((wire_cases, False), (extra_cases, True)):
+            for case in cases:
+                name = case["name"]
+                # Track (plugin, caseName) uniqueness BEFORE construction so a
+                # duplicate is caught even when the first of the pair fails to
+                # construct (design.md D2). `entries` alone would miss that.
+                if name in seen:
+                    raise SystemExit(
+                        "ERROR: duplicate (plugin, caseName) across sources: "
+                        f"({plugin!r}, {name!r}). Sidecar keys MUST be globally "
+                        "unique (rename the url-oracle seed)."
+                    )
+                seen.add(name)
+                seeds = case.get("seeds") or {}
+                entry = url_oracle_entry(
+                    case["url"],
+                    seeds.get("uid", DEFAULT_UID),
+                    seeds.get("recursion", DEFAULT_RECURSION),
+                )
+                if entry is None:
+                    if curated:
+                        raise SystemExit(
+                            "ERROR: curated url-oracle seed failed to construct: "
+                            f"({plugin!r}, {name!r}). Hand-authored "
+                            f"{URL_ORACLE_CASES_DIR.relative_to(ROOT)}/"
+                            f"{plugin}.json seeds MUST always construct — fix the "
+                            "seed URL (only wire cases may legitimately reject)."
+                        )
+                    continue  # wire cases may legitimately reject
+                entries[name] = entry
+        oracle[plugin] = entries
+
+    _assert_inventory_covered(oracle)
+
+    sidecar = {
+        "_source": (
+            "apprise==1.12.0 plugin.url() / url(privacy=True) + two-stage "
+            "re-serialization (parse->url()->parse->url())"
+        ),
+        "_note": (
+            "sidecar oracle for url() serialization (NOT a wire fixture; wire "
+            "fixtures stay byte-identical). Keyed by (plugin, caseName) over the "
+            "union of cases/<plugin>.json (url() only) and "
+            "cases/url-oracle/<plugin>.json (url()-only source). reserialize="
+            "[stage1, stage2] is upstream parse->url()->parse->url() for D4. In "
+            "inventory, a bare '+'/'-'/':' conditional entry is the custom "
+            "prefix-mapping FAMILY, not a literal key."
+        ),
+        "apprise_version": apprise.__version__,
+        "inventory": URL_KEY_INVENTORY,
+        "oracle": oracle,
+    }
+    URL_ORACLE_OUT.write_text(
+        json.dumps(sidecar, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    total = sum(len(v) for v in oracle.values())
+    print(
+        f"url-oracle: {total} cases across {len(oracle)} plugins -> "
+        f"{URL_ORACLE_OUT.relative_to(ROOT)}"
+    )
+
+
 def main(argv):
     if apprise.__version__ != EXPECTED_APPRISE_VERSION:
         # Fail closed: a different upstream version would silently capture
@@ -368,6 +650,11 @@ def main(argv):
 
     for plugin in plugins:
         process_plugin(plugin)
+
+    # The url() sidecar is a single consolidated oracle over all in-scope
+    # plugins; always regenerate it in full (deterministic, byte-reproducible)
+    # so a targeted `capture_fixtures.py <plugin>` run never leaves it partial.
+    capture_url_oracle()
     return 0
 
 

@@ -1,0 +1,14 @@
+{
+  "plugin": "apprise-api",
+  "_note": "url()-only seeds. wire matrix covers the + header family (and rto=30.0 is emitted by default); these activate non-default verify/cto and the deferred `tags` key (upstream emits tags=<sorted,comma-joined>; TS defers tag forwarding, tolerated via design.md D1's D).",
+  "cases": [
+    {
+      "name": "oracle-verify-cto",
+      "url": "apprise://localhost/abc123?verify=no&cto=5&rto=7"
+    },
+    {
+      "name": "oracle-tags",
+      "url": "apprise://localhost/abc123?tags=foo,bar"
+    }
+  ]
+}

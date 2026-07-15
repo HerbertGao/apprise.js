@@ -13,7 +13,11 @@
 // This is invisible to the test suite (vitest runs `src/`, never `dist/`) and to
 // publint / attw (they check SHAPE and TYPES, both of which stay valid while the
 // registry splits). So this check EXECUTES the built artifact in every load
-// combination and asserts `add()` actually resolves.
+// combination and asserts `add()` actually resolves. Every combination that
+// loads a plugin as CJS goes one step further: it `notify()`s that plugin over
+// an injected stub transport and asserts the transport was really called — the
+// CJS delivery path (top-level await, `import.meta` leakage) can still explode
+// after registration succeeds, and only executing it catches that.
 //
 // Orthogonal to check-bundler-sideeffects.mjs: that one asks whether a bundler
 // tree-shakes the registration away; this one asks whether registration lands in
@@ -35,20 +39,20 @@ const PROBES = [
     type: 'cjs',
     src: `const { Apprise } = require('./dist/index.cjs')
           require('./dist/plugins/telegram.cjs')
-          report(new Apprise().add(${JSON.stringify(TGRAM)}))`,
+          smoke(Apprise, ${JSON.stringify(TGRAM)})`,
   },
   {
     name: 'CJS barrel + CJS plugins/all',
     type: 'cjs',
     src: `const { Apprise } = require('./dist/index.cjs')
           require('./dist/plugins/all.cjs')
-          report(new Apprise().add(${JSON.stringify(TGRAM)}))`,
+          smoke(Apprise, ${JSON.stringify(TGRAM)})`,
   },
   {
     name: 'CJS barrel alone (barrel-bundled meta plugin)',
     type: 'cjs',
     src: `const { Apprise } = require('./dist/index.cjs')
-          report(new Apprise().add('json://localhost/path'))`,
+          smoke(Apprise, 'json://localhost/path')`,
   },
   {
     name: 'ESM barrel + CJS plugin (cross-format)',
@@ -56,7 +60,7 @@ const PROBES = [
     src: `import { createRequire } from 'node:module'
           const { Apprise } = await import('./dist/index.js')
           createRequire(process.cwd() + '/x.js')('./dist/plugins/telegram.cjs')
-          report(new Apprise().add(${JSON.stringify(TGRAM)}))`,
+          await smoke(Apprise, ${JSON.stringify(TGRAM)})`,
   },
   {
     name: 'CJS barrel + ESM plugin (cross-format)',
@@ -74,14 +78,35 @@ const PROBES = [
   },
 ]
 
-const REPORT = `const report = (ok) => process.stdout.write(ok ? 'OK' : 'DROPPED');`
+// Injected ahead of every probe body. `report` marks add()-only probes; `smoke`
+// drives the CJS delivery path: add() the CJS-loaded plugin, then notify() it
+// over a PER-INSTANCE stub transport, asserting BOTH a true result AND that the
+// stub was actually called. A non-empty payload is mandatory — an empty one
+// trips the empty-content guard (apprise.ts) before any transport call, so
+// "stub was called" is what proves send() really ran. The stub returns
+// status:200 + a minimal JSON body, all telegram/custom-json's success check
+// reads (NOT universal — matrix/discord/slack read the body; adjust if added).
+const PRELUDE = `
+const report = (ok) => process.stdout.write(ok ? 'OK' : 'DROPPED');
+const smoke = async (Apprise, url) => {
+  let calls = 0;
+  const transport = async () => {
+    calls++;
+    return { ok: true, status: 200, statusText: 'OK', headers: new Headers(), text: async () => '{"ok":true}' };
+  };
+  const ap = new Apprise({ transport });
+  if (ap.add(url) !== true) return process.stdout.write('add() returned false');
+  if ((await ap.notify({ title: 't', body: 'b' })) !== true) return process.stdout.write('notify() returned false');
+  if (calls < 1) return process.stdout.write('stub transport was never called');
+  process.stdout.write('OK');
+};`
 
 const failed = []
 for (const probe of PROBES) {
   const args =
     probe.type === 'esm'
-      ? ['--input-type=module', '-e', `${REPORT}\n${probe.src}`]
-      : ['-e', `${REPORT}\n${probe.src}`]
+      ? ['--input-type=module', '-e', `${PRELUDE}\n${probe.src}`]
+      : ['-e', `${PRELUDE}\n${probe.src}`]
 
   let out
   try {
@@ -95,17 +120,19 @@ for (const probe of PROBES) {
     continue
   }
 
-  if (out.trim() !== 'OK') failed.push([probe.name, `add() returned false`])
+  if (out.trim() !== 'OK')
+    failed.push([probe.name, out.trim() || '(no output)'])
 }
 
 if (failed.length > 0) {
   console.error(
-    '\n✗ The registry SPLIT across module copies:\n\n' +
+    '\n✗ A dual-package load combination broke:\n\n' +
       failed.map(([name, why]) => `    ${name}\n      -> ${why}`).join('\n') +
       '\n\n' +
-      '  A plugin registered its scheme into a registry that `Apprise` never\n' +
-      '  reads, so `add()` returned false — which `notify()` then reports as a\n' +
-      '  plain delivery failure. Nothing would be sent.\n\n' +
+      '  `add() returned false`: a plugin registered its scheme into a registry\n' +
+      '  that `Apprise` never reads, so nothing would be sent. `notify() returned\n' +
+      '  false` / `stub transport was never called`: registration landed, but the\n' +
+      '  CJS-loaded plugin’s delivery path failed to reach the transport.\n\n' +
       '  This is the dual package hazard: Node caches ESM and CJS separately, so\n' +
       '  a mixed-format graph loads `registry` twice. The registry must be a\n' +
       '  process-wide singleton (see src/registry.ts), NOT module state. Note a\n' +
@@ -117,5 +144,6 @@ if (failed.length > 0) {
 
 console.log(
   `✓ registry is a single process-wide table ` +
-    `(${PROBES.length} ESM/CJS load combinations all resolve)`,
+    `(${PROBES.length} ESM/CJS load combinations resolve; ` +
+    `CJS-loaded plugins deliver over a stub transport)`,
 )

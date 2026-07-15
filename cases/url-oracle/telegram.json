@@ -1,0 +1,10 @@
+{
+  "plugin": "telegram",
+  "_note": "url()-only seed. wire `topic` case covers the topic key; this activates non-default verify/rto/cto.",
+  "cases": [
+    {
+      "name": "oracle-verify-rto-cto",
+      "url": "tgram://123456789:ABCdef_ghi-jkl/12345?verify=no&rto=5&cto=10"
+    }
+  ]
+}

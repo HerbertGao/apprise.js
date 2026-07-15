@@ -1,0 +1,10 @@
+{
+  "plugin": "mattermost",
+  "_note": "url()-only seed. wire `channel` case covers the `to` target key; this activates icon_url plus non-default verify/rto/cto (channel repeated to keep the seed self-covering).",
+  "cases": [
+    {
+      "name": "oracle-icon-verify-rto-cto",
+      "url": "mmost://host/token1?verify=no&rto=5&cto=10&icon_url=https://x/i.png&channel=town-square"
+    }
+  ]
+}

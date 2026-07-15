@@ -5,6 +5,9 @@ dist/
 
 # golden-differential capture harness venv (dev-only, apprise==1.12.0)
 scripts/.venv/
+# Python bytecode from running the capture harness
+__pycache__/
+*.pyc
 
 # Coverage reports (vitest v8)
 coverage/
