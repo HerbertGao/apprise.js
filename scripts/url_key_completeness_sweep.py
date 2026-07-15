@@ -122,7 +122,14 @@ def main():
               file=sys.stderr)
         return 1
     gaps = sweep()
-    unexpected = {p: g for p, g in gaps.items() if EXPECTED.get(p) != g}
+    # Compare over the UNION of produced + expected plugins so a VANISHED expected
+    # residue (a plugin in EXPECTED that stops emitting its known-safe family) also
+    # fails — not just extra/mismatched families on plugins that still produce one.
+    unexpected = {
+        p: gaps.get(p, [])
+        for p in set(gaps) | set(EXPECTED)
+        if gaps.get(p, []) != sorted(EXPECTED.get(p, []))
+    }
     if unexpected:
         print(f"\nNEW SIBLING(S) — investigate (add to D + seed, or exclude): {unexpected}",
               file=sys.stderr)
