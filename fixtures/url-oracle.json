@@ -165,6 +165,66 @@
         "cto",
         "e2ee"
       ]
+    },
+    "serverchan": {
+      "static": [],
+      "conditional": []
+    },
+    "dingtalk": {
+      "static": [
+        "format",
+        "overflow",
+        "verify"
+      ],
+      "conditional": []
+    },
+    "wecombot": {
+      "static": [
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "feishu": {
+      "static": [
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "lark": {
+      "static": [
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "wxpusher": {
+      "static": [
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "pushdeer": {
+      "static": [],
+      "conditional": []
     }
   },
   "oracle": {
@@ -897,6 +957,724 @@
         "reserialize": [
           "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no",
           "matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789/?image=no&mode=t2bot&version=3&msgtype=text&discovery=no&hsreq=yes&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=5.0&cto=10.0&verify=no"
+        ]
+      }
+    },
+    "serverchan": {
+      "default": {
+        "url": "schan://12345678",
+        "urlPrivacy": "schan://1...8",
+        "reserialize": [
+          "schan://12345678",
+          "schan://12345678"
+        ]
+      },
+      "hyphen-prefix-truncation": {
+        "url": "schan://abc",
+        "urlPrivacy": "schan://a...c",
+        "reserialize": [
+          "schan://abc",
+          "schan://abc"
+        ]
+      },
+      "http-failure": {
+        "url": "schan://abcdefgh",
+        "urlPrivacy": "schan://a...h",
+        "reserialize": [
+          "schan://abcdefgh",
+          "schan://abcdefgh"
+        ]
+      },
+      "oracle-format": {
+        "url": "schan://abcdefgh",
+        "urlPrivacy": "schan://a...h",
+        "reserialize": [
+          "schan://abcdefgh",
+          "schan://abcdefgh"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "schan://abcdefgh",
+        "urlPrivacy": "schan://a...h",
+        "reserialize": [
+          "schan://abcdefgh",
+          "schan://abcdefgh"
+        ]
+      },
+      "oracle-verify": {
+        "url": "schan://abcdefgh",
+        "urlPrivacy": "schan://a...h",
+        "reserialize": [
+          "schan://abcdefgh",
+          "schan://abcdefgh"
+        ]
+      },
+      "oracle-rto": {
+        "url": "schan://abcdefgh",
+        "urlPrivacy": "schan://a...h",
+        "reserialize": [
+          "schan://abcdefgh",
+          "schan://abcdefgh"
+        ]
+      },
+      "oracle-cto": {
+        "url": "schan://abcdefgh",
+        "urlPrivacy": "schan://a...h",
+        "reserialize": [
+          "schan://abcdefgh",
+          "schan://abcdefgh"
+        ]
+      }
+    },
+    "dingtalk": {
+      "default-text": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "markdown": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.MARKDOWN&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.MARKDOWN&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.MARKDOWN&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "targets-path-and-query": {
+        "url": "dingtalk://abcdefgh/13800138000/13900139000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h/13800138000/13900139000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh/13800138000/13900139000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh/13800138000/13900139000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "signed": {
+        "url": "dingtalk://secret123@abcdefgh/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://****@a...h/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://secret123@abcdefgh/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://secret123@abcdefgh/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "signed-timestamp-upper-bound": {
+        "url": "dingtalk://secret123@abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://****@a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://secret123@abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://secret123@abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "http-failure": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-token-alias": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-secret-alias": {
+        "url": "dingtalk://secret123@abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://****@a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://secret123@abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://secret123@abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-to-alias": {
+        "url": "dingtalk://abcdefgh/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh/13800138000/?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-format": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.HTML&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.HTML&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.HTML&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.TRUNCATE&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.TRUNCATE&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.TRUNCATE&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-verify": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=no",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=no",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=no",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=no"
+        ]
+      },
+      "oracle-rto-discarded": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      },
+      "oracle-cto-discarded": {
+        "url": "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "urlPrivacy": "dingtalk://a...h//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+        "reserialize": [
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes",
+          "dingtalk://abcdefgh//?format=NotifyFormat.TEXT&overflow=OverflowMode.UPSTREAM&verify=yes"
+        ]
+      }
+    },
+    "wecombot": {
+      "scheme": {
+        "url": "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "query-key": {
+        "url": "wecombot://query_key-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://q...1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://query_key-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://query_key-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "native-url": {
+        "url": "wecombot://BOTKEY/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://B...Y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://BOTKEY/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://BOTKEY/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "native-trailing-slash-and-params": {
+        "url": "wecombot://BOTKEY/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://B...Y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://BOTKEY/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://BOTKEY/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "http-failure": {
+        "url": "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-key-alias": {
+        "url": "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "wecombot://botkey/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://b...y/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://botkey/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wecombot://botkey/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "wecombot://botkey/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "wecombot://botkey/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0"
+        ]
+      },
+      "oracle-cto": {
+        "url": "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "urlPrivacy": "wecombot://b...y/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "reserialize": [
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+          "wecombot://botkey/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0"
+        ]
+      }
+    },
+    "feishu": {
+      "host-token-title-merge": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "query-token": {
+        "url": "feishu://query_token-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://q...1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://query_token-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "feishu://query_token-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "title-boundary-plus-one": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "body-boundary-19985": {
+        "url": "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "cross-body-19986-truncate": {
+        "url": "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "http-failure": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-token-alias": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "feishu://abc123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "feishu://abc123/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0"
+        ]
+      },
+      "oracle-cto": {
+        "url": "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "urlPrivacy": "feishu://a...3/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "reserialize": [
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+          "feishu://abc123/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0"
+        ]
+      }
+    },
+    "lark": {
+      "host-token-title-newline": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "query-token": {
+        "url": "lark://query-token-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://query-token-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "lark://query-token-1/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "native-url": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "title-boundary-250": {
+        "url": "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "title-overflow-251": {
+        "url": "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "body-boundary-32768": {
+        "url": "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "body-overflow-32769": {
+        "url": "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "cross-body-19986-retained": {
+        "url": "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "http-failure": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-token-alias": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "lark://abcd-1234/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "lark://abcd-1234/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0"
+        ]
+      },
+      "oracle-cto": {
+        "url": "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "urlPrivacy": "lark://****/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "reserialize": [
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+          "lark://abcd-1234/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0"
+        ]
+      }
+    },
+    "wxpusher": {
+      "text-user-success": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "html-topic-success": {
+        "url": "wxpusher://AT_appid/123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/123/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "markdown-mixed-targets-success": {
+        "url": "wxpusher://AT_appid/123/UID_bob/invalid/?format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/123/UID_bob/invalid/?format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/123/UID_bob/invalid/?format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/123/UID_bob/invalid/?format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "query-token-and-to-success": {
+        "url": "wxpusher://AT_query/456/789/UID_query/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/456/789/UID_query/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_query/456/789/UID_query/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_query/456/789/UID_query/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "no-valid-target": {
+        "url": "wxpusher://AT_appid/invalid/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/invalid/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/invalid/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/invalid/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "business-failure": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "bad-json": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "invalid-utf8-json": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "utf16le-json-success": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "utf32be-json-success": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "http-failure": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-token-alias": {
+        "url": "wxpusher://AT_appid/UID_authority/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_authority/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_authority/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_authority/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-to-alias": {
+        "url": "wxpusher://AT_appid/123/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/123/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/123/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/123/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0"
+        ]
+      },
+      "oracle-cto": {
+        "url": "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "urlPrivacy": "wxpusher://****/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "reserialize": [
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+          "wxpusher://AT_appid/UID_alice/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0"
+        ]
+      }
+    },
+    "pushdeer": {
+      "default-http-no-title": {
+        "url": "pushdeer://pushKey",
+        "urlPrivacy": "pushdeer://p...y",
+        "reserialize": [
+          "pushdeer://pushKey",
+          "pushdeer://pushKey"
+        ]
+      },
+      "default-https-title": {
+        "url": "pushdeers://pushKey",
+        "urlPrivacy": "pushdeers://p...y",
+        "reserialize": [
+          "pushdeers://pushKey",
+          "pushdeers://pushKey"
+        ]
+      },
+      "self-hosted-http-port-title": {
+        "url": "pushdeer://localhost:8080/pushKey",
+        "urlPrivacy": "pushdeer://localhost:8080/p...y",
+        "reserialize": [
+          "pushdeer://localhost:8080/pushKey",
+          "pushdeer://localhost:8080/pushKey"
+        ]
+      },
+      "self-hosted-https-default-port": {
+        "url": "pushdeers://push.example/pushKey",
+        "urlPrivacy": "pushdeers://push.example/p...y",
+        "reserialize": [
+          "pushdeers://push.example/pushKey",
+          "pushdeers://push.example/pushKey"
+        ]
+      },
+      "http-failure": {
+        "url": "pushdeer://localhost/pushKey",
+        "urlPrivacy": "pushdeer://localhost/p...y",
+        "reserialize": [
+          "pushdeer://localhost/pushKey",
+          "pushdeer://localhost/pushKey"
+        ]
+      },
+      "oracle-format": {
+        "url": "pushdeer://pushKey",
+        "urlPrivacy": "pushdeer://p...y",
+        "reserialize": [
+          "pushdeer://pushKey",
+          "pushdeer://pushKey"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "pushdeer://pushKey",
+        "urlPrivacy": "pushdeer://p...y",
+        "reserialize": [
+          "pushdeer://pushKey",
+          "pushdeer://pushKey"
+        ]
+      },
+      "oracle-verify": {
+        "url": "pushdeer://pushKey",
+        "urlPrivacy": "pushdeer://p...y",
+        "reserialize": [
+          "pushdeer://pushKey",
+          "pushdeer://pushKey"
+        ]
+      },
+      "oracle-rto": {
+        "url": "pushdeer://pushKey",
+        "urlPrivacy": "pushdeer://p...y",
+        "reserialize": [
+          "pushdeer://pushKey",
+          "pushdeer://pushKey"
+        ]
+      },
+      "oracle-cto": {
+        "url": "pushdeer://pushKey",
+        "urlPrivacy": "pushdeer://p...y",
+        "reserialize": [
+          "pushdeer://pushKey",
+          "pushdeer://pushKey"
         ]
       }
     }

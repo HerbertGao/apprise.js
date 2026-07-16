@@ -1,0 +1,46 @@
+{
+  "plugin": "pushdeer",
+  "cases": [
+    {
+      "name": "default-http-no-title",
+      "url": "pushdeer://pushKey",
+      "title": "",
+      "body": "hello world",
+      "assertResult": true
+    },
+    {
+      "name": "default-https-title",
+      "url": "pushdeers://pushKey",
+      "title": "Alert",
+      "body": "secure body",
+      "assertResult": true
+    },
+    {
+      "name": "self-hosted-http-port-title",
+      "url": "pushdeer://localhost:8080/pushKey",
+      "title": "Self Hosted",
+      "body": "custom port",
+      "assertResult": true
+    },
+    {
+      "name": "self-hosted-https-default-port",
+      "url": "pushdeers://push.example/pushKey",
+      "title": "",
+      "body": "secure self host",
+      "assertResult": true
+    },
+    {
+      "name": "invalid-pushkey",
+      "url": "pushdeer://bad_key",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "http-failure",
+      "url": "pushdeer://localhost/pushKey",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

@@ -1,0 +1,429 @@
+{
+  "plugin": "wxpusher",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "text-user-success",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "Alert",
+        "body": "hello",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "text": "{\"code\":1000}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "134"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogImhlbGxvIiwgInN1bW1hcnkiOiAiQWxlcnQiLCAiY29udGVudFR5cGUiOiAxLCAidG9waWNJZHMiOiBbXSwgInVpZHMiOiBbIlVJRF9hbGljZSJdLCAidXJsIjogbnVsbH0="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "html-topic-success",
+      "input": {
+        "url": "wxpusher://AT_appid/123/?format=html",
+        "title": "HTML",
+        "body": "<b>hello</b>",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "text": "{\"code\":1000}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "132"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogIjxiPmhlbGxvPC9iPiIsICJzdW1tYXJ5IjogIkhUTUwiLCAiY29udGVudFR5cGUiOiAyLCAidG9waWNJZHMiOiBbMTIzXSwgInVpZHMiOiBbXSwgInVybCI6IG51bGx9"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "markdown-mixed-targets-success",
+      "input": {
+        "url": "wxpusher://AT_appid/123/UID_bob/invalid/?format=markdown",
+        "title": "Markdown",
+        "body": "hello **world**",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "text": "{\"code\":1000}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "148"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogImhlbGxvICoqd29ybGQqKiIsICJzdW1tYXJ5IjogIk1hcmtkb3duIiwgImNvbnRlbnRUeXBlIjogMywgInRvcGljSWRzIjogWzEyM10sICJ1aWRzIjogWyJVSURfYm9iIl0sICJ1cmwiOiBudWxsfQ=="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "query-token-and-to-success",
+      "input": {
+        "url": "wxpusher://456?token=AT_query&to=UID_query,789",
+        "title": "",
+        "body": "query targets",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "text": "{\"code\":1000}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "145"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9xdWVyeSIsICJjb250ZW50IjogInF1ZXJ5IHRhcmdldHMiLCAic3VtbWFyeSI6ICIiLCAiY29udGVudFR5cGUiOiAxLCAidG9waWNJZHMiOiBbNDU2LCA3ODldLCAidWlkcyI6IFsiVUlEX3F1ZXJ5Il0sICJ1cmwiOiBudWxsfQ=="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "no-valid-target",
+      "input": {
+        "url": "wxpusher://AT_appid/invalid/",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "no-request"
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "business-failure",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "",
+        "body": "failure",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "text": "{\"code\":1002,\"msg\":\"bad token\"}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "131"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogImZhaWx1cmUiLCAic3VtbWFyeSI6ICIiLCAiY29udGVudFR5cGUiOiAxLCAidG9waWNJZHMiOiBbXSwgInVpZHMiOiBbIlVJRF9hbGljZSJdLCAidXJsIjogbnVsbH0="
+          }
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "bad-json",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "",
+        "body": "bad json",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "text": "{"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "132"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogImJhZCBqc29uIiwgInN1bW1hcnkiOiAiIiwgImNvbnRlbnRUeXBlIjogMSwgInRvcGljSWRzIjogW10sICJ1aWRzIjogWyJVSURfYWxpY2UiXSwgInVybCI6IG51bGx9"
+          }
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "invalid-utf8-json",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "",
+        "body": "invalid utf8",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "base64": "eyJjb2RlIjoxMDAwLCJtc2ciOiKAIn0="
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "136"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogImludmFsaWQgdXRmOCIsICJzdW1tYXJ5IjogIiIsICJjb250ZW50VHlwZSI6IDEsICJ0b3BpY0lkcyI6IFtdLCAidWlkcyI6IFsiVUlEX2FsaWNlIl0sICJ1cmwiOiBudWxsfQ=="
+          }
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "utf16le-json-success",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "",
+        "body": "utf16le response",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "base64": "//57ACIAYwBvAGQAZQAiADoAMQAwADAAMAB9AA=="
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "140"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogInV0ZjE2bGUgcmVzcG9uc2UiLCAic3VtbWFyeSI6ICIiLCAiY29udGVudFR5cGUiOiAxLCAidG9waWNJZHMiOiBbXSwgInVpZHMiOiBbIlVJRF9hbGljZSJdLCAidXJsIjogbnVsbH0="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "utf32be-json-success",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "",
+        "body": "utf32be response",
+        "type": "info",
+        "responses": [
+          {
+            "body": {
+              "base64": "AAD+/wAAAHsAAAAiAAAAYwAAAG8AAABkAAAAZQAAACIAAAA6AAAAMQAAADAAAAAwAAAAMAAAAH0="
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "140"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogInV0ZjMyYmUgcmVzcG9uc2UiLCAic3VtbWFyeSI6ICIiLCAiY29udGVudFR5cGUiOiAxLCAidG9waWNJZHMiOiBbXSwgInVpZHMiOiBbIlVJRF9hbGljZSJdLCAidXJsIjogbnVsbH0="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "http-failure",
+      "input": {
+        "url": "wxpusher://AT_appid/UID_alice/",
+        "title": "",
+        "body": "http failure",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500,
+            "body": {
+              "text": "{\"code\":1000}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://wxpusher.zjiecode.com/api/send/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "136"
+          },
+          "body": {
+            "base64": "eyJhcHBUb2tlbiI6ICJBVF9hcHBpZCIsICJjb250ZW50IjogImh0dHAgZmFpbHVyZSIsICJzdW1tYXJ5IjogIiIsICJjb250ZW50VHlwZSI6IDEsICJ0b3BpY0lkcyI6IFtdLCAidWlkcyI6IFsiVUlEX2FsaWNlIl0sICJ1cmwiOiBudWxsfQ=="
+          }
+        },
+        "result": false
+      }
+    }
+  ]
+}

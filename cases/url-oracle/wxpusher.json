@@ -1,0 +1,33 @@
+{
+  "plugin": "wxpusher",
+  "cases": [
+    {
+      "name": "oracle-token-alias",
+      "url": "wxpusher://UID_authority?token=AT_appid"
+    },
+    {
+      "name": "oracle-to-alias",
+      "url": "wxpusher://AT_appid?to=UID_alice,123"
+    },
+    {
+      "name": "oracle-format",
+      "url": "wxpusher://AT_appid/UID_alice?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "wxpusher://AT_appid/UID_alice?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "wxpusher://AT_appid/UID_alice?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "wxpusher://AT_appid/UID_alice?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "wxpusher://AT_appid/UID_alice?cto=7"
+    }
+  ]
+}

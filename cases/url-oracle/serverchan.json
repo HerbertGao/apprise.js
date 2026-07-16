@@ -1,0 +1,25 @@
+{
+  "plugin": "serverchan",
+  "cases": [
+    {
+      "name": "oracle-format",
+      "url": "schan://abcdefgh?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "schan://abcdefgh?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "schan://abcdefgh?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "schan://abcdefgh?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "schan://abcdefgh?cto=7"
+    }
+  ]
+}

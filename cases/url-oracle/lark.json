@@ -1,0 +1,29 @@
+{
+  "plugin": "lark",
+  "cases": [
+    {
+      "name": "oracle-token-alias",
+      "url": "lark://ignored?token=abcd-1234"
+    },
+    {
+      "name": "oracle-format",
+      "url": "lark://abcd-1234?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "lark://abcd-1234?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "lark://abcd-1234?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "lark://abcd-1234?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "lark://abcd-1234?cto=7"
+    }
+  ]
+}

@@ -72,6 +72,7 @@ from __future__ import annotations
 
 import base64
 import contextlib
+import importlib
 import json
 import sys
 import urllib.parse
@@ -89,6 +90,16 @@ EXPECTED_APPRISE_VERSION = "1.12.0"
 # Default determinism seeds (a case may override via its "seeds" block).
 DEFAULT_UID = "itest-uid-0"
 DEFAULT_RECURSION = 0
+MAX_TIMESTAMP_MS = (1 << 51) - 1
+PLUGINS_CN = {
+    "serverchan",
+    "dingtalk",
+    "wecombot",
+    "feishu",
+    "lark",
+    "wxpusher",
+    "pushdeer",
+}
 
 ROOT = Path(__file__).resolve().parent.parent
 CASES_DIR = ROOT / "cases"
@@ -197,6 +208,28 @@ URL_KEY_INVENTORY = {
         # case can activate it — excluded from the must-activate conditional set.
         "conditional": ["verify", "rto", "cto", "e2ee"],
     },
+    "serverchan": {"static": [], "conditional": []},
+    "dingtalk": {
+        "static": ["format", "overflow", "verify"],
+        "conditional": [],
+    },
+    "wecombot": {
+        "static": ["format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "feishu": {
+        "static": ["format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "lark": {
+        "static": ["format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "wxpusher": {
+        "static": ["format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "pushdeer": {"static": [], "conditional": []},
 }
 
 
@@ -229,6 +262,87 @@ def _fake_response(request, spec=None):
     resp.url = request.url
     resp.request = request
     return resp
+
+
+def _validate_responses(responses, case_name):
+    """Validate the closed canned-response schema before driving upstream."""
+    if responses is None:
+        return []
+    if not isinstance(responses, list):
+        raise SystemExit(
+            f"ERROR: case {case_name!r} responses MUST be an array."
+        )
+    allowed = {"status", "headers", "body"}
+    for idx, spec in enumerate(responses):
+        if not isinstance(spec, dict) or set(spec) - allowed:
+            raise SystemExit(
+                f"ERROR: case {case_name!r} responses[{idx}] MUST be an object "
+                f"with only {sorted(allowed)!r}."
+            )
+        if "status" in spec and (
+            isinstance(spec["status"], bool)
+            or not isinstance(spec["status"], int)
+        ):
+            raise SystemExit(
+                f"ERROR: case {case_name!r} responses[{idx}].status MUST be an integer."
+            )
+        headers = spec.get("headers")
+        if headers is not None and (
+            not isinstance(headers, dict)
+            or not all(
+                isinstance(key, str) and isinstance(value, str)
+                for key, value in headers.items()
+            )
+        ):
+            raise SystemExit(
+                f"ERROR: case {case_name!r} responses[{idx}].headers MUST map strings to strings."
+            )
+        if "body" not in spec or spec["body"] is None:
+            continue
+        body = spec["body"]
+        if (
+            not isinstance(body, dict)
+            or set(body) not in ({"text"}, {"base64"})
+            or not all(isinstance(value, str) for value in body.values())
+        ):
+            raise SystemExit(
+                f"ERROR: case {case_name!r} responses[{idx}].body MUST be null "
+                "or exactly one string field: text/base64."
+            )
+    return responses
+
+
+def _timestamp_ms(seeds, case_name):
+    """Return a validated optional timestampMs determinism seed."""
+    if "timestampMs" not in seeds:
+        return None
+    value = seeds["timestampMs"]
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int)
+        or value < 0
+        or value > MAX_TIMESTAMP_MS
+    ):
+        raise SystemExit(
+            f"ERROR: case {case_name!r} seeds.timestampMs MUST be an integer "
+            f"between 0 and {MAX_TIMESTAMP_MS}."
+        )
+    return value
+
+
+@contextlib.contextmanager
+def pin_dingtalk_time(timestamp_ms):
+    """Temporarily make upstream DingTalk's time.time() return pinned seconds."""
+    if timestamp_ms is None:
+        yield
+        return
+    module = importlib.import_module("apprise.plugins.dingtalk")
+    original = module.time.time
+    module.time.time = lambda: timestamp_ms / 1000.0
+    try:
+        yield
+    finally:
+        module.time.time = original
 
 
 @contextlib.contextmanager
@@ -342,17 +456,28 @@ def dump_request(pr):
     }
 
 
-def capture_case(case):
+def capture_case(case, plugin):
     """Drive one case through upstream apprise; return its fixture entry."""
     seeds = case.get("seeds") or {}
     uid = seeds.get("uid", DEFAULT_UID)
     recursion = seeds.get("recursion", DEFAULT_RECURSION)
     boundary = seeds.get("boundary")
     uuid_seed = seeds.get("uuid")
+    timestamp_ms = _timestamp_ms(seeds, case["name"])
 
     attachments = case.get("attachments") or []
     # Per-request canned responses for multi-step plugins (login/send/...).
-    responses = case.get("responses")
+    responses = _validate_responses(case.get("responses"), case["name"])
+    has_assert_result = "assertResult" in case
+    assert_result = case.get("assertResult")
+    if has_assert_result and not isinstance(assert_result, bool):
+        raise SystemExit(
+            f"ERROR: case {case['name']!r} assertResult MUST be boolean."
+        )
+    if plugin in PLUGINS_CN and not has_assert_result:
+        raise SystemExit(
+            f"ERROR: plugins-cn case {case['name']!r} MUST declare assertResult."
+        )
 
     # `body_gen` compactly expresses a large body (e.g. overflow cases) as a
     # {char, count} pair so the hand-authored case stays small; the full body is
@@ -380,6 +505,8 @@ def capture_case(case):
     if responses:
         # Echoed so the TS diff side replays the SAME per-request responses.
         input_echo["responses"] = responses
+    if has_assert_result:
+        input_echo["assertResult"] = assert_result
 
     # Backward-compatible seeds block: only add txn/uuid when the case declares
     # them, so existing single-request fixtures stay byte-identical.
@@ -388,6 +515,8 @@ def capture_case(case):
         seeds_echo["txn"] = seeds.get("txn", 0)
     if "uuid" in seeds:
         seeds_echo["uuid"] = uuid_seed
+    if "timestampMs" in seeds:
+        seeds_echo["timestampMs"] = timestamp_ms
 
     entry = {
         "name": case["name"],
@@ -397,18 +526,42 @@ def capture_case(case):
 
     if not added or len(ap) == 0:
         # Upstream rejected construction (e.g. invalid ?method=, bad token).
+        if responses:
+            raise SystemExit(
+                f"ERROR: case {case['name']!r} declared {len(responses)} "
+                "response preset(s) but constructed no request producer."
+            )
+        if plugin in PLUGINS_CN and assert_result is not False:
+            raise SystemExit(
+                f"ERROR: instantiation-failed plugins-cn case {case['name']!r} "
+                "MUST set assertResult=false."
+            )
         entry["expected"] = {"noRequest": {"reason": "instantiation-failed"}}
         return entry
 
+    if plugin in PLUGINS_CN and assert_result is not True:
+        raise SystemExit(
+            f"ERROR: constructed plugins-cn case {case['name']!r} "
+            "MUST set assertResult=true."
+        )
+
     attach = build_attach(attachments)
-    with intercept(
-        boundary=boundary, responses=responses, uuid_seed=uuid_seed
-    ) as captured:
-        ap.notify(
-            body=body,
-            title=case.get("title", ""),
-            notify_type=apprise.NotifyType(case.get("type", "info")),
-            attach=attach,
+    with pin_dingtalk_time(timestamp_ms):
+        with intercept(
+            boundary=boundary, responses=responses, uuid_seed=uuid_seed
+        ) as captured:
+            result = ap.notify(
+                body=body,
+                title=case.get("title", ""),
+                notify_type=apprise.NotifyType(case.get("type", "info")),
+                attach=attach,
+            )
+
+    if len(captured) < len(responses):
+        raise SystemExit(
+            f"ERROR: case {case['name']!r} left response preset index "
+            f"{len(captured)} unconsumed ({len(responses)} declared, "
+            f"{len(captured)} request(s))."
         )
 
     # Author-declared oracle: a multi-request case states how many requests it
@@ -427,6 +580,8 @@ def capture_case(case):
     if not captured:
         # Constructed fine but produced no request (e.g. empty content).
         entry["expected"] = {"noRequest": {"reason": "no-request"}}
+        if assert_result is True:
+            entry["expected"]["result"] = bool(result)
         return entry
 
     if len(captured) == 1:
@@ -439,17 +594,20 @@ def capture_case(case):
             "requests": [dump_request(r) for r in captured],
             "expectedCount": len(captured),
         }
+    if assert_result is True:
+        entry["expected"]["result"] = bool(result)
     return entry
 
 
 def process_plugin(plugin):
     case_file = CASES_DIR / f"{plugin}.json"
     spec = json.loads(case_file.read_text())
+    fixture_plugin = spec.get("plugin", plugin)
     fixture = {
-        "plugin": spec.get("plugin", plugin),
+        "plugin": fixture_plugin,
         "generated_by": "scripts/capture_fixtures.py",
         "apprise_version": apprise.__version__,
-        "cases": [capture_case(c) for c in spec["cases"]],
+        "cases": [capture_case(c, fixture_plugin) for c in spec["cases"]],
     }
     out = FIXTURES_DIR / f"{plugin}.json"
     out.write_text(json.dumps(fixture, indent=2, ensure_ascii=False) + "\n")
@@ -518,6 +676,22 @@ def _load_cases(path):
     return json.loads(path.read_text())["cases"] if path.exists() else []
 
 
+def _validate_url_oracle_seed(case, plugin):
+    """Keep url()-only seeds free of notify-result expectations."""
+    expected = case.get("expected")
+    if not isinstance(expected, dict):
+        expected = {}
+    if (
+        "assertResult" in case
+        or "expected.result" in case
+        or "result" in expected
+    ):
+        raise SystemExit(
+            "ERROR: url-oracle-only seed MUST NOT declare result fields: "
+            f"({plugin!r}, {case['name']!r})."
+        )
+
+
 def _query_keys(url):
     """Decoded query-parameter names per the D1 split: base = up to the first
     '?', query = after it. Split on the first '?' (NOT urlsplit) so rocketchat's
@@ -572,6 +746,8 @@ def capture_url_oracle():
         for cases, curated in ((wire_cases, False), (extra_cases, True)):
             for case in cases:
                 name = case["name"]
+                if curated:
+                    _validate_url_oracle_seed(case, plugin)
                 # Track (plugin, caseName) uniqueness BEFORE construction so a
                 # duplicate is caught even when the first of the pair fails to
                 # construct (design.md D2). `entries` alone would miss that.

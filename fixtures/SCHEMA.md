@@ -26,6 +26,7 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
       "body": "hello body",         // optional, default ""
       "body_gen": { "char": "A", "count": 4001 }, // optional; expands to char*count in place of `body` (compact large/overflow bodies)
       "type": "info",               // info|success|warning|failure, default info
+      "assertResult": true,          // required for plugins-cn wire cases
       "attachments": [ /* descriptors, optional */ ],
       "responses": [ /* CannedResponse[], optional; multi-step plugins */ ],
       "seeds": {                    // optional; defaults applied per field
@@ -33,7 +34,8 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
         "recursion": 0,             // -> asset._recursion (X-Apprise-Recursion-Count = +1)
         "boundary": null,           // multipart boundary pin (null = none this batch)
         "txn": 0,                   // matrix login-mode txnId counter start (optional)
-        "uuid": "..."               // matrix raw-token fixed uuid4 (optional)
+        "uuid": "...",              // matrix raw-token fixed uuid4 (optional)
+        "timestampMs": 1700000000123 // DingTalk epoch ms, integer 0..2^51-1
       }
     }
   ]
@@ -65,6 +67,10 @@ rocketchat login `{status:'success',data:{authToken,userId}}`, matrix login
 missing field makes upstream short-circuit and truncate the sequence. Both the
 capture harness AND the TS diff replay the SAME `responses`.
 
+Every explicit response MUST be consumed by a request; trailing unused entries
+fail capture and replay. A shorter array is allowed and missing request indexes
+receive the default 200 `{}` response.
+
 Determinism: pin matrix's login-mode txnId counter start with `seeds.txn`
 (default 0, increments after each send) and the raw-token fixed uuid with
 `seeds.uuid` (the harness monkeypatches `uuid.uuid4`; the TS store reads the
@@ -95,17 +101,19 @@ seed via `setStoreSeeds`).
       "input": {                    // echoes the driving case
         "url": "json://user:pass@localhost/path",
         "title": "hi", "body": "hello body", "type": "info",
-        "attachments": [ /* echoed if present */ ]
+        "attachments": [ /* echoed if present */ ],
+        "assertResult": true
       },
       "seeds": { "uid": "itest-uid-0", "recursion": 0, "boundary": null },
-      "expected": { /* exactly one of: */
+      "expected": { /* request/requests/noRequest plus optional result: */
         "request": {                // normal delivery
           "method": "POST",
           "url": "http://localhost/path",   // final, query already joined
           "headers": { "User-Agent": "Apprise", "Content-Type": "application/json",
                        "Authorization": "Basic ...", "...": "..." },
           "body": { "text": "..." } // see body encoding below
-        }
+        },
+        "result": true               // iff input.assertResult is true
       }
     },
     {
@@ -137,7 +145,13 @@ seed via `setStoreSeeds`).
   - `"instantiation-failed"` — upstream refused to construct the plugin
     (invalid `?method=`, bad token, ...). `.add()` returned False.
   - `"no-request"` — constructed fine but emitted nothing (e.g. empty content).
+  No other `reason` value is valid.
   The TS side asserts it likewise constructs-and-refuses / sends nothing.
+
+New `plugins-cn` wire cases MUST set source `assertResult`. Successful
+construction (including `no-request`) uses `true` and records boolean
+`expected.result`; `instantiation-failed` uses `false` and omits the result.
+Legacy fixtures without these fields remain readable and byte-compatible.
 
 ### `body` encoding (self-describing)
 

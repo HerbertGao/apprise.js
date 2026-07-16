@@ -92,6 +92,8 @@ export interface FixtureCase {
     attachments?: AttachmentDescriptor[]
     /** Per-request canned responses replayed in order (multi-step plugins). */
     responses?: CannedResponse[]
+    /** New wire fixtures opt in to upstream notify() result parity. */
+    assertResult?: boolean
   }
   seeds?: {
     uid?: string
@@ -101,6 +103,8 @@ export interface FixtureCase {
     txn?: number
     /** matrix raw-token fixed uuid (see store.ts). */
     uuid?: string
+    /** DingTalk epoch-millisecond signing seed; schema validation is generic. */
+    timestampMs?: number
   }
   expected: {
     /** Single-request delivery (unchanged, backward-compatible). */
@@ -109,7 +113,9 @@ export interface FixtureCase {
     requests?: FixtureRequest[]
     /** Independent request-count oracle for `requests` (defends vs truncation). */
     expectedCount?: number
-    noRequest?: { reason: string }
+    noRequest?: { reason: 'instantiation-failed' | 'no-request' }
+    /** Upstream notify() result, present iff input.assertResult is true. */
+    result?: boolean
   }
 }
 
@@ -123,6 +129,8 @@ export type BodyMode = 'json' | 'form' | 'raw'
 
 export interface GoldenOptions {
   bodyMode: BodyMode
+  /** Compare Content-Type verbatim, including parameters such as charset. */
+  exactContentType?: boolean
   /**
    * Header keys (lower-cased) treated as transport defaults and NOT compared.
    * Defaults to the requests/fetch transport-default set. Note `accept` is a
@@ -144,12 +152,224 @@ const DEFAULT_IGNORE: ReadonlySet<string> = new Set([
 // --- helpers -----------------------------------------------------------------
 
 const PROJECT_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+const MAX_TIMESTAMP_MS = 2 ** 51 - 1
+const PLUGINS_CN = new Set([
+  'serverchan',
+  'dingtalk',
+  'wecombot',
+  'feishu',
+  'lark',
+  'wxpusher',
+  'pushdeer',
+])
+
+function validateCannedResponse(
+  response: CannedResponse,
+  caseName: string,
+  index: number,
+): void {
+  if (!response || typeof response !== 'object' || Array.isArray(response)) {
+    throw new Error(`case "${caseName}" responses[${index}] must be an object`)
+  }
+  const allowed = new Set(['status', 'headers', 'body'])
+  if (Object.keys(response).some((key) => !allowed.has(key))) {
+    throw new Error(`case "${caseName}" responses[${index}] has unknown fields`)
+  }
+  if (
+    response.status !== undefined &&
+    (!Number.isInteger(response.status) || !Number.isFinite(response.status))
+  ) {
+    throw new Error(
+      `case "${caseName}" responses[${index}].status must be integer`,
+    )
+  }
+  if (
+    response.headers !== undefined &&
+    (!response.headers ||
+      typeof response.headers !== 'object' ||
+      Array.isArray(response.headers) ||
+      Object.values(response.headers).some(
+        (value) => typeof value !== 'string',
+      ))
+  ) {
+    throw new Error(
+      `case "${caseName}" responses[${index}].headers must map strings to strings`,
+    )
+  }
+  if (response.body !== undefined && response.body !== null) {
+    const bodyKeys = Object.keys(response.body)
+    const bodyKey = bodyKeys[0] as 'text' | 'base64' | undefined
+    if (
+      bodyKeys.length !== 1 ||
+      bodyKey === undefined ||
+      !['text', 'base64'].includes(bodyKey) ||
+      typeof response.body[bodyKey] !== 'string'
+    ) {
+      throw new Error(
+        `case "${caseName}" responses[${index}].body must contain exactly one text/base64 string`,
+      )
+    }
+  }
+}
+
+type ValidatedExpected = (
+  | {
+      shape: 'request'
+      request: FixtureRequest
+    }
+  | {
+      shape: 'requests'
+      requests: FixtureRequest[]
+      expectedCount: number
+    }
+  | {
+      shape: 'noRequest'
+      reason: 'instantiation-failed' | 'no-request'
+    }
+) & {
+  assertResult: boolean | undefined
+  result: boolean | undefined
+}
+
+/** Validate the fixture's exclusive delivery oracle before executing it. */
+function validateExpectedShape(c: FixtureCase): ValidatedExpected {
+  const expected = c.expected
+  if (!expected || typeof expected !== 'object' || Array.isArray(expected)) {
+    throw new Error(`case "${c.name}" expected must be an object`)
+  }
+
+  const request = expected.request
+  const requests = expected.requests
+  const noRequest = expected.noRequest
+  const assertResult = c.input.assertResult
+  const result = expected.result
+  const shapes: ValidatedExpected['shape'][] = []
+  if (request !== undefined) shapes.push('request')
+  if (requests !== undefined) shapes.push('requests')
+  if (noRequest !== undefined) shapes.push('noRequest')
+  if (shapes.length !== 1) {
+    throw new Error(
+      `case "${c.name}" expected must contain exactly one of request, requests, or noRequest`,
+    )
+  }
+
+  const shape = shapes[0] as ValidatedExpected['shape']
+  if (shape !== 'requests' && 'expectedCount' in expected) {
+    throw new Error(
+      `case "${c.name}" expected.expectedCount is only valid with requests`,
+    )
+  }
+  if (shape === 'request') {
+    if (!request || typeof request !== 'object' || Array.isArray(request)) {
+      throw new Error(`case "${c.name}" expected.request must be an object`)
+    }
+    return { shape, request, assertResult, result }
+  } else if (shape === 'requests') {
+    if (!Array.isArray(requests)) {
+      throw new Error(
+        `case "${c.name}" expected.requests must contain at least two requests`,
+      )
+    }
+    const requestCount = requests.length
+    if (requestCount < 2) {
+      throw new Error(
+        `case "${c.name}" expected.requests must contain at least two requests`,
+      )
+    }
+    const validatedRequests: FixtureRequest[] = []
+    for (let index = 0; index < requestCount; index += 1) {
+      const member = Object.hasOwn(requests, index)
+        ? requests[index]
+        : undefined
+      if (!member || typeof member !== 'object' || Array.isArray(member)) {
+        throw new Error(
+          `case "${c.name}" expected.requests entries must be objects`,
+        )
+      }
+      validatedRequests.push(member)
+    }
+    const expectedCount = expected.expectedCount
+    if (expectedCount !== requestCount) {
+      throw new Error(
+        `case "${c.name}" expected.expectedCount must equal expected.requests.length`,
+      )
+    }
+    return {
+      shape,
+      requests: validatedRequests,
+      expectedCount,
+      assertResult,
+      result,
+    }
+  } else {
+    const reason = noRequest?.reason
+    if (reason !== 'instantiation-failed' && reason !== 'no-request') {
+      throw new Error(
+        `case "${c.name}" expected.noRequest.reason must be "instantiation-failed" or "no-request"`,
+      )
+    }
+    return { shape, reason, assertResult, result }
+  }
+}
+
+export function validateFixture(fixture: Fixture): Fixture {
+  for (const c of fixture.cases) {
+    const expected = validateExpectedShape(c)
+    const timestampMs = c.seeds?.timestampMs
+    if (
+      timestampMs !== undefined &&
+      (!Number.isSafeInteger(timestampMs) ||
+        timestampMs < 0 ||
+        timestampMs > MAX_TIMESTAMP_MS)
+    ) {
+      throw new Error(
+        `case "${c.name}" seeds.timestampMs must be an integer between 0 and ${MAX_TIMESTAMP_MS}`,
+      )
+    }
+    if (c.input.responses !== undefined && !Array.isArray(c.input.responses)) {
+      throw new Error(`case "${c.name}" input.responses must be an array`)
+    }
+    for (const [index, response] of (c.input.responses ?? []).entries()) {
+      validateCannedResponse(response, c.name, index)
+    }
+    const isInstantiationFailure =
+      expected.shape === 'noRequest' &&
+      expected.reason === 'instantiation-failed'
+    if (PLUGINS_CN.has(fixture.plugin)) {
+      if (typeof expected.assertResult !== 'boolean') {
+        throw new Error(`plugins-cn case "${c.name}" must declare assertResult`)
+      }
+      if (isInstantiationFailure && expected.assertResult !== false) {
+        throw new Error(
+          `instantiation-failed case "${c.name}" must set assertResult=false`,
+        )
+      }
+      if (!isInstantiationFailure && expected.assertResult !== true) {
+        throw new Error(
+          `constructed case "${c.name}" must set assertResult=true`,
+        )
+      }
+    }
+    if (
+      expected.assertResult === true &&
+      typeof expected.result !== 'boolean'
+    ) {
+      throw new Error(`case "${c.name}" must provide boolean expected.result`)
+    }
+    if (expected.assertResult !== true && expected.result !== undefined) {
+      throw new Error(
+        `case "${c.name}" must omit expected.result unless assertResult=true`,
+      )
+    }
+  }
+  return fixture
+}
 
 /** Load a fixture by a path relative to the subproject root. */
 export function loadFixture(relPath: string): Fixture {
-  return JSON.parse(
-    readFileSync(join(PROJECT_ROOT, relPath), 'utf8'),
-  ) as Fixture
+  return validateFixture(
+    JSON.parse(readFileSync(join(PROJECT_ROOT, relPath), 'utf8')) as Fixture,
+  )
 }
 
 function buildAttach(
@@ -190,22 +410,23 @@ interface DriveResult {
 /** Build a form-correct TransportResponse from a canned spec (default 200 `{}`). */
 function makeResponse(spec: CannedResponse | undefined): TransportResponse {
   const status = spec?.status ?? 200
-  let bodyText: string
+  let bodyBytes: Buffer
   if (spec === undefined) {
-    bodyText = '{}'
+    bodyBytes = Buffer.from('{}')
   } else if (spec.body == null) {
-    bodyText = ''
+    bodyBytes = Buffer.alloc(0)
   } else if (spec.body.base64 !== undefined) {
-    bodyText = Buffer.from(spec.body.base64, 'base64').toString()
+    bodyBytes = Buffer.from(spec.body.base64, 'base64')
   } else {
-    bodyText = spec.body.text ?? ''
+    bodyBytes = Buffer.from(spec.body.text ?? '')
   }
   return {
     ok: status >= 200 && status < 300,
     status,
     statusText: 'OK',
     headers: new Headers(spec?.headers ?? {}),
-    text: async () => bodyText,
+    text: async () => bodyBytes.toString(),
+    arrayBuffer: async () => Uint8Array.from(bodyBytes).buffer,
   }
 }
 
@@ -251,6 +472,11 @@ async function driveCase(c: FixtureCase): Promise<DriveResult> {
       } finally {
         setTransport(null)
       }
+    }
+    if (requests.length < canned.length) {
+      throw new Error(
+        `case "${c.name}" left response preset index ${requests.length} unconsumed`,
+      )
     }
     return { added, requests, result }
   } finally {
@@ -316,6 +542,7 @@ function compareHeaders(
   actual: Record<string, string> | undefined,
   expected: Record<string, string>,
   ignore: ReadonlySet<string>,
+  exactContentType: boolean,
 ): void {
   const ah = headerMap(actual)
   const eh = headerMap(expected)
@@ -325,7 +552,7 @@ function compareHeaders(
   for (const key of keys) {
     let a = ah.get(key)
     let e = eh.get(key)
-    if (key === 'content-type') {
+    if (key === 'content-type' && !exactContentType) {
       a = stripCharset(a)
       e = stripCharset(e)
     }
@@ -380,6 +607,7 @@ function compareRequest(
     actual.headers,
     expected.headers,
     opts.ignoreHeaders ?? DEFAULT_IGNORE,
+    opts.exactContentType ?? false,
   )
   compareBody(actual.body, expected.body, opts.bodyMode)
 }
@@ -389,32 +617,34 @@ export async function matchCase(
   c: FixtureCase,
   opts: GoldenOptions,
 ): Promise<void> {
-  const { added, requests } = await driveCase(c)
+  const expected = validateExpectedShape(c)
+  const { added, requests, result } = await driveCase(c)
 
-  if (c.expected.noRequest) {
-    if (c.expected.noRequest.reason === 'instantiation-failed') {
+  const assertNotifyResult = (): void => {
+    if (expected.assertResult === true) {
+      expect(result, 'notify result').toBe(expected.result)
+    }
+  }
+
+  if (expected.shape === 'noRequest') {
+    if (expected.reason === 'instantiation-failed') {
       expect(added, 'instantiation should have failed').toBe(false)
     } else {
       expect(added, 'instantiation should have succeeded').toBe(true)
     }
     expect(requests, 'no wire request expected').toHaveLength(0)
+    assertNotifyResult()
     return
   }
 
   // Multi-request form: an ordered sequence with an independent count oracle.
-  if (c.expected.requests) {
-    const expectedReqs = c.expected.requests
-    const count = c.expected.expectedCount
+  if (expected.shape === 'requests') {
+    const expectedReqs = expected.requests
+    const count = expected.expectedCount
     expect(added, 'instantiation should succeed').toBe(true)
-    expect(
-      count,
-      'a `requests` fixture MUST declare a matching `expectedCount`',
-    ).toBe(expectedReqs.length)
     // Independent count oracle: guards against a truncated sequence (a short
     // upstream response short-circuiting) passing by mutual agreement.
-    expect(requests, `expected ${count} wire requests`).toHaveLength(
-      count as number,
-    )
+    expect(requests, `expected ${count} wire requests`).toHaveLength(count)
     for (let i = 0; i < expectedReqs.length; i++) {
       compareRequest(
         requests[i] as TransportRequest,
@@ -422,16 +652,14 @@ export async function matchCase(
         opts,
       )
     }
+    assertNotifyResult()
     return
   }
 
-  const expected = c.expected.request
-  if (!expected) {
-    throw new Error(`case "${c.name}" has neither request nor noRequest`)
-  }
   expect(added, 'instantiation should succeed').toBe(true)
   expect(requests, 'exactly one wire request expected').toHaveLength(1)
-  compareRequest(requests[0] as TransportRequest, expected, opts)
+  compareRequest(requests[0] as TransportRequest, expected.request, opts)
+  assertNotifyResult()
 }
 
 /**

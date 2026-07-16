@@ -1,0 +1,212 @@
+{
+  "plugin": "dingtalk",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "default-text",
+      "input": {
+        "url": "dingtalk://abcdefgh",
+        "title": "Alert",
+        "body": "hello world",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://oapi.dingtalk.com/robot/send?access_token=abcdefgh",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "107"
+          },
+          "body": {
+            "text": "{\"msgtype\": \"text\", \"at\": {\"atMobiles\": [], \"isAtAll\": false}, \"text\": {\"content\": \"Alert\\r\\nhello world\"}}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "markdown",
+      "input": {
+        "url": "dingtalk://abcdefgh?format=markdown",
+        "title": "Release",
+        "body": "hello **world**",
+        "type": "success",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://oapi.dingtalk.com/robot/send?access_token=abcdefgh",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "123"
+          },
+          "body": {
+            "text": "{\"msgtype\": \"text\", \"at\": {\"atMobiles\": [], \"isAtAll\": false}, \"markdown\": {\"title\": \"Release\", \"text\": \"hello **world**\"}}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "targets-path-and-query",
+      "input": {
+        "url": "dingtalk://abcdefgh/+86%20138-0013-8000/123/?to=13900139000,invalid",
+        "title": "",
+        "body": "targeted",
+        "type": "warning",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://oapi.dingtalk.com/robot/send?access_token=abcdefgh",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "123"
+          },
+          "body": {
+            "text": "{\"msgtype\": \"text\", \"at\": {\"atMobiles\": [\"13800138000\", \"13900139000\"], \"isAtAll\": false}, \"text\": {\"content\": \"targeted\"}}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "signed",
+      "input": {
+        "url": "dingtalk://secret123@abcdefgh/13800138000/",
+        "title": "Signed",
+        "body": "deterministic",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null,
+        "timestampMs": 1700000000123
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://oapi.dingtalk.com/robot/send?access_token=abcdefgh&timestamp=1700000000123&sign=fE9IZV%252FSz5d9kQkZwtMBZ5qfB0cEON9rJ90RpBftOa4%253D",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "123"
+          },
+          "body": {
+            "text": "{\"msgtype\": \"text\", \"at\": {\"atMobiles\": [\"13800138000\"], \"isAtAll\": false}, \"text\": {\"content\": \"Signed\\r\\ndeterministic\"}}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "signed-timestamp-upper-bound",
+      "input": {
+        "url": "dingtalk://secret123@abcdefgh/",
+        "title": "Boundary",
+        "body": "maximum safe seed",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null,
+        "timestampMs": 2251799813685247
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://oapi.dingtalk.com/robot/send?access_token=abcdefgh&timestamp=2251799813685247&sign=t0uawzmOa84NOlY42CKm2OhF1OghrZPhzN%252BvwC9cUZ0%253D",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "116"
+          },
+          "body": {
+            "text": "{\"msgtype\": \"text\", \"at\": {\"atMobiles\": [], \"isAtAll\": false}, \"text\": {\"content\": \"Boundary\\r\\nmaximum safe seed\"}}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "http-failure",
+      "input": {
+        "url": "dingtalk://abcdefgh",
+        "title": "",
+        "body": "failure",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://oapi.dingtalk.com/robot/send?access_token=abcdefgh",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "94"
+          },
+          "body": {
+            "text": "{\"msgtype\": \"text\", \"at\": {\"atMobiles\": [], \"isAtAll\": false}, \"text\": {\"content\": \"failure\"}}"
+          }
+        },
+        "result": false
+      }
+    }
+  ]
+}

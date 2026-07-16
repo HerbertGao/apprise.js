@@ -33,14 +33,19 @@ export type PluginConstructor = new (
 // Scope is the current realm — worker_threads / vm contexts each hold their own
 // symbol registry and must import plugins themselves.
 const REGISTRY_KEY = Symbol.for('apprise.js/registry@0')
+const REGISTRATION_OBSERVER_KEY = Symbol.for(
+  'apprise.js/test-registration-observer@0',
+)
 
 const globalRegistry = globalThis as unknown as Record<
   symbol,
-  Map<string, PluginConstructor> | undefined
+  Map<string, PluginConstructor> | ((scheme: string) => void) | undefined
 >
 
 const registry: Map<string, PluginConstructor> =
-  globalRegistry[REGISTRY_KEY] ?? new Map<string, PluginConstructor>()
+  (globalRegistry[REGISTRY_KEY] as
+    | Map<string, PluginConstructor>
+    | undefined) ?? new Map<string, PluginConstructor>()
 globalRegistry[REGISTRY_KEY] = registry
 
 /** Register a plugin constructor under one or more (lower-cased) schemes. */
@@ -50,7 +55,12 @@ export function registerPlugin(
 ): void {
   const list = typeof schemes === 'string' ? [schemes] : schemes
   for (const scheme of list) {
-    registry.set(scheme.toLowerCase(), ctor)
+    const normalized = scheme.toLowerCase()
+    const observer = globalRegistry[REGISTRATION_OBSERVER_KEY]
+    try {
+      if (typeof observer === 'function') observer(normalized)
+    } catch {}
+    registry.set(normalized, ctor)
   }
 }
 

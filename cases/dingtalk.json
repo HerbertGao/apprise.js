@@ -1,0 +1,53 @@
+{
+  "plugin": "dingtalk",
+  "cases": [
+    {
+      "name": "default-text",
+      "url": "dingtalk://abcdefgh",
+      "title": "Alert",
+      "body": "hello world",
+      "type": "info",
+      "assertResult": true
+    },
+    {
+      "name": "markdown",
+      "url": "dingtalk://abcdefgh?format=markdown",
+      "title": "Release",
+      "body": "hello **world**",
+      "type": "success",
+      "assertResult": true
+    },
+    {
+      "name": "targets-path-and-query",
+      "url": "dingtalk://abcdefgh/+86%20138-0013-8000/123/?to=13900139000,invalid",
+      "title": "",
+      "body": "targeted",
+      "type": "warning",
+      "assertResult": true
+    },
+    {
+      "name": "signed",
+      "url": "dingtalk://secret123@abcdefgh/13800138000/",
+      "title": "Signed",
+      "body": "deterministic",
+      "assertResult": true,
+      "seeds": { "timestampMs": 1700000000123 }
+    },
+    {
+      "name": "signed-timestamp-upper-bound",
+      "url": "dingtalk://secret123@abcdefgh/",
+      "title": "Boundary",
+      "body": "maximum safe seed",
+      "assertResult": true,
+      "seeds": { "timestampMs": 2251799813685247 }
+    },
+    {
+      "name": "http-failure",
+      "url": "dingtalk://abcdefgh",
+      "title": "",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

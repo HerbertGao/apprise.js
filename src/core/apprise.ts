@@ -171,6 +171,14 @@ export class Apprise {
   }
 
   /**
+   * Unknown/native-rejected URL shapes have no trustworthy credential schema,
+   * so secure logging must mask the full URL remainder instead of guessing.
+   */
+  private loggableRejectedUrl(url: string): string {
+    return this.asset.secureLogging ? cwe312UrlFailClosed(url) : url
+  }
+
+  /**
    * Resolve an apprise (or native) URL to a plugin instance, or `null` on
    * failure. Mirrors upstream `url_to_dict` + `instantiate`: scheme-based
    * lookup first, then a scan of plugins that implement `parseNativeUrl`.
@@ -224,7 +232,7 @@ export class Apprise {
         this.asset.diagnostic({
           level: 'error',
           kind: 'unregistered-scheme',
-          message: `Unparseable URL ${this.loggableUrl(url)}`,
+          message: `Unparseable URL ${this.loggableRejectedUrl(url)}`,
         })
         return null
       }
@@ -250,7 +258,7 @@ export class Apprise {
       this.asset.diagnostic({
         level: 'error',
         kind: 'plugin-error',
-        message: `Could not load ${ctorName(ctor)} URL: ${this.loggableUrl(url)}`,
+        message: `Could not load ${ctorName(ctor)} URL: ${this.loggableRejectedUrl(url)}`,
       })
       return null
     }
