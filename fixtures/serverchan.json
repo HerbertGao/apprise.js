@@ -1,0 +1,151 @@
+{
+  "plugin": "serverchan",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "default",
+      "input": {
+        "url": "schan://12345678",
+        "title": "Alert",
+        "body": "hello world",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://sctapi.ftqq.com/12345678.send",
+          "headers": {
+            "User-Agent": "python-requests/2.34.2",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "28",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "title=Alert&desp=hello+world"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "hyphen-prefix-truncation",
+      "input": {
+        "url": "schan://abc-def",
+        "title": "Prefix",
+        "body": "hyphen token",
+        "type": "warning",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://sctapi.ftqq.com/abc.send",
+          "headers": {
+            "User-Agent": "python-requests/2.34.2",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "30",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "title=Prefix&desp=hyphen+token"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "hyphen-with-trailing-slash-invalid",
+      "input": {
+        "url": "schan://abc-def/",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "invalid-token",
+      "input": {
+        "url": "schan://a_bd_/",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "http-failure",
+      "input": {
+        "url": "schan://abcdefgh",
+        "title": "Alert",
+        "body": "failure",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://sctapi.ftqq.com/abcdefgh.send",
+          "headers": {
+            "User-Agent": "python-requests/2.34.2",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "24",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          "body": {
+            "text": "title=Alert&desp=failure"
+          }
+        },
+        "result": false
+      }
+    }
+  ]
+}

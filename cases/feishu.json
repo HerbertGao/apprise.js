@@ -1,0 +1,47 @@
+{
+  "plugin": "feishu",
+  "cases": [
+    {
+      "name": "host-token-title-merge",
+      "url": "feishu://abc123",
+      "title": "Alert",
+      "body": "hello",
+      "assertResult": true
+    },
+    {
+      "name": "query-token",
+      "url": "feishu://?token=query_token-1",
+      "title": "",
+      "body": "from query",
+      "assertResult": true
+    },
+    {
+      "name": "title-boundary-plus-one",
+      "url": "feishu://abc123",
+      "title": "x",
+      "body": "",
+      "assertResult": true
+    },
+    {
+      "name": "body-boundary-19985",
+      "url": "feishu://abc123?format=text&overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "x", "count": 19985 },
+      "assertResult": true
+    },
+    {
+      "name": "cross-body-19986-truncate",
+      "url": "feishu://abc123?format=text&overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "x", "count": 19986 },
+      "assertResult": true
+    },
+    {
+      "name": "http-failure",
+      "url": "feishu://abc123",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

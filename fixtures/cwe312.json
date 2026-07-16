@@ -41,6 +41,34 @@
     {
       "url": "slack://user:token@workspace",
       "expected": "slack://user:t...n@workspace"
+    },
+    {
+      "url": "schan://ServerChanSecret123",
+      "expected": "schan://S...3"
+    },
+    {
+      "url": "dingtalk://DingSecret123@DingToken123/",
+      "expected": "dingtalk://D...3@D...3/"
+    },
+    {
+      "url": "wecombot://WeComKey_123",
+      "expected": "wecombot://W...3"
+    },
+    {
+      "url": "feishu://FeishuToken_123",
+      "expected": "feishu://F...3"
+    },
+    {
+      "url": "lark://Lark-Token-123",
+      "expected": "lark://L...3"
+    },
+    {
+      "url": "wxpusher://AT_WxPusherSecret123/UID_user/",
+      "expected": "wxpusher://A...3/U...r/"
+    },
+    {
+      "url": "pushdeer://PushDeerSecret123",
+      "expected": "pushdeer://P...3"
     }
   ]
 }

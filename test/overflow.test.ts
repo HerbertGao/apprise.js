@@ -59,6 +59,16 @@ describe('overflow TRUNCATE', () => {
     await plugin.notify({ body: 'short', overflow: OverflowMode.TRUNCATE })
     expect(plugin.sent).toEqual([{ body: 'short', title: '' }])
   })
+
+  test('truncates at a Unicode code-point boundary without an unpaired surrogate', async () => {
+    const plugin = make()
+    await plugin.notify({
+      body: `${'a'.repeat(9)}😀x`,
+      overflow: OverflowMode.TRUNCATE,
+    })
+    expect(plugin.sent).toEqual([{ body: `${'a'.repeat(9)}😀`, title: '' }])
+    expect(Array.from(plugin.sent[0]?.body ?? '')).toHaveLength(10)
+  })
 })
 
 describe('overflow SPLIT (smart_split natural boundaries)', () => {
@@ -115,6 +125,21 @@ describe('overflow SPLIT (smart_split natural boundaries)', () => {
     expect(plugin.sent).toEqual([
       { body: 'aaaa.', title: '' },
       { body: 'bbbbbbbbb', title: '' },
+    ])
+  })
+
+  test('hard-splits by Unicode code-point budget without corruption', async () => {
+    const plugin = make()
+    await plugin.notify({
+      body: '😀'.repeat(12),
+      overflow: OverflowMode.SPLIT,
+    })
+    expect(plugin.sent).toEqual([
+      { body: '😀'.repeat(10), title: '' },
+      { body: '😀'.repeat(2), title: '' },
+    ])
+    expect(plugin.sent.map(({ body }) => Array.from(body).length)).toEqual([
+      10, 2,
     ])
   })
 })

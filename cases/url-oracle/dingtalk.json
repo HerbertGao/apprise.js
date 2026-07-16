@@ -1,0 +1,37 @@
+{
+  "plugin": "dingtalk",
+  "cases": [
+    {
+      "name": "oracle-token-alias",
+      "url": "dingtalk://ignored?token=abcdefgh"
+    },
+    {
+      "name": "oracle-secret-alias",
+      "url": "dingtalk://abcdefgh?secret=secret123"
+    },
+    {
+      "name": "oracle-to-alias",
+      "url": "dingtalk://abcdefgh?to=13800138000"
+    },
+    {
+      "name": "oracle-format",
+      "url": "dingtalk://abcdefgh?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "dingtalk://abcdefgh?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "dingtalk://abcdefgh?verify=no"
+    },
+    {
+      "name": "oracle-rto-discarded",
+      "url": "dingtalk://abcdefgh?rto=9"
+    },
+    {
+      "name": "oracle-cto-discarded",
+      "url": "dingtalk://abcdefgh?cto=7"
+    }
+  ]
+}

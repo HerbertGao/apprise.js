@@ -1,0 +1,25 @@
+{
+  "plugin": "pushdeer",
+  "cases": [
+    {
+      "name": "oracle-format",
+      "url": "pushdeer://pushKey?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "pushdeer://pushKey?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "pushdeer://pushKey?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "pushdeer://pushKey?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "pushdeer://pushKey?cto=7"
+    }
+  ]
+}

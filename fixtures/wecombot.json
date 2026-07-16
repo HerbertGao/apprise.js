@@ -1,0 +1,257 @@
+{
+  "plugin": "wecombot",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "scheme",
+      "input": {
+        "url": "wecombot://botkey",
+        "title": "Alert",
+        "body": "你好 world",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=botkey",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "71"
+          },
+          "body": {
+            "base64": "eyJtc2d0eXBlIjogInRleHQiLCAidGV4dCI6IHsiY29udGVudCI6ICJBbGVydFxyXG5cdTRmNjBcdTU5N2Qgd29ybGQifX0="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "query-key",
+      "input": {
+        "url": "wecombot://?key=query_key-1",
+        "title": "",
+        "body": "from query",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=query_key-1",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "54"
+          },
+          "body": {
+            "base64": "eyJtc2d0eXBlIjogInRleHQiLCAidGV4dCI6IHsiY29udGVudCI6ICJmcm9tIHF1ZXJ5In19"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "native-url",
+      "input": {
+        "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=BOTKEY",
+        "title": "Native",
+        "body": "webhook",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=BOTKEY",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "61"
+          },
+          "body": {
+            "base64": "eyJtc2d0eXBlIjogInRleHQiLCAidGV4dCI6IHsiY29udGVudCI6ICJOYXRpdmVcclxud2ViaG9vayJ9fQ=="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "native-trailing-slash-and-params",
+      "input": {
+        "url": "http://qyapi.weixin.qq.com/cgi-bin/webhook/send/?key=BOTKEY/&data=123",
+        "title": "",
+        "body": "native options",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=BOTKEY",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "58"
+          },
+          "body": {
+            "base64": "eyJtc2d0eXBlIjogInRleHQiLCAidGV4dCI6IHsiY29udGVudCI6ICJuYXRpdmUgb3B0aW9ucyJ9fQ=="
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "native-lookalike-host",
+      "input": {
+        "url": "https://qyapi.weixin.qq.com.evil/cgi-bin/webhook/send?key=BOTKEY",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "native-wrong-path",
+      "input": {
+        "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/wrong?key=BOTKEY",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "native-missing-key",
+      "input": {
+        "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "native-empty-key",
+      "input": {
+        "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "http-failure",
+      "input": {
+        "url": "wecombot://botkey",
+        "title": "",
+        "body": "failure",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=botkey",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "51"
+          },
+          "body": {
+            "base64": "eyJtc2d0eXBlIjogInRleHQiLCAidGV4dCI6IHsiY29udGVudCI6ICJmYWlsdXJlIn19"
+          }
+        },
+        "result": false
+      }
+    }
+  ]
+}

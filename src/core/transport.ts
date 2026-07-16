@@ -35,6 +35,8 @@ export interface TransportResponse {
   readonly statusText: string
   readonly headers: Headers
   text(): Promise<string>
+  /** Exact response bytes when the transport can expose them (native fetch can). */
+  arrayBuffer?(): Promise<ArrayBuffer>
 }
 
 /** An injectable transport (default wraps the global `fetch`). */

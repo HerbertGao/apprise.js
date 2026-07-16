@@ -136,6 +136,76 @@
         "default": "./dist/plugins/matrix.cjs"
       }
     },
+    "./plugins/serverchan": {
+      "import": {
+        "types": "./dist/plugins/serverchan.d.ts",
+        "default": "./dist/plugins/serverchan.js"
+      },
+      "require": {
+        "types": "./dist/plugins/serverchan.d.cts",
+        "default": "./dist/plugins/serverchan.cjs"
+      }
+    },
+    "./plugins/dingtalk": {
+      "import": {
+        "types": "./dist/plugins/dingtalk.d.ts",
+        "default": "./dist/plugins/dingtalk.js"
+      },
+      "require": {
+        "types": "./dist/plugins/dingtalk.d.cts",
+        "default": "./dist/plugins/dingtalk.cjs"
+      }
+    },
+    "./plugins/wecombot": {
+      "import": {
+        "types": "./dist/plugins/wecombot.d.ts",
+        "default": "./dist/plugins/wecombot.js"
+      },
+      "require": {
+        "types": "./dist/plugins/wecombot.d.cts",
+        "default": "./dist/plugins/wecombot.cjs"
+      }
+    },
+    "./plugins/feishu": {
+      "import": {
+        "types": "./dist/plugins/feishu.d.ts",
+        "default": "./dist/plugins/feishu.js"
+      },
+      "require": {
+        "types": "./dist/plugins/feishu.d.cts",
+        "default": "./dist/plugins/feishu.cjs"
+      }
+    },
+    "./plugins/lark": {
+      "import": {
+        "types": "./dist/plugins/lark.d.ts",
+        "default": "./dist/plugins/lark.js"
+      },
+      "require": {
+        "types": "./dist/plugins/lark.d.cts",
+        "default": "./dist/plugins/lark.cjs"
+      }
+    },
+    "./plugins/wxpusher": {
+      "import": {
+        "types": "./dist/plugins/wxpusher.d.ts",
+        "default": "./dist/plugins/wxpusher.js"
+      },
+      "require": {
+        "types": "./dist/plugins/wxpusher.d.cts",
+        "default": "./dist/plugins/wxpusher.cjs"
+      }
+    },
+    "./plugins/pushdeer": {
+      "import": {
+        "types": "./dist/plugins/pushdeer.d.ts",
+        "default": "./dist/plugins/pushdeer.js"
+      },
+      "require": {
+        "types": "./dist/plugins/pushdeer.d.cts",
+        "default": "./dist/plugins/pushdeer.cjs"
+      }
+    },
     "./plugins/all": {
       "import": {
         "types": "./dist/plugins/all.d.ts",

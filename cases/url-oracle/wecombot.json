@@ -1,0 +1,29 @@
+{
+  "plugin": "wecombot",
+  "cases": [
+    {
+      "name": "oracle-key-alias",
+      "url": "wecombot://ignored?key=botkey"
+    },
+    {
+      "name": "oracle-format",
+      "url": "wecombot://botkey?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "wecombot://botkey?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "wecombot://botkey?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "wecombot://botkey?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "wecombot://botkey?cto=7"
+    }
+  ]
+}

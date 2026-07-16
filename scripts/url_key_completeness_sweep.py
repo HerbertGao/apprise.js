@@ -61,6 +61,13 @@ BASES = {
     "custom-json": "json://localhost/",
     "custom-form": "form://localhost/",
     "custom-xml": "xml://localhost/",
+    "serverchan": "schan://abcdefgh",
+    "dingtalk": "dingtalk://abcdefgh",
+    "wecombot": "wecombot://botkey",
+    "feishu": "feishu://abc123",
+    "lark": "lark://abcd-1234",
+    "wxpusher": "wxpusher://AT_appid/UID_alice",
+    "pushdeer": "pushdeer://pushKey",
 }
 
 # Known-safe residue (each verified on both sides): discord/slack `:{k}` %3A boundary;

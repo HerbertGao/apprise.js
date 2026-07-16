@@ -38,7 +38,7 @@ Importing the `apprise.js` barrel registers the four generic webhook meta-plugin
 | `xml://` / `xmls://`         | `NotifyXML`        | XML (SOAP) body               |
 | `apprise://` / `apprises://` | `NotifyAppriseAPI` | Apprise API server            |
 
-The six instant-messaging plugins are **not** in the barrel — import each from its subpath (or the `all` bucket) so bundlers can tree-shake the rest away:
+Service plugins are **not** in the barrel — import each from its subpath (or the `all` bucket) so bundlers can tree-shake the rest away:
 
 | Scheme                   | Plugin             | Subpath                        | Sends                                          |
 | ------------------------ | ------------------ | ------------------------------ | ---------------------------------------------- |
@@ -48,6 +48,13 @@ The six instant-messaging plugins are **not** in the barrel — import each from
 | `tgram://`               | `NotifyTelegram`   | `apprise.js/plugins/telegram`  | Telegram Bot API (`sendMessage` + media)       |
 | `rocket://` / `rockets://` | `NotifyRocketChat` | `apprise.js/plugins/rocketchat` | Rocket.Chat (webhook / token / basic login)   |
 | `matrix://` / `matrixs://` | `NotifyMatrix`     | `apprise.js/plugins/matrix`    | Matrix (t2bot webhook or direct room message)  |
+| `schan://`               | `NotifyServerChan` | `apprise.js/plugins/serverchan` | ServerChan webhook                             |
+| `dingtalk://`            | `NotifyDingTalk`   | `apprise.js/plugins/dingtalk`   | DingTalk custom robot                          |
+| `wecombot://`            | `NotifyWeComBot`   | `apprise.js/plugins/wecombot`   | WeCom group bot                                |
+| `feishu://`              | `NotifyFeishu`     | `apprise.js/plugins/feishu`     | Feishu custom bot                              |
+| `lark://`                | `NotifyLark`       | `apprise.js/plugins/lark`       | Lark custom bot                                |
+| `wxpusher://`            | `NotifyWxPusher`   | `apprise.js/plugins/wxpusher`   | WxPusher users/topics                          |
+| `pushdeer://` / `pushdeers://` | `NotifyPushDeer` | `apprise.js/plugins/pushdeer` | PushDeer cloud or self-hosted API             |
 
 To keep only what you use (tree-shakeable), import a single plugin — or the `all` bucket — from a subpath:
 
@@ -56,13 +63,31 @@ import { Apprise } from 'apprise.js'
 import 'apprise.js/plugins/custom-json' // registers only json:// + jsons://
 import 'apprise.js/plugins/discord'     // registers only discord://
 import 'apprise.js/plugins/telegram'    // registers only tgram://
+import 'apprise.js/plugins/feishu'      // registers only feishu://
 // or: import 'apprise.js/plugins/all'  // registers every scheme above
 
 const apprise = new Apprise()
 apprise.add('discord://webhook_id/webhook_token')
 apprise.add('tgram://bot_token/12345')
+apprise.add('feishu://bot_token')
 const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 ```
+
+Minimal URL shapes for the China-oriented plugins are:
+
+```text
+schan://token
+dingtalk://token/                         # or secret@token/13800138000
+wecombot://webhook_key
+feishu://bot_token
+lark://bot-token
+wxpusher://AT_app_token/UID_target/123
+pushdeers://pushkey                       # cloud; host/pushkey for self-hosting
+```
+
+These URLs contain live credentials. Keep them in a secret manager or environment variable, never source control, logs, screenshots, fixtures, or issue reports. `url(true)` and secure diagnostics mask credentials for routine troubleshooting, but masking is defense-in-depth rather than permission to publish a URL.
+
+For an optional pre-release live smoke, set local-only environment variables such as `TELEGRAM_APPRISE_URL`, `FEISHU_APPRISE_URL`, or `LARK_APPRISE_URL`, import the matching plugin, and send a clearly labeled test message to a disposable/private target. The automated suite never reads these variables and never contacts real notification services.
 
 Runtime handlers can also be registered without a plugin class via `Apprise.register(scheme, handler)`.
 

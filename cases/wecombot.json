@@ -1,0 +1,64 @@
+{
+  "plugin": "wecombot",
+  "cases": [
+    {
+      "name": "scheme",
+      "url": "wecombot://botkey",
+      "title": "Alert",
+      "body": "你好 world",
+      "assertResult": true
+    },
+    {
+      "name": "query-key",
+      "url": "wecombot://?key=query_key-1",
+      "title": "",
+      "body": "from query",
+      "assertResult": true
+    },
+    {
+      "name": "native-url",
+      "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=BOTKEY",
+      "title": "Native",
+      "body": "webhook",
+      "assertResult": true
+    },
+    {
+      "name": "native-trailing-slash-and-params",
+      "url": "http://qyapi.weixin.qq.com/cgi-bin/webhook/send/?key=BOTKEY/&data=123",
+      "title": "",
+      "body": "native options",
+      "assertResult": true
+    },
+    {
+      "name": "native-lookalike-host",
+      "url": "https://qyapi.weixin.qq.com.evil/cgi-bin/webhook/send?key=BOTKEY",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "native-wrong-path",
+      "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/wrong?key=BOTKEY",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "native-missing-key",
+      "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "native-empty-key",
+      "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "http-failure",
+      "url": "wecombot://botkey",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

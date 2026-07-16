@@ -142,8 +142,82 @@ if (failed.length > 0) {
   process.exit(1)
 }
 
+// Registration-call observer checks. The observer and registry live only under
+// internal Symbol.for keys; neither is exported from the package API.
+const OBSERVER = 'apprise.js/test-registration-observer@0'
+const REGISTRY = 'apprise.js/registry@0'
+const ENTRY_SCHEMES = [
+  ['custom-json', ['json', 'jsons']],
+  ['custom-form', ['form', 'forms']],
+  ['custom-xml', ['xml', 'xmls']],
+  ['apprise-api', ['apprise', 'apprises']],
+  ['mattermost', ['mmost', 'mmosts']],
+  ['discord', ['discord']],
+  ['slack', ['slack']],
+  ['telegram', ['tgram']],
+  ['rocketchat', ['rocket', 'rockets']],
+  ['matrix', ['matrix', 'matrixs']],
+  ['serverchan', ['schan']],
+  ['dingtalk', ['dingtalk']],
+  ['wecombot', ['wecombot']],
+  ['feishu', ['feishu']],
+  ['lark', ['lark']],
+  ['wxpusher', ['wxpusher']],
+  ['pushdeer', ['pushdeer', 'pushdeers']],
+]
+const ALL_SCHEMES = ENTRY_SCHEMES.flatMap(([, schemes]) => schemes)
+
+function runModuleProbe(source) {
+  return execFileSync(process.execPath, ['--input-type=module', '-e', source], {
+    cwd: PKG,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim()
+}
+
+const calibration = runModuleProbe(`
+  const calls = []
+  globalThis[Symbol.for(${JSON.stringify(OBSERVER)})] = (scheme) => calls.push(scheme)
+  const { Apprise } = await import('./dist/index.js')
+  const registry = globalThis[Symbol.for(${JSON.stringify(REGISTRY)})]
+  const before = registry.size
+  Apprise.register('ObserverStub', () => true)
+  Apprise.register('observerstub', () => true)
+  const count = calls.filter((scheme) => scheme === 'observerstub').length
+  const okay = count === 2 && registry.size === before + 1 && registry.has('observerstub')
+  process.stdout.write(okay ? 'OK' : JSON.stringify({ calls, before, size: registry.size }))
+`)
+if (calibration !== 'OK') {
+  console.error(`✗ registration observer calibration failed: ${calibration}`)
+  process.exit(1)
+}
+
+for (const [entry, schemes] of [...ENTRY_SCHEMES, ['all', ALL_SCHEMES]]) {
+  const output = runModuleProbe(`
+    const calls = []
+    const observerKey = Symbol.for(${JSON.stringify(OBSERVER)})
+    const registryKey = Symbol.for(${JSON.stringify(REGISTRY)})
+    if (globalThis[registryKey] !== undefined || calls.length !== 0) process.exit(20)
+    globalThis[observerKey] = (scheme) => calls.push(scheme)
+    await import('./dist/plugins/${entry}.js')
+    const registry = globalThis[registryKey]
+    const expected = ${JSON.stringify(schemes)}
+    const actual = [...registry.keys()].sort()
+    const counts = Object.fromEntries(expected.map((scheme) => [scheme, calls.filter((x) => x === scheme).length]))
+    const okay = JSON.stringify(actual) === JSON.stringify([...expected].sort()) &&
+      expected.every((scheme) => counts[scheme] === 1) &&
+      !registry.has('observerstub') && !calls.includes('observerstub')
+    process.stdout.write(okay ? 'OK' : JSON.stringify({ actual, expected, calls, counts }))
+  `)
+  if (output !== 'OK') {
+    console.error(`✗ isolated registration failed for ${entry}: ${output}`)
+    process.exit(1)
+  }
+}
+
 console.log(
   `✓ registry is a single process-wide table ` +
     `(${PROBES.length} ESM/CJS load combinations resolve; ` +
-    `CJS-loaded plugins deliver over a stub transport)`,
+    `CJS-loaded plugins deliver over a stub transport; ` +
+    `${ENTRY_SCHEMES.length} isolated entries + plugins/all register once)`,
 )

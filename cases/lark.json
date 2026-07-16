@@ -1,0 +1,92 @@
+{
+  "plugin": "lark",
+  "cases": [
+    {
+      "name": "host-token-title-newline",
+      "url": "lark://abcd-1234",
+      "title": "Alert",
+      "body": "hello",
+      "assertResult": true
+    },
+    {
+      "name": "query-token",
+      "url": "lark://?token=query-token-1",
+      "title": "",
+      "body": "from query",
+      "assertResult": true
+    },
+    {
+      "name": "native-url",
+      "url": "https://open.larksuite.com/open-apis/bot/v2/hook/abcd-1234",
+      "title": "Native",
+      "body": "webhook",
+      "assertResult": true
+    },
+    {
+      "name": "native-lookalike-host",
+      "url": "https://open.larksuite.com.evil/open-apis/bot/v2/hook/abcd-1234",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "native-wrong-path",
+      "url": "https://open.larksuite.com/open-apis/bot/v2/wrong/abcd-1234",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "native-http-rejected",
+      "url": "http://open.larksuite.com/open-apis/bot/v2/hook/abcd-1234",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "native-missing-token",
+      "url": "https://open.larksuite.com/open-apis/bot/v2/hook/",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "title-boundary-250",
+      "url": "lark://abcd-1234?format=text&overflow=truncate",
+      "title": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+      "body": "body",
+      "assertResult": true
+    },
+    {
+      "name": "title-overflow-251",
+      "url": "lark://abcd-1234?format=text&overflow=truncate",
+      "title": "ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+      "body": "body",
+      "assertResult": true
+    },
+    {
+      "name": "body-boundary-32768",
+      "url": "lark://abcd-1234?format=text&overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "x", "count": 32768 },
+      "assertResult": true
+    },
+    {
+      "name": "body-overflow-32769",
+      "url": "lark://abcd-1234?format=text&overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "x", "count": 32769 },
+      "assertResult": true
+    },
+    {
+      "name": "cross-body-19986-retained",
+      "url": "lark://abcd-1234?format=text&overflow=truncate",
+      "title": "",
+      "body_gen": { "char": "x", "count": 19986 },
+      "assertResult": true
+    },
+    {
+      "name": "http-failure",
+      "url": "lark://abcd-1234",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

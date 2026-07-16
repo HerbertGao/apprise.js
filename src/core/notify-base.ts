@@ -62,24 +62,24 @@ const HTML_ENTITY_LOOKBACK = 16
 const HTML_ENTITY_LOOKAHEAD = 16
 
 /** `str.rfind(ch, start, end)` (returns absolute index or -1). */
-function rfind(text: string, ch: string, start: number, end: number): number {
+function rfind(text: string[], ch: string, start: number, end: number): number {
   const idx = text.slice(start, end).lastIndexOf(ch)
   return idx === -1 ? -1 : idx + start
 }
 
 /** `str.find(ch, start, end)` (returns absolute index or -1). */
-function find(text: string, ch: string, start: number, end: number): number {
+function find(text: string[], ch: string, start: number, end: number): number {
   const idx = text.slice(start, end).indexOf(ch)
   return idx === -1 ? -1 : idx + start
 }
 
-function lastPunctEnd(text: string, start: number, end: number): number {
-  const seg = text.slice(start, end)
+function lastPunctEnd(text: string[], start: number, end: number): number {
+  const seg = text.slice(start, end).join('')
   const re = new RegExp(PUNCT_SPLIT_RE.source, 'g')
   let last = -1
   let m: RegExpExecArray | null = re.exec(seg)
   while (m !== null) {
-    last = start + m.index + m[0].length
+    last = start + Array.from(seg.slice(0, m.index + m[0].length)).length
     m = re.exec(seg)
   }
   return last
@@ -87,7 +87,7 @@ function lastPunctEnd(text: string, start: number, end: number): number {
 
 /** Avoid splitting inside a short HTML entity (upstream `html_adjust`). */
 function htmlAdjust(
-  text: string,
+  text: string[],
   windowStart: number,
   splitAt: number,
 ): number {
@@ -114,7 +114,7 @@ function htmlAdjust(
 
 /** Avoid splitting a Markdown/chat link construct (upstream `markdown_adjust`). */
 function markdownAdjust(
-  text: string,
+  text: string[],
   windowStart: number,
   splitAt: number,
 ): number {
@@ -129,11 +129,7 @@ function markdownAdjust(
   let linkStart = rfind(text, '[', windowStart, splitAt)
   if (linkStart === -1) {
     const bang = rfind(text, '!', windowStart, splitAt)
-    if (
-      bang !== -1 &&
-      bang + 1 < text.length &&
-      text.charAt(bang + 1) === '['
-    ) {
+    if (bang !== -1 && bang + 1 < text.length && text[bang + 1] === '[') {
       linkStart = bang
     }
   }
@@ -175,12 +171,13 @@ function smartSplit(
 
   const result: string[] = []
   let start = 0
-  const length = text.length
+  const codePoints = Array.from(text)
+  const length = codePoints.length
 
   while (start < length) {
     const remaining = length - start
     if (remaining <= limit) {
-      result.push(text.slice(start))
+      result.push(codePoints.slice(start).join(''))
       break
     }
 
@@ -188,20 +185,20 @@ function smartSplit(
 
     // Priority 1: newline
     const lastNl = Math.max(
-      rfind(text, '\n', start, windowEnd),
-      rfind(text, '\r', start, windowEnd),
+      rfind(codePoints, '\n', start, windowEnd),
+      rfind(codePoints, '\r', start, windowEnd),
     )
     const splitNl = lastNl !== -1 ? lastNl + 1 : -1
 
     // Priority 2: space / tab
     const lastSpaceTab = Math.max(
-      rfind(text, ' ', start, windowEnd),
-      rfind(text, '\t', start, windowEnd),
+      rfind(codePoints, ' ', start, windowEnd),
+      rfind(codePoints, '\t', start, windowEnd),
     )
     const splitSpaceTab = lastSpaceTab !== -1 ? lastSpaceTab + 1 : -1
 
     // Priority 3: punctuation followed by whitespace
-    const splitPunct = lastPunctEnd(text, start, windowEnd)
+    const splitPunct = lastPunctEnd(codePoints, start, windowEnd)
 
     let splitAt: number
     if (splitNl !== -1) {
@@ -217,17 +214,17 @@ function smartSplit(
 
     const origSplit = splitAt
     if (bodyFormat === NotifyFormat.HTML) {
-      splitAt = htmlAdjust(text, start, splitAt)
+      splitAt = htmlAdjust(codePoints, start, splitAt)
     } else if (bodyFormat === NotifyFormat.MARKDOWN) {
-      splitAt = htmlAdjust(text, start, splitAt)
-      splitAt = markdownAdjust(text, start, splitAt)
+      splitAt = htmlAdjust(codePoints, start, splitAt)
+      splitAt = markdownAdjust(codePoints, start, splitAt)
     }
 
     if (splitAt <= start) {
       splitAt = origSplit
     }
 
-    result.push(text.slice(start, splitAt))
+    result.push(codePoints.slice(start, splitAt).join(''))
     start = splitAt
   }
 
@@ -550,13 +547,13 @@ export class NotifyBase extends URLBase {
     const titleMaxlen = !this.overflowAmalgamateTitle
       ? this.titleMaxlen
       : Math.min(
-          title.length + this.overflowMaxDisplayCountWidth,
+          Array.from(title).length + this.overflowMaxDisplayCountWidth,
           this.titleMaxlen,
           this.bodyMaxlen,
         )
 
-    if (title.length > titleMaxlen) {
-      title = rstripWs(title.slice(0, titleMaxlen))
+    if (Array.from(title).length > titleMaxlen) {
+      title = rstripWs(Array.from(title).slice(0, titleMaxlen).join(''))
     }
 
     let bodyMaxlen: number
@@ -574,7 +571,7 @@ export class NotifyBase extends URLBase {
     }
 
     // If the body fits, we are done.
-    if (bodyMaxlen > 0 && body.length <= bodyMaxlen) {
+    if (bodyMaxlen > 0 && Array.from(body).length <= bodyMaxlen) {
       response.push({ body, title })
       return response
     }
@@ -582,7 +579,12 @@ export class NotifyBase extends URLBase {
     // TRUNCATE mode: hard truncation (no smart-splitting).
     if (overflow === OverflowMode.TRUNCATE) {
       response.push({
-        body: rstripWs(lstripChars(body.slice(0, bodyMaxlen), '\r\n\x0b\x0c')),
+        body: rstripWs(
+          lstripChars(
+            Array.from(body).slice(0, bodyMaxlen).join(''),
+            '\r\n\x0b\x0c',
+          ),
+        ),
         title,
       })
       return response
@@ -606,7 +608,7 @@ export class NotifyBase extends URLBase {
       // SPLIT with repeated title (with/without counter).
       let showCounter = Boolean(
         title &&
-          body.length > bodyMaxlen &&
+          Array.from(body).length > bodyMaxlen &&
           ((this.overflowAmalgamateTitle &&
             bodyMaxlen >= this.overflowDisplayCountThreshold) ||
             (!this.overflowAmalgamateTitle &&
@@ -629,8 +631,8 @@ export class NotifyBase extends URLBase {
         const overflowDisplayCountWidth = 4 + digits * 2
         if (overflowDisplayCountWidth <= this.overflowMaxDisplayCountWidth) {
           const tMax = titleMaxlen - overflowDisplayCountWidth
-          if (title.length > tMax) {
-            title = title.slice(0, tMax)
+          if (Array.from(title).length > tMax) {
+            title = Array.from(title).slice(0, tMax).join('')
           }
         } else {
           // Too many messages; fall back to a repeated title without counter.
@@ -656,7 +658,7 @@ export class NotifyBase extends URLBase {
     if (bodyMaxlen > 0 && body) {
       const firstChunks = smartSplit(body, bodyMaxlen, bodyFormat)
       const firstBody = firstChunks.length > 0 ? (firstChunks[0] as string) : ''
-      remainder = body.slice(firstBody.length)
+      remainder = Array.from(body).slice(Array.from(firstBody).length).join('')
       response.push({
         body: rstripWs(lstripChars(firstBody, '\r\n\x0b\x0c')),
         title,

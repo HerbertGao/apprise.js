@@ -1,0 +1,98 @@
+{
+  "plugin": "wxpusher",
+  "cases": [
+    {
+      "name": "text-user-success",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "title": "Alert",
+      "body": "hello",
+      "assertResult": true,
+      "responses": [{ "body": { "text": "{\"code\":1000}" } }]
+    },
+    {
+      "name": "html-topic-success",
+      "url": "wxpusher://AT_appid/123/?format=html",
+      "title": "HTML",
+      "body": "<b>hello</b>",
+      "assertResult": true,
+      "responses": [{ "body": { "text": "{\"code\":1000}" } }]
+    },
+    {
+      "name": "markdown-mixed-targets-success",
+      "url": "wxpusher://AT_appid/123/UID_bob/invalid/?format=markdown",
+      "title": "Markdown",
+      "body": "hello **world**",
+      "assertResult": true,
+      "responses": [{ "body": { "text": "{\"code\":1000}" } }]
+    },
+    {
+      "name": "query-token-and-to-success",
+      "url": "wxpusher://456?token=AT_query&to=UID_query,789",
+      "title": "",
+      "body": "query targets",
+      "assertResult": true,
+      "responses": [{ "body": { "text": "{\"code\":1000}" } }]
+    },
+    {
+      "name": "no-valid-target",
+      "url": "wxpusher://AT_appid/invalid/",
+      "title": "",
+      "body": "not sent",
+      "assertResult": true
+    },
+    {
+      "name": "business-failure",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [
+        { "body": { "text": "{\"code\":1002,\"msg\":\"bad token\"}" } }
+      ]
+    },
+    {
+      "name": "bad-json",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "body": "bad json",
+      "assertResult": true,
+      "responses": [{ "body": { "text": "{" } }]
+    },
+    {
+      "name": "invalid-utf8-json",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "body": "invalid utf8",
+      "assertResult": true,
+      "responses": [
+        { "body": { "base64": "eyJjb2RlIjoxMDAwLCJtc2ciOiKAIn0=" } }
+      ]
+    },
+    {
+      "name": "utf16le-json-success",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "body": "utf16le response",
+      "assertResult": true,
+      "responses": [
+        { "body": { "base64": "//57ACIAYwBvAGQAZQAiADoAMQAwADAAMAB9AA==" } }
+      ]
+    },
+    {
+      "name": "utf32be-json-success",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "body": "utf32be response",
+      "assertResult": true,
+      "responses": [
+        {
+          "body": {
+            "base64": "AAD+/wAAAHsAAAAiAAAAYwAAAG8AAABkAAAAZQAAACIAAAA6AAAAMQAAADAAAAAwAAAAMAAAAH0="
+          }
+        }
+      ]
+    },
+    {
+      "name": "http-failure",
+      "url": "wxpusher://AT_appid/UID_alice/",
+      "body": "http failure",
+      "assertResult": true,
+      "responses": [{ "status": 500, "body": { "text": "{\"code\":1000}" } }]
+    }
+  ]
+}

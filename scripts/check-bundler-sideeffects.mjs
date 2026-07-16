@@ -39,16 +39,37 @@ const PKG = resolve(import.meta.dirname, '..')
 // subpath imports for the opt-in IM plugins.
 const ENTRY = `
 import { Apprise } from 'apprise.js'
-import 'apprise.js/plugins/telegram'
-import 'apprise.js/plugins/discord'
+import 'apprise.js/plugins/all'
 
 const a = new Apprise()
 const registered = {
   // from the barrel's own side effects
   json: a.add('json://localhost/path'),
-  // from the bare subpath imports
+  jsons: a.add('jsons://localhost/path'),
+  // from the bare plugins/all subpath import
+  form: a.add('form://localhost/path'),
+  forms: a.add('forms://localhost/path'),
+  xml: a.add('xml://localhost/path'),
+  xmls: a.add('xmls://localhost/path'),
+  apprise: a.add('apprise://localhost/token'),
+  apprises: a.add('apprises://localhost/token'),
+  mmost: a.add('mmost://host/token1'),
+  mmosts: a.add('mmosts://host/token1'),
   tgram: a.add('tgram://123456789:ABCdef_ghi-jkl/12345'),
   discord: a.add('discord://1234/abcdefghijklmnop'),
+  slack: a.add('slack://T1JJ3T3L2/A1BRTD4JD/TIiajkdnlazkcOXrIdevi7'),
+  rocket: a.add('rocket://user:pass@localhost/%23general'),
+  rockets: a.add('rockets://user:pass@localhost/%23general'),
+  matrix: a.add('matrix://abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'),
+  matrixs: a.add('matrixs://rawtoken@matrix.example.com/!room:matrix.example.com?discovery=no'),
+  schan: a.add('schan://abcdefgh'),
+  dingtalk: a.add('dingtalk://abcdefgh'),
+  wecombot: a.add('wecombot://botkey'),
+  feishu: a.add('feishu://abc123'),
+  lark: a.add('lark://abcd-1234'),
+  wxpusher: a.add('wxpusher://AT_appid/UID_alice'),
+  pushdeer: a.add('pushdeer://pushKey'),
+  pushdeers: a.add('pushdeers://pushKey'),
 }
 process.stdout.write(JSON.stringify(registered))
 `

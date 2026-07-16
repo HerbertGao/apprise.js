@@ -1,0 +1,41 @@
+{
+  "plugin": "serverchan",
+  "cases": [
+    {
+      "name": "default",
+      "url": "schan://12345678",
+      "title": "Alert",
+      "body": "hello world",
+      "type": "info",
+      "assertResult": true
+    },
+    {
+      "name": "hyphen-prefix-truncation",
+      "url": "schan://abc-def",
+      "title": "Prefix",
+      "body": "hyphen token",
+      "type": "warning",
+      "assertResult": true
+    },
+    {
+      "name": "hyphen-with-trailing-slash-invalid",
+      "url": "schan://abc-def/",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "invalid-token",
+      "url": "schan://a_bd_/",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "http-failure",
+      "url": "schan://abcdefgh",
+      "title": "Alert",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

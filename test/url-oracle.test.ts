@@ -11,8 +11,8 @@
 //     D = ∅ (rule 3), plus the structural (no unencoded `#` in the query segment,
 //     no duplicate keys) and presence (format/overflow always, custom `method`)
 //     assertions. url(privacy=true) uses the same rules against urlPrivacy.
-//   * idempotency (task 3 / D4): u1 === u2, or — when a plugin is faithfully
-//     non-idempotent — each TS stage matches the sidecar's upstream
+//   * idempotency (task 3 / D4): u1 === u2 for lossless plugins; for faithfully
+//     lossy plugins, each TS stage matches the sidecar's upstream
 //     re-serialization stage (order-preserving, D-stripped, byte-for-byte).
 //
 // norm() reproduces Apprise.instantiate's `/#`->`/%23` preprocessing so
@@ -29,12 +29,19 @@ import { NotifyAppriseAPI } from '../src/plugins/apprise-api.js'
 import { NotifyForm } from '../src/plugins/custom-form.js'
 import { NotifyJSON } from '../src/plugins/custom-json.js'
 import { NotifyXML } from '../src/plugins/custom-xml.js'
+import { NotifyDingTalk } from '../src/plugins/dingtalk.js'
 import { NotifyDiscord } from '../src/plugins/discord.js'
+import { NotifyFeishu } from '../src/plugins/feishu.js'
+import { NotifyLark } from '../src/plugins/lark.js'
 import { NotifyMatrix } from '../src/plugins/matrix.js'
 import { NotifyMattermost } from '../src/plugins/mattermost.js'
+import { NotifyPushDeer } from '../src/plugins/pushdeer.js'
 import { NotifyRocketChat } from '../src/plugins/rocketchat.js'
+import { NotifyServerChan } from '../src/plugins/serverchan.js'
 import { NotifySlack } from '../src/plugins/slack.js'
 import { NotifyTelegram } from '../src/plugins/telegram.js'
+import { NotifyWeComBot } from '../src/plugins/wecombot.js'
+import { NotifyWxPusher } from '../src/plugins/wxpusher.js'
 import type { ParsedUrlResults } from '../src/url.js'
 
 // --- plugin registry (name -> class) -----------------------------------------
@@ -45,6 +52,7 @@ interface UrlPlugin {
 interface UrlPluginClass {
   new (args: ParsedUrlResults): UrlPlugin
   parseUrl(url: string): ParsedUrlResults | null
+  parseNativeUrl?(url: string): Record<string, unknown> | null
 }
 
 const PLUGINS: Record<string, UrlPluginClass> = {
@@ -58,6 +66,13 @@ const PLUGINS: Record<string, UrlPluginClass> = {
   telegram: NotifyTelegram as unknown as UrlPluginClass,
   rocketchat: NotifyRocketChat as unknown as UrlPluginClass,
   matrix: NotifyMatrix as unknown as UrlPluginClass,
+  serverchan: NotifyServerChan as unknown as UrlPluginClass,
+  dingtalk: NotifyDingTalk as unknown as UrlPluginClass,
+  wecombot: NotifyWeComBot as unknown as UrlPluginClass,
+  feishu: NotifyFeishu as unknown as UrlPluginClass,
+  lark: NotifyLark as unknown as UrlPluginClass,
+  wxpusher: NotifyWxPusher as unknown as UrlPluginClass,
+  pushdeer: NotifyPushDeer as unknown as UrlPluginClass,
 }
 
 // Plugins whose url() unconditionally emits `method` (the custom webhook family).
@@ -67,6 +82,8 @@ const CUSTOM_METHOD_PLUGINS = new Set([
   'custom-xml',
   'apprise-api',
 ])
+
+const LOSSY_PLUGINS = new Set(['serverchan', 'pushdeer', 'dingtalk'])
 
 // Deferred keys (design.md D1): upstream url() emits them, this batch does not
 // serialize them yet — each is plugin-specific and an exact literal key that NO
@@ -112,6 +129,7 @@ interface OracleCase {
 }
 interface OracleFile {
   apprise_version: string
+  inventory: Record<string, { static: string[]; conditional: string[] }>
   oracle: Record<string, Record<string, OracleCase>>
 }
 
@@ -165,6 +183,18 @@ function norm(url: string): string {
   return url.replace('/#', '/%23')
 }
 
+function parseSeed(
+  plugin: UrlPluginClass,
+  url: string,
+): ParsedUrlResults | null {
+  const normalized = norm(url)
+  if (/^https?:\/\//i.test(normalized)) {
+    return (plugin.parseNativeUrl?.(normalized) ??
+      null) as ParsedUrlResults | null
+  }
+  return plugin.parseUrl(normalized)
+}
+
 /** Split at the FIRST `?`: base before, query after (design.md D1). */
 function splitUrl(url: string): { base: string; query: string } {
   const i = url.indexOf('?')
@@ -208,8 +238,11 @@ function assertUrlMatches(
   actual: string,
   expected: string,
 ): void {
-  // format/overflow are unconditionally emitted -> url() MUST contain `?`.
-  expect(actual.includes('?'), `${label}: url() must contain ?`).toBe(true)
+  const inventory = ORACLE.inventory[plugin]
+  if (!inventory) throw new Error(`missing inventory for ${plugin}`)
+  const expectsQuery =
+    inventory.static.length > 0 || inventory.conditional.length > 0
+  expect(actual.includes('?'), `${label}: query presence`).toBe(expectsQuery)
 
   const a = splitUrl(actual)
   const e = splitUrl(expected)
@@ -249,9 +282,10 @@ function assertUrlMatches(
     )
   }
 
-  // Presence: format/overflow always; custom `method` for the webhook family.
-  expect(aKeySet.has('format'), `${label}: missing format`).toBe(true)
-  expect(aKeySet.has('overflow'), `${label}: missing overflow`).toBe(true)
+  // Presence: every static inventory key is unconditional.
+  for (const key of inventory.static) {
+    expect(aKeySet.has(key), `${label}: missing static key ${key}`).toBe(true)
+  }
   if (CUSTOM_METHOD_PLUGINS.has(plugin)) {
     expect(aKeySet.has('method'), `${label}: missing method`).toBe(true)
   }
@@ -273,7 +307,7 @@ describe('url() sidecar-oracle differential (D1)', () => {
           if (seed === undefined) {
             throw new Error(`no seed source for ${plugin}/${name}`)
           }
-          const parsed = P.parseUrl(norm(seed.url))
+          const parsed = parseSeed(P, seed.url)
           expect(
             parsed,
             `${plugin}/${name}: parseUrl returned null`,
@@ -311,27 +345,27 @@ describe('url() idempotency (D4)', () => {
           if (seed === undefined) {
             throw new Error(`no seed source for ${plugin}/${name}`)
           }
-          const p1 = P.parseUrl(norm(seed.url))
+          const p1 = parseSeed(P, seed.url)
           expect(p1, `${plugin}/${name}: first parseUrl null`).not.toBeNull()
           const u1 = new P(p1 as ParsedUrlResults).url()
           const p2 = P.parseUrl(norm(u1))
           expect(p2, `${plugin}/${name}: second parseUrl null`).not.toBeNull()
           const u2 = new P(p2 as ParsedUrlResults).url()
 
-          if (u1 === u2) {
+          if (u1 === u2 && !LOSSY_PLUGINS.has(plugin)) {
             expect(u2).toBe(u1)
             return
           }
-          // Faithful-non-idempotence exception (D4): each TS stage MUST match the
+          // Faithful-lossiness exception (D4): each TS stage MUST match the
           // sidecar's upstream re-serialization stage — order-preserving and
           // D-stripped, byte-for-byte (NOT the differential's unordered per-key).
           expect(
             stripDeferred(u1),
-            `${plugin}/${name}: u1 != u2; stage1 vs upstream`,
+            `${plugin}/${name}: stage1 vs upstream`,
           ).toBe(stripDeferred(oracle.reserialize[0]))
           expect(
             stripDeferred(u2),
-            `${plugin}/${name}: u1 != u2; stage2 vs upstream`,
+            `${plugin}/${name}: stage2 vs upstream`,
           ).toBe(stripDeferred(oracle.reserialize[1]))
         })
       }
@@ -351,6 +385,25 @@ describe('url() oracle coverage', () => {
     expect(new Set(Object.keys(ORACLE.oracle))).toEqual(
       new Set(Object.keys(PLUGINS)),
     )
+  })
+
+  test('inventory plugin set == oracle plugin set', () => {
+    expect(new Set(Object.keys(ORACLE.inventory))).toEqual(
+      new Set(Object.keys(ORACLE.oracle)),
+    )
+  })
+
+  test('captured key union exactly covers each static/conditional inventory', () => {
+    const gaps = inventoryGaps(ORACLE)
+    expect(gaps, JSON.stringify(gaps)).toEqual({})
+  })
+
+  test('dropping an activated conditional key makes completeness RED', () => {
+    const broken = structuredClone(ORACLE)
+    for (const entry of Object.values(broken.oracle.wecombot ?? {})) {
+      entry.url = removeQueryKey(entry.url, 'rto')
+    }
+    expect(inventoryGaps(broken).wecombot).toContain('rto')
   })
 
   test('every constructible seed has an oracle entry', () => {
@@ -377,7 +430,7 @@ describe('url() oracle coverage', () => {
           continue
         }
         let constructs = false
-        const parsed = P.parseUrl(norm(seed.url))
+        const parsed = parseSeed(P, seed.url)
         if (parsed) {
           try {
             const inst = new P(parsed)
@@ -397,3 +450,37 @@ describe('url() oracle coverage', () => {
     ).toEqual([])
   })
 })
+
+function removeQueryKey(url: string, key: string): string {
+  const { base, query } = splitUrl(url)
+  const kept = parseQuery(query).filter(([candidate]) => candidate !== key)
+  return kept.length
+    ? `${base}?${kept.map(([k, v]) => `${k}=${v}`).join('&')}`
+    : base
+}
+
+function inventoryGaps(file: OracleFile): Record<string, string[]> {
+  const gaps: Record<string, string[]> = {}
+  for (const [plugin, inventory] of Object.entries(file.inventory)) {
+    const found = new Set<string>()
+    for (const entry of Object.values(file.oracle[plugin] ?? {})) {
+      for (const [key] of parseQuery(splitUrl(entry.url).query)) {
+        const decoded = decodeURIComponent(key)
+        const family = ['+', '-', ':'].includes(decoded[0] ?? '')
+          ? (decoded[0] as string)
+          : decoded
+        if (!DEFERRED.has(family)) found.add(family)
+      }
+    }
+    const expected = new Set(
+      [...inventory.static, ...inventory.conditional].filter(
+        (key) => !DEFERRED.has(key),
+      ),
+    )
+    const missing = [...expected].filter((key) => !found.has(key))
+    const extra = [...found].filter((key) => !expected.has(key))
+    const difference = [...missing, ...extra.map((key) => `extra:${key}`)]
+    if (difference.length > 0) gaps[plugin] = difference
+  }
+  return gaps
+}

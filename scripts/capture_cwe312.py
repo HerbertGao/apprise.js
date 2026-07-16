@@ -46,6 +46,13 @@ PARSEABLE_URLS = [
     "json://h/p?data=héllo",  # unicode value (non-forced key)
     "json://h/p?x=abcdefghijklmnopqrstuvwxyz",  # long token (>=16) -> masked
     "slack://user:token@workspace",  # non-http user/host + password
+    "schan://ServerChanSecret123",
+    "dingtalk://DingSecret123@DingToken123/",
+    "wecombot://WeComKey_123",
+    "feishu://FeishuToken_123",
+    "lark://Lark-Token-123",
+    "wxpusher://AT_WxPusherSecret123/UID_user/",
+    "pushdeer://PushDeerSecret123",
 ]
 
 

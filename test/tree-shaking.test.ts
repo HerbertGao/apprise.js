@@ -11,7 +11,7 @@
 // time and asserted to flip only its own scheme(s), then the bucket import.
 
 import { describe, expect, test } from 'vitest'
-import { resolvePlugin } from '../src/registry.js'
+import { registerPlugin, resolvePlugin } from '../src/registry.js'
 
 const ALL_SCHEMES = [
   'json',
@@ -31,6 +31,14 @@ const ALL_SCHEMES = [
   'rockets',
   'matrix',
   'matrixs',
+  'schan',
+  'dingtalk',
+  'wecombot',
+  'feishu',
+  'lark',
+  'wxpusher',
+  'pushdeer',
+  'pushdeers',
 ]
 
 // Every scheme EXCEPT custom-xml's own pair — none of these may exist after a
@@ -55,6 +63,17 @@ const IM_PLUGINS: Array<[string, () => Promise<unknown>, string[]]> = [
     ['rocket', 'rockets'],
   ],
   ['matrix', () => import('../src/plugins/matrix.js'), ['matrix', 'matrixs']],
+  ['serverchan', () => import('../src/plugins/serverchan.js'), ['schan']],
+  ['dingtalk', () => import('../src/plugins/dingtalk.js'), ['dingtalk']],
+  ['wecombot', () => import('../src/plugins/wecombot.js'), ['wecombot']],
+  ['feishu', () => import('../src/plugins/feishu.js'), ['feishu']],
+  ['lark', () => import('../src/plugins/lark.js'), ['lark']],
+  ['wxpusher', () => import('../src/plugins/wxpusher.js'), ['wxpusher']],
+  [
+    'pushdeer',
+    () => import('../src/plugins/pushdeer.js'),
+    ['pushdeer', 'pushdeers'],
+  ],
 ]
 
 describe('tree-shaking / convenience bucket', () => {
@@ -68,6 +87,22 @@ describe('tree-shaking / convenience bucket', () => {
     // ...and pulls in none of the other plugins' schemes.
     for (const scheme of NON_XML_SCHEMES) {
       expect(resolvePlugin(scheme), scheme).toBeUndefined()
+    }
+  })
+
+  test('a throwing registration observer cannot block registration', () => {
+    const observerKey = Symbol.for('apprise.js/test-registration-observer@0')
+    const globals = globalThis as unknown as Record<symbol, unknown>
+    globals[observerKey] = () => {
+      throw new Error('observer collision')
+    }
+    try {
+      const plugin = resolvePlugin('xml')
+      if (!plugin) throw new Error('custom-xml was not registered')
+      registerPlugin('observer-probe', plugin)
+      expect(resolvePlugin('observer-probe')).toBe(plugin)
+    } finally {
+      delete globals[observerKey]
     }
   })
 

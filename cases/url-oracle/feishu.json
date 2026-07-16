@@ -1,0 +1,29 @@
+{
+  "plugin": "feishu",
+  "cases": [
+    {
+      "name": "oracle-token-alias",
+      "url": "feishu://ignored?token=abc123"
+    },
+    {
+      "name": "oracle-format",
+      "url": "feishu://abc123?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "feishu://abc123?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "feishu://abc123?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "feishu://abc123?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "feishu://abc123?cto=7"
+    }
+  ]
+}
