@@ -1,0 +1,249 @@
+{
+  "plugin": "pushbullet",
+  "cases": [
+    {
+      "name": "all-devices-note",
+      "url": "pbul://ACCESS_TOKEN",
+      "title": "Alert",
+      "body": "all devices",
+      "assertResult": true
+    },
+    {
+      "name": "email-note",
+      "url": "pbul://ACCESS_TOKEN/person%40example.com",
+      "title": "Email",
+      "body": "email target",
+      "assertResult": true
+    },
+    {
+      "name": "channel-note",
+      "url": "pbul://ACCESS_TOKEN/%23alerts",
+      "body": "channel target",
+      "assertResult": true
+    },
+    {
+      "name": "device-and-to-email",
+      "expectedCount": 2,
+      "url": "pbul://ACCESS_TOKEN/device-iden?to=person%40example.com",
+      "body": "two targets",
+      "assertResult": true
+    },
+    {
+      "name": "empty-body-image-only",
+      "expectedCount": 3,
+      "url": "pbul://ACCESS_TOKEN/device-image",
+      "body": "",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        },
+        { "status": 204, "body": null },
+        { "status": 200, "body": { "text": "not-json" } }
+      ],
+      "seeds": { "boundary": "51111111111111111111111111111111" }
+    },
+    {
+      "name": "single-image-complete-chain",
+      "expectedCount": 4,
+      "url": "pbul://ACCESS_TOKEN/device-image",
+      "title": "Image",
+      "body": "image body",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        }
+      ],
+      "seeds": { "boundary": "52222222222222222222222222222222" }
+    },
+    {
+      "name": "single-non-image-complete-chain",
+      "expectedCount": 4,
+      "url": "pbul://ACCESS_TOKEN/device-file",
+      "title": "File",
+      "body": "file body",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/hello.txt" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"hello.txt\",\"file_type\":\"text/plain\",\"file_url\":\"https://files.example/hello.txt\",\"upload_url\":\"https://upload.example/hello\"}"
+          }
+        }
+      ],
+      "seeds": { "boundary": "53333333333333333333333333333333" }
+    },
+    {
+      "name": "two-attachments-two-targets",
+      "expectedCount": 10,
+      "url": "pbul://ACCESS_TOKEN/person%40example.com/%23alerts",
+      "title": "Matrix",
+      "body": "ten requests",
+      "assertResult": true,
+      "attachments": [
+        { "file": "cases/assets/push-one.png" },
+        { "file": "cases/assets/hello.txt" }
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        },
+        { "status": 204, "body": null },
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"hello.txt\",\"file_type\":\"text/plain\",\"file_url\":\"https://files.example/hello.txt\",\"upload_url\":\"https://upload.example/hello\"}"
+          }
+        },
+        { "status": 200, "body": { "text": "uploaded" } }
+      ],
+      "seeds": { "boundary": "54444444444444444444444444444444" }
+    },
+    {
+      "name": "upload-request-http-failure",
+      "expectedCount": 1,
+      "url": "pbul://ACCESS_TOKEN/device",
+      "body": "not delivered",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [{ "status": 500, "body": { "text": "{}" } }]
+    },
+    {
+      "name": "upload-request-invalid-json",
+      "expectedCount": 1,
+      "url": "pbul://ACCESS_TOKEN/device",
+      "body": "not delivered",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [{ "status": 200, "body": { "text": "not-json" } }]
+    },
+    {
+      "name": "upload-request-missing-field",
+      "expectedCount": 1,
+      "url": "pbul://ACCESS_TOKEN/device",
+      "body": "not delivered",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\"}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "dynamic-upload-failure-short-circuits",
+      "expectedCount": 2,
+      "url": "pbul://ACCESS_TOKEN/device",
+      "body": "not delivered",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        },
+        { "status": 500, "body": { "text": "upload failed" } }
+      ],
+      "seeds": { "boundary": "55555555555555555555555555555555" }
+    },
+    {
+      "name": "note-failure-skips-current-files-and-continues",
+      "expectedCount": 5,
+      "url": "pbul://ACCESS_TOKEN/device/%23alerts",
+      "body": "continue targets",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        },
+        { "status": 200, "body": { "text": "uploaded" } },
+        { "status": 500, "body": { "text": "note failed" } },
+        { "status": 200, "body": null },
+        { "status": 200, "body": { "text": "file sent" } }
+      ],
+      "seeds": { "boundary": "56666666666666666666666666666666" }
+    },
+    {
+      "name": "file-failure-continues-files-and-targets",
+      "expectedCount": 10,
+      "url": "pbul://ACCESS_TOKEN/device/%23alerts",
+      "body": "continue files",
+      "assertResult": true,
+      "attachments": [
+        { "file": "cases/assets/push-one.png" },
+        { "file": "cases/assets/hello.txt" }
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        },
+        { "status": 200, "body": { "text": "uploaded" } },
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"hello.txt\",\"file_type\":\"text/plain\",\"file_url\":\"https://files.example/hello.txt\",\"upload_url\":\"https://upload.example/hello\"}"
+          }
+        },
+        { "status": 204, "body": null },
+        { "status": 200, "body": null },
+        { "status": 500, "body": { "text": "file failed" } },
+        { "status": 200, "body": { "text": "file sent" } },
+        { "status": 204, "body": null },
+        { "status": 200, "body": { "text": "not-json" } },
+        { "status": 204, "body": null }
+      ],
+      "seeds": { "boundary": "57777777777777777777777777777777" }
+    },
+    {
+      "name": "success-statuses-ignore-response-json",
+      "expectedCount": 4,
+      "url": "pbul://ACCESS_TOKEN/device",
+      "body": "status handling",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/push-one.png" }],
+      "responses": [
+        {
+          "status": 200,
+          "body": {
+            "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+          }
+        },
+        { "status": 204, "body": { "text": "not-json" } },
+        { "status": 204, "body": null },
+        { "status": 200, "body": { "text": "also-not-json" } }
+      ],
+      "seeds": { "boundary": "58888888888888888888888888888888" }
+    },
+    {
+      "name": "invalid-missing-token",
+      "url": "pbul://",
+      "body": "not sent",
+      "assertResult": false
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "plugin": "gotify",
+  "cases": [
+    {
+      "name": "oracle-priority",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT?priority=emergency"
+    },
+    {
+      "name": "oracle-format",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT?overflow=truncate"
+    },
+    {
+      "name": "oracle-verify",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT?verify=no"
+    },
+    {
+      "name": "oracle-rto",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT?rto=9"
+    },
+    {
+      "name": "oracle-cto",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT?cto=7"
+    }
+  ]
+}

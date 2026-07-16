@@ -55,6 +55,11 @@ Service plugins are **not** in the barrel — import each from its subpath (or t
 | `lark://`                | `NotifyLark`       | `apprise.js/plugins/lark`       | Lark custom bot                                |
 | `wxpusher://`            | `NotifyWxPusher`   | `apprise.js/plugins/wxpusher`   | WxPusher users/topics                          |
 | `pushdeer://` / `pushdeers://` | `NotifyPushDeer` | `apprise.js/plugins/pushdeer` | PushDeer cloud or self-hosted API             |
+| `pover://`               | `NotifyPushover`   | `apprise.js/plugins/pushover`   | Pushover form/E2EE and image attachments      |
+| `pbul://`                | `NotifyPushBullet` | `apprise.js/plugins/pushbullet` | Pushbullet notes and uploaded attachments     |
+| `ntfy://` / `ntfys://`   | `NotifyNtfy`       | `apprise.js/plugins/ntfy`       | ntfy cloud or self-hosted JSON/raw publishing |
+| `gotify://` / `gotifys://` | `NotifyGotify`   | `apprise.js/plugins/gotify`     | Gotify JSON API                               |
+| `bark://` / `barks://`   | `NotifyBark`       | `apprise.js/plugins/bark`       | Bark device push API                          |
 
 To keep only what you use (tree-shakeable), import a single plugin — or the `all` bucket — from a subpath:
 
@@ -64,6 +69,8 @@ import 'apprise.js/plugins/custom-json' // registers only json:// + jsons://
 import 'apprise.js/plugins/discord'     // registers only discord://
 import 'apprise.js/plugins/telegram'    // registers only tgram://
 import 'apprise.js/plugins/feishu'      // registers only feishu://
+import 'apprise.js/plugins/ntfy'        // registers only ntfy:// + ntfys://
+import 'apprise.js/plugins/gotify'      // registers only gotify:// + gotifys://
 // or: import 'apprise.js/plugins/all'  // registers every scheme above
 
 const apprise = new Apprise()
@@ -73,7 +80,7 @@ apprise.add('feishu://bot_token')
 const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 ```
 
-Minimal URL shapes for the China-oriented plugins are:
+Minimal URL shapes for selected service plugins are:
 
 ```text
 schan://token
@@ -83,11 +90,21 @@ feishu://bot_token
 lark://bot-token
 wxpusher://AT_app_token/UID_target/123
 pushdeers://pushkey                       # cloud; host/pushkey for self-hosting
+pover://user_key@application_token/device
+pbul://access_token/device
+ntfys://topic                              # ntfy.sh cloud
+ntfys://user:password@host/topic?mode=private
+gotifys://host/application_token
+barks://host/device_key
 ```
 
 These URLs contain live credentials. Keep them in a secret manager or environment variable, never source control, logs, screenshots, fixtures, or issue reports. `url(true)` and secure diagnostics mask credentials for routine troubleshooting, but masking is defense-in-depth rather than permission to publish a URL.
 
-For an optional pre-release live smoke, set local-only environment variables such as `TELEGRAM_APPRISE_URL`, `FEISHU_APPRISE_URL`, or `LARK_APPRISE_URL`, import the matching plugin, and send a clearly labeled test message to a disposable/private target. The automated suite never reads these variables and never contacts real notification services.
+Pushover `?key=<64-hex>` enables field-level E2EE by default; `?e2ee=no` explicitly disables it. This follows upstream v1.12.0’s behavior, including an important limitation: when attachments are sent, the attachment loop can overwrite the encrypted message/title fields with plaintext filenames while leaving `encrypted=1`. Treat attachment filenames as public metadata; do not put secrets in them, and do not interpret `encrypted=1` as meaning the entire multipart request is encrypted.
+
+Pushover accepts image attachments up to 5 MiB. Pushbullet first uploads attachments to the service-provided upload URL. ntfy sends local attachments as raw bytes, while `?attach=https://…` is only a remote URL reference that the ntfy server fetches. Automated tests use injected transports and fake credentials; they never contact these services.
+
+For an optional pre-release live smoke, set a local-only environment variable such as `TELEGRAM_APPRISE_URL`, `NTFY_APPRISE_URL`, `GOTIFY_APPRISE_URL`, or `PUSHOVER_APPRISE_URL`, import the matching plugin, and send a clearly labeled test message to a disposable/private target. Run live smoke manually and opt in one service at a time; the automated suite never reads these variables and never contacts real notification services.
 
 Runtime handlers can also be registered without a plugin class via `Apprise.register(scheme, handler)`.
 

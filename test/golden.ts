@@ -34,6 +34,7 @@ import { fileURLToPath } from 'node:url'
 import { expect, test } from 'vitest'
 import { AppriseAsset } from '../src/asset.js'
 import { AppriseAttachment } from '../src/attachment/base.js'
+import '../src/attachment/file.js'
 import { AttachMemory } from '../src/attachment/memory.js'
 import type { NotifyType } from '../src/common.js'
 import { Apprise } from '../src/core/apprise.js'
@@ -105,6 +106,8 @@ export interface FixtureCase {
     uuid?: string
     /** DingTalk epoch-millisecond signing seed; schema validation is generic. */
     timestampMs?: number
+    /** Pushover 16-byte IV queue; the generic runner validates but never installs it. */
+    entropyHex?: string[]
   }
   expected: {
     /** Single-request delivery (unchanged, backward-compatible). */
@@ -139,6 +142,34 @@ export interface GoldenOptions {
    * WITHOUT `accept` so its Accept header is compared.
    */
   ignoreHeaders?: ReadonlySet<string>
+  /** Semantic headers that remain comparable even if an option ignores them. */
+  headerProfile?: SemanticHeaderProfile
+}
+
+export interface SemanticHeaderProfile {
+  exact: ReadonlySet<string>
+  prefixes?: readonly string[]
+}
+
+export const PUSH_HEADER_PROFILES: Readonly<
+  Record<string, SemanticHeaderProfile>
+> = {
+  pushover: {
+    exact: new Set(['user-agent', 'authorization', 'content-type']),
+  },
+  pushbullet: {
+    exact: new Set(['user-agent', 'authorization', 'content-type']),
+  },
+  ntfy: {
+    exact: new Set(['user-agent', 'authorization', 'content-type']),
+    prefixes: ['x-'],
+  },
+  gotify: {
+    exact: new Set(['user-agent', 'content-type', 'x-gotify-key']),
+  },
+  bark: {
+    exact: new Set(['user-agent', 'content-type', 'authorization']),
+  },
 }
 
 const DEFAULT_IGNORE: ReadonlySet<string> = new Set([
@@ -153,7 +184,9 @@ const DEFAULT_IGNORE: ReadonlySet<string> = new Set([
 
 const PROJECT_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MAX_TIMESTAMP_MS = 2 ** 51 - 1
-const PLUGINS_CN = new Set([
+const CANONICAL_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const RESULT_REQUIRED_PLUGINS = new Set([
   'serverchan',
   'dingtalk',
   'wecombot',
@@ -161,6 +194,11 @@ const PLUGINS_CN = new Set([
   'lark',
   'wxpusher',
   'pushdeer',
+  'pushover',
+  'pushbullet',
+  'ntfy',
+  'gotify',
+  'bark',
 ])
 
 function validateCannedResponse(
@@ -315,6 +353,27 @@ function validateExpectedShape(c: FixtureCase): ValidatedExpected {
 export function validateFixture(fixture: Fixture): Fixture {
   for (const c of fixture.cases) {
     const expected = validateExpectedShape(c)
+    const expectedRequests =
+      expected.shape === 'request'
+        ? [expected.request]
+        : expected.shape === 'requests'
+          ? expected.requests
+          : []
+    const hasMultipart = expectedRequests.some((request) =>
+      Object.entries(request.headers ?? {}).some(
+        ([key, value]) =>
+          key.toLowerCase() === 'content-type' &&
+          value.toLowerCase().startsWith('multipart/form-data'),
+      ),
+    )
+    if (
+      hasMultipart &&
+      (typeof c.seeds?.boundary !== 'string' || c.seeds.boundary.length === 0)
+    ) {
+      throw new Error(
+        `multipart case "${c.name}" must declare a non-empty seeds.boundary`,
+      )
+    }
     const timestampMs = c.seeds?.timestampMs
     if (
       timestampMs !== undefined &&
@@ -326,6 +385,27 @@ export function validateFixture(fixture: Fixture): Fixture {
         `case "${c.name}" seeds.timestampMs must be an integer between 0 and ${MAX_TIMESTAMP_MS}`,
       )
     }
+    const entropyHex = c.seeds?.entropyHex
+    if (
+      entropyHex !== undefined &&
+      (!Array.isArray(entropyHex) ||
+        entropyHex.some(
+          (seed) => typeof seed !== 'string' || !/^[0-9a-fA-F]{32}$/.test(seed),
+        ))
+    ) {
+      throw new Error(
+        `case "${c.name}" seeds.entropyHex must be an array of 32-character hexadecimal strings`,
+      )
+    }
+    const uuid = c.seeds?.uuid
+    if (
+      uuid !== undefined &&
+      (typeof uuid !== 'string' || !CANONICAL_UUID_RE.test(uuid))
+    ) {
+      throw new Error(
+        `case "${c.name}" seeds.uuid must be a canonical lowercase hyphenated UUID`,
+      )
+    }
     if (c.input.responses !== undefined && !Array.isArray(c.input.responses)) {
       throw new Error(`case "${c.name}" input.responses must be an array`)
     }
@@ -335,9 +415,11 @@ export function validateFixture(fixture: Fixture): Fixture {
     const isInstantiationFailure =
       expected.shape === 'noRequest' &&
       expected.reason === 'instantiation-failed'
-    if (PLUGINS_CN.has(fixture.plugin)) {
+    if (RESULT_REQUIRED_PLUGINS.has(fixture.plugin)) {
       if (typeof expected.assertResult !== 'boolean') {
-        throw new Error(`plugins-cn case "${c.name}" must declare assertResult`)
+        throw new Error(
+          `result-required plugin case "${c.name}" must declare assertResult`,
+        )
       }
       if (isInstantiationFailure && expected.assertResult !== false) {
         throw new Error(
@@ -493,9 +575,13 @@ function headerMap(h: Record<string, string> | undefined): Map<string, string> {
   return m
 }
 
-/** Strip a `; charset=...` suffix from a Content-Type value. */
-function stripCharset(v: string | undefined): string | undefined {
-  return v?.split(';')[0]?.trim()
+/** Normalise charset parameters for JSON only; all non-JSON types stay exact. */
+function normaliseContentType(v: string | undefined): string | undefined {
+  if (v === undefined) return undefined
+  const mediaType = v.split(';')[0]?.trim().toLowerCase()
+  return mediaType === 'application/json' || mediaType?.endsWith('+json')
+    ? mediaType
+    : v
 }
 
 function bodyToString(body: TransportRequest['body']): string | null {
@@ -543,18 +629,24 @@ function compareHeaders(
   expected: Record<string, string>,
   ignore: ReadonlySet<string>,
   exactContentType: boolean,
+  profile: SemanticHeaderProfile | undefined,
 ): void {
   const ah = headerMap(actual)
   const eh = headerMap(expected)
   const keys = new Set(
-    [...ah.keys(), ...eh.keys()].filter((k) => !ignore.has(k)),
+    [...ah.keys(), ...eh.keys()].filter(
+      (key) =>
+        !ignore.has(key) ||
+        profile?.exact.has(key) === true ||
+        profile?.prefixes?.some((prefix) => key.startsWith(prefix)) === true,
+    ),
   )
   for (const key of keys) {
     let a = ah.get(key)
     let e = eh.get(key)
     if (key === 'content-type' && !exactContentType) {
-      a = stripCharset(a)
-      e = stripCharset(e)
+      a = normaliseContentType(a)
+      e = normaliseContentType(e)
     }
     expect(a, `header "${key}"`).toBe(e)
   }
@@ -608,6 +700,7 @@ function compareRequest(
     expected.headers,
     opts.ignoreHeaders ?? DEFAULT_IGNORE,
     opts.exactContentType ?? false,
+    opts.headerProfile,
   )
   compareBody(actual.body, expected.body, opts.bodyMode)
 }
@@ -669,9 +762,13 @@ export async function matchCase(
  */
 export function runGolden(relFixturePath: string, opts: GoldenOptions): void {
   const fixture = loadFixture(relFixturePath)
+  const effectiveOptions = {
+    ...opts,
+    headerProfile: opts.headerProfile ?? PUSH_HEADER_PROFILES[fixture.plugin],
+  }
   for (const c of fixture.cases) {
     test(c.name, async () => {
-      await matchCase(c, opts)
+      await matchCase(c, effectiveOptions)
     })
   }
 }

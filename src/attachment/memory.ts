@@ -6,6 +6,17 @@
 import { randomUUID } from 'node:crypto'
 import { AttachBase } from './base.js'
 
+let uuidSeed: string | null = null
+
+/** Pin auto-generated memory attachment names in explicit sequential tests. */
+export function setAttachMemoryUuidSeed(seed: string | null): void {
+  uuidSeed = seed
+}
+
+function nextUuid(): string {
+  return uuidSeed ?? randomUUID()
+}
+
 /** Options for constructing an in-memory attachment. */
 export interface AttachMemoryOptions {
   /** String (encoded via `encoding`) or raw bytes. */
@@ -38,7 +49,7 @@ export class AttachMemory extends AttachBase {
         mimetype = 'text/plain'
       }
       if (!name) {
-        name = `${randomUUID()}.txt`
+        name = `${nextUuid()}.txt`
       }
     } else {
       data = Buffer.from(content)
@@ -49,7 +60,7 @@ export class AttachMemory extends AttachBase {
       mimetype = 'application/octet-stream'
     }
     if (!name) {
-      name = `${randomUUID()}.dat`
+      name = `${nextUuid()}.dat`
     }
 
     super(name, mimetype)

@@ -26,7 +26,8 @@
 // Requires `dist/` (run `pnpm build` first).
 
 import { execFileSync } from 'node:child_process'
-import { resolve } from 'node:path'
+import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 
 const PKG = resolve(import.meta.dirname, '..')
 const TGRAM = 'tgram://123456789:ABCdef_ghi-jkl/12345'
@@ -164,8 +165,70 @@ const ENTRY_SCHEMES = [
   ['lark', ['lark']],
   ['wxpusher', ['wxpusher']],
   ['pushdeer', ['pushdeer', 'pushdeers']],
+  ['pushover', ['pover']],
+  ['pushbullet', ['pbul']],
+  ['ntfy', ['ntfy', 'ntfys']],
+  ['gotify', ['gotify', 'gotifys']],
+  ['bark', ['bark', 'barks']],
 ]
 const ALL_SCHEMES = ENTRY_SCHEMES.flatMap(([, schemes]) => schemes)
+
+// Pushover's `node:zlib` codec must stay behind its own entry. A registration-
+// only assertion would miss an accidentally bundled but unused codec. ESM
+// output is split into chunks, so inspect the full static-import closure rather
+// than just the tiny public entry file.
+function assertNoPushoverCodecInEsmClosure(entry) {
+  const seen = new Set()
+
+  function visit(file) {
+    if (seen.has(file)) return
+    seen.add(file)
+
+    const source = readFileSync(file, 'utf8')
+    if (source.includes('node:zlib') || source.includes('pushover-codec')) {
+      console.error(
+        `✗ ${entry}.js reaches Pushover codec code through ${file.replace(`${PKG}/dist/`, '')}`,
+      )
+      process.exit(1)
+    }
+
+    const staticImport = /\b(?:from\s*|import\s*)["'](\.[^"']+)["']/g
+    for (const match of source.matchAll(staticImport)) {
+      visit(resolve(dirname(file), match[1]))
+    }
+  }
+
+  visit(resolve(PKG, `dist/${entry}.js`))
+}
+
+for (const entry of [
+  'index',
+  ...ENTRY_SCHEMES.map(([name]) => `plugins/${name}`),
+]) {
+  if (entry === 'plugins/pushover') continue
+  assertNoPushoverCodecInEsmClosure(entry)
+
+  const cjs = readFileSync(resolve(PKG, `dist/${entry}.cjs`), 'utf8')
+  if (cjs.includes('node:zlib') || cjs.includes('pushover-codec')) {
+    console.error(`✗ ${entry}.cjs unexpectedly contains Pushover codec code`)
+    process.exit(1)
+  }
+}
+for (const extension of ['d.ts', 'd.cts']) {
+  const declarations = readFileSync(
+    resolve(PKG, `dist/plugins/pushover.${extension}`),
+    'utf8',
+  )
+  if (
+    declarations.includes('setPushoverEntropySourceForTest') ||
+    declarations.includes('python314Gzip')
+  ) {
+    console.error(
+      `✗ pushover.${extension} exposes an internal deterministic seam`,
+    )
+    process.exit(1)
+  }
+}
 
 function runModuleProbe(source) {
   return execFileSync(process.execPath, ['--input-type=module', '-e', source], {
@@ -193,25 +256,34 @@ if (calibration !== 'OK') {
 }
 
 for (const [entry, schemes] of [...ENTRY_SCHEMES, ['all', ALL_SCHEMES]]) {
-  const output = runModuleProbe(`
-    const calls = []
-    const observerKey = Symbol.for(${JSON.stringify(OBSERVER)})
-    const registryKey = Symbol.for(${JSON.stringify(REGISTRY)})
-    if (globalThis[registryKey] !== undefined || calls.length !== 0) process.exit(20)
-    globalThis[observerKey] = (scheme) => calls.push(scheme)
-    await import('./dist/plugins/${entry}.js')
-    const registry = globalThis[registryKey]
-    const expected = ${JSON.stringify(schemes)}
-    const actual = [...registry.keys()].sort()
-    const counts = Object.fromEntries(expected.map((scheme) => [scheme, calls.filter((x) => x === scheme).length]))
-    const okay = JSON.stringify(actual) === JSON.stringify([...expected].sort()) &&
-      expected.every((scheme) => counts[scheme] === 1) &&
-      !registry.has('observerstub') && !calls.includes('observerstub')
-    process.stdout.write(okay ? 'OK' : JSON.stringify({ actual, expected, calls, counts }))
-  `)
-  if (output !== 'OK') {
-    console.error(`✗ isolated registration failed for ${entry}: ${output}`)
-    process.exit(1)
+  for (const format of ['esm', 'cjs']) {
+    const load =
+      format === 'esm'
+        ? `await import('./dist/plugins/${entry}.js')`
+        : `createRequire(import.meta.url)('./dist/plugins/${entry}.cjs')`
+    const output = runModuleProbe(`
+      import { createRequire } from 'node:module'
+      const calls = []
+      const observerKey = Symbol.for(${JSON.stringify(OBSERVER)})
+      const registryKey = Symbol.for(${JSON.stringify(REGISTRY)})
+      if (globalThis[registryKey] !== undefined || calls.length !== 0) process.exit(20)
+      globalThis[observerKey] = (scheme) => calls.push(scheme)
+      ${load}
+      const registry = globalThis[registryKey]
+      const expected = ${JSON.stringify(schemes)}
+      const actual = [...registry.keys()].sort()
+      const counts = Object.fromEntries(expected.map((scheme) => [scheme, calls.filter((x) => x === scheme).length]))
+      const okay = JSON.stringify(actual) === JSON.stringify([...expected].sort()) &&
+        expected.every((scheme) => counts[scheme] === 1) &&
+        !registry.has('observerstub') && !calls.includes('observerstub')
+      process.stdout.write(okay ? 'OK' : JSON.stringify({ actual, expected, calls, counts }))
+    `)
+    if (output !== 'OK') {
+      console.error(
+        `✗ isolated ${format.toUpperCase()} registration failed for ${entry}: ${output}`,
+      )
+      process.exit(1)
+    }
   }
 }
 
@@ -219,5 +291,5 @@ console.log(
   `✓ registry is a single process-wide table ` +
     `(${PROBES.length} ESM/CJS load combinations resolve; ` +
     `CJS-loaded plugins deliver over a stub transport; ` +
-    `${ENTRY_SCHEMES.length} isolated entries + plugins/all register once)`,
+    `${ENTRY_SCHEMES.length} isolated ESM+CJS entries + plugins/all register once)`,
 )

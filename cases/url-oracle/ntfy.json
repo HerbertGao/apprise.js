@@ -1,0 +1,48 @@
+{
+  "plugin": "ntfy",
+  "cases": [
+    {
+      "name": "oracle-attach-filename-loss",
+      "url": "ntfys://topic?attach=https%3A%2F%2Ffiles.example%2Fa.txt&filename=renamed.txt"
+    },
+    { "name": "oracle-image", "url": "ntfys://topic?image=no" },
+    {
+      "name": "oracle-avatar-url",
+      "url": "ntfys://topic?avatar_url=https%3A%2F%2Fexample.com%2Fa.png"
+    },
+    {
+      "name": "oracle-click",
+      "url": "ntfys://topic?click=https%3A%2F%2Fexample.com%2Fopen"
+    },
+    { "name": "oracle-delay", "url": "ntfys://topic?delay=10m" },
+    { "name": "oracle-email", "url": "ntfys://topic?email=ops%40example.com" },
+    { "name": "oracle-priority", "url": "ntfys://topic?priority=high" },
+    { "name": "oracle-xtags", "url": "ntfys://topic?xtags=warning%2Cfire" },
+    {
+      "name": "oracle-legacy-tags",
+      "url": "ntfys://topic?tags=warning%2Cfire"
+    },
+    {
+      "name": "oracle-actions",
+      "url": "ntfys://topic?actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com"
+    },
+    {
+      "name": "oracle-mode",
+      "url": "ntfy://ntfy.private.example/topic?mode=private"
+    },
+    {
+      "name": "oracle-token-query",
+      "url": "ntfys://ntfy.private.example/topic?mode=private&token=tk_QUERY"
+    },
+    {
+      "name": "oracle-auth",
+      "url": "ntfys://alice@ntfy.private.example/topic?mode=private&auth=basic"
+    },
+    { "name": "oracle-to", "url": "ntfys://topic?to=extra-topic" },
+    { "name": "oracle-format", "url": "ntfys://topic?format=markdown" },
+    { "name": "oracle-overflow", "url": "ntfys://topic?overflow=truncate" },
+    { "name": "oracle-verify", "url": "ntfys://topic?verify=no" },
+    { "name": "oracle-rto", "url": "ntfys://topic?rto=9.5" },
+    { "name": "oracle-cto", "url": "ntfys://topic?cto=8.5" }
+  ]
+}

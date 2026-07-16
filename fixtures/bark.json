@@ -1,0 +1,483 @@
+{
+  "plugin": "bark",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "http-default",
+      "input": {
+        "url": "bark://bark.example/device-a",
+        "title": "Alert",
+        "body": "hello bark",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "177"
+          },
+          "body": {
+            "text": "{\"title\": \"Alert\", \"body\": \"hello bark\", \"icon\": \"https://github.com/caronc/apprise/raw/master/apprise/assets/themes/default/apprise-info-128x128.png\", \"device_key\": \"device-a\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "tls-default-port-no-image",
+      "input": {
+        "url": "barks://bark.example:443/device-secure?image=no",
+        "title": "",
+        "body": "secure",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://bark.example:443/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "83"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"secure\", \"device_key\": \"device-secure\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "basic-password",
+      "input": {
+        "url": "bark://alice:secret@bark.example:8080/device-auth?image=no",
+        "title": "",
+        "body": "authenticated",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example:8080/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "88",
+            "Authorization": "Basic YWxpY2U6c2VjcmV0"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"authenticated\", \"device_key\": \"device-auth\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "basic-user-only",
+      "input": {
+        "url": "bark://alice@bark.example/device-user?image=no",
+        "title": "",
+        "body": "user only",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "84",
+            "Authorization": "Basic YWxpY2U6Tm9uZQ=="
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"user only\", \"device_key\": \"device-user\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "multi-target-partial-failure",
+      "input": {
+        "url": "bark://bark.example/device-a/device-b?to=device-c&image=no",
+        "title": "",
+        "body": "fanout",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500
+          },
+          {
+            "status": 200
+          },
+          {
+            "status": 200
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://bark.example/push",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "78"
+            },
+            "body": {
+              "text": "{\"title\": \"Apprise Notifications\", \"body\": \"fanout\", \"device_key\": \"device-c\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://bark.example/push",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "78"
+            },
+            "body": {
+              "text": "{\"title\": \"Apprise Notifications\", \"body\": \"fanout\", \"device_key\": \"device-b\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://bark.example/push",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "78"
+            },
+            "body": {
+              "text": "{\"title\": \"Apprise Notifications\", \"body\": \"fanout\", \"device_key\": \"device-a\"}"
+            }
+          }
+        ],
+        "expectedCount": 3,
+        "result": false
+      }
+    },
+    {
+      "name": "multi-target-all-failure",
+      "input": {
+        "url": "bark://bark.example/device-a/device-b?image=no",
+        "title": "",
+        "body": "all fail",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500
+          },
+          {
+            "status": 500
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://bark.example/push",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "80"
+            },
+            "body": {
+              "text": "{\"title\": \"Apprise Notifications\", \"body\": \"all fail\", \"device_key\": \"device-b\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "http://bark.example/push",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Length": "80"
+            },
+            "body": {
+              "text": "{\"title\": \"Apprise Notifications\", \"body\": \"all fail\", \"device_key\": \"device-a\"}"
+            }
+          }
+        ],
+        "expectedCount": 2,
+        "result": false
+      }
+    },
+    {
+      "name": "all-display-fields",
+      "input": {
+        "url": "bark://bark.example/device-fields?format=markdown&sound=alarm&level=critical&volume=10&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&category=alerts&group=ops&image=no&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes",
+        "title": "Fields",
+        "body": "**markdown**",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "277"
+          },
+          "body": {
+            "text": "{\"title\": \"Fields\", \"markdown\": \"**markdown**\", \"icon\": \"https://example.com/custom.png\", \"sound\": \"alarm.caf\", \"url\": \"https://example.com/open?x=1\", \"badge\": 7, \"level\": \"critical\", \"category\": \"alerts\", \"group\": \"ops\", \"volume\": 10, \"call\": 1, \"device_key\": \"device-fields\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "underscored-integers",
+      "input": {
+        "url": "bark://bark.example/device-underscore?volume=1_0&badge=1_0&image=no",
+        "title": "",
+        "body": "underscored integers",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "128"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"underscored integers\", \"badge\": 10, \"volume\": 10, \"device_key\": \"device-underscore\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "markdown-custom-icon-priority",
+      "input": {
+        "url": "bark://bark.example/device-icon?format=markdown&image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png",
+        "title": "",
+        "body": "**custom**",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "133"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"markdown\": \"**custom**\", \"icon\": \"https://example.com/override.png\", \"device_key\": \"device-icon\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "invalid-parameters-fall-back",
+      "input": {
+        "url": "bark://bark.example/device-invalid?sound=bogus&level=zebra&volume=invalid&badge=-1&image=no",
+        "title": "",
+        "body": "fallback",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "86"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"fallback\", \"device_key\": \"device-invalid\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "out-of-range-volume-retained-upstream",
+      "input": {
+        "url": "bark://bark.example/device-volume?level=critical&volume=11&image=no",
+        "title": "",
+        "body": "volume boundary",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "127"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"volume boundary\", \"level\": \"critical\", \"volume\": 11, \"device_key\": \"device-volume\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "no-target",
+      "input": {
+        "url": "bark://bark.example",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "no-request"
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "invalid-missing-host",
+      "input": {
+        "url": "bark://",
+        "title": "",
+        "body": "not constructed",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    }
+  ]
+}

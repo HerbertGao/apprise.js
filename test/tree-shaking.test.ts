@@ -39,6 +39,14 @@ const ALL_SCHEMES = [
   'wxpusher',
   'pushdeer',
   'pushdeers',
+  'pover',
+  'pbul',
+  'ntfy',
+  'ntfys',
+  'gotify',
+  'gotifys',
+  'bark',
+  'barks',
 ]
 
 // Every scheme EXCEPT custom-xml's own pair — none of these may exist after a
@@ -74,6 +82,11 @@ const IM_PLUGINS: Array<[string, () => Promise<unknown>, string[]]> = [
     () => import('../src/plugins/pushdeer.js'),
     ['pushdeer', 'pushdeers'],
   ],
+  ['pushover', () => import('../src/plugins/pushover.js'), ['pover']],
+  ['pushbullet', () => import('../src/plugins/pushbullet.js'), ['pbul']],
+  ['ntfy', () => import('../src/plugins/ntfy.js'), ['ntfy', 'ntfys']],
+  ['gotify', () => import('../src/plugins/gotify.js'), ['gotify', 'gotifys']],
+  ['bark', () => import('../src/plugins/bark.js'), ['bark', 'barks']],
 ]
 
 describe('tree-shaking / convenience bucket', () => {
@@ -140,5 +153,13 @@ describe('tree-shaking / convenience bucket', () => {
     for (const scheme of ALL_SCHEMES) {
       expect(resolvePlugin(scheme), scheme).toBeDefined()
     }
+    const registry = (
+      globalThis as unknown as Record<symbol, Map<string, unknown>>
+    )[Symbol.for('apprise.js/registry@0')]
+    expect(
+      new Set(
+        [...(registry?.keys() ?? [])].filter((key) => key !== 'observer-probe'),
+      ),
+    ).toEqual(new Set(ALL_SCHEMES))
   })
 })

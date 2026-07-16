@@ -26,16 +26,21 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
 import { NotifyAppriseAPI } from '../src/plugins/apprise-api.js'
+import { NotifyBark } from '../src/plugins/bark.js'
 import { NotifyForm } from '../src/plugins/custom-form.js'
 import { NotifyJSON } from '../src/plugins/custom-json.js'
 import { NotifyXML } from '../src/plugins/custom-xml.js'
 import { NotifyDingTalk } from '../src/plugins/dingtalk.js'
 import { NotifyDiscord } from '../src/plugins/discord.js'
 import { NotifyFeishu } from '../src/plugins/feishu.js'
+import { NotifyGotify } from '../src/plugins/gotify.js'
 import { NotifyLark } from '../src/plugins/lark.js'
 import { NotifyMatrix } from '../src/plugins/matrix.js'
 import { NotifyMattermost } from '../src/plugins/mattermost.js'
+import { NotifyNtfy } from '../src/plugins/ntfy.js'
+import { NotifyPushBullet } from '../src/plugins/pushbullet.js'
 import { NotifyPushDeer } from '../src/plugins/pushdeer.js'
+import { NotifyPushover } from '../src/plugins/pushover.js'
 import { NotifyRocketChat } from '../src/plugins/rocketchat.js'
 import { NotifyServerChan } from '../src/plugins/serverchan.js'
 import { NotifySlack } from '../src/plugins/slack.js'
@@ -66,6 +71,7 @@ const PLUGINS: Record<string, UrlPluginClass> = {
   telegram: NotifyTelegram as unknown as UrlPluginClass,
   rocketchat: NotifyRocketChat as unknown as UrlPluginClass,
   matrix: NotifyMatrix as unknown as UrlPluginClass,
+  ntfy: NotifyNtfy as unknown as UrlPluginClass,
   serverchan: NotifyServerChan as unknown as UrlPluginClass,
   dingtalk: NotifyDingTalk as unknown as UrlPluginClass,
   wecombot: NotifyWeComBot as unknown as UrlPluginClass,
@@ -73,6 +79,10 @@ const PLUGINS: Record<string, UrlPluginClass> = {
   lark: NotifyLark as unknown as UrlPluginClass,
   wxpusher: NotifyWxPusher as unknown as UrlPluginClass,
   pushdeer: NotifyPushDeer as unknown as UrlPluginClass,
+  pushover: NotifyPushover as unknown as UrlPluginClass,
+  pushbullet: NotifyPushBullet as unknown as UrlPluginClass,
+  gotify: NotifyGotify as unknown as UrlPluginClass,
+  bark: NotifyBark as unknown as UrlPluginClass,
 }
 
 // Plugins whose url() unconditionally emits `method` (the custom webhook family).

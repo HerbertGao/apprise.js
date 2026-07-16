@@ -1,0 +1,918 @@
+{
+  "plugin": "pushover",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "default-all-devices-text",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN",
+        "title": "Alert",
+        "body": "hello pushover",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "107",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=0&title=Alert&message=hello+pushover&sound=pushover&user=USERKEY&device=ALL_DEVICES"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "html-format",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-html?format=html",
+        "title": "HTML",
+        "body": "<b>important</b>",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "125",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=0&title=HTML&message=%3Cb%3Eimportant%3C%2Fb%3E&sound=pushover&html=1&user=USERKEY&device=device-html"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "markdown-format",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-markdown?format=markdown",
+        "title": "",
+        "body": "**important**",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "173",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=%3Cp%3E%3Cstrong%3Eimportant%3C%2Fstrong%3E%3C%2Fp%3E&sound=pushover&html=1&user=USERKEY&device=device-markdown"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "devices-groups-and-to",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-b/%23groupb/device-a?to=%23groupa%2Cdevice-c",
+        "title": "",
+        "body": "fanout",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "134",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=fanout&sound=pushover&user=USERKEY&device=device-a%2Cdevice-b%2Cdevice-c"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "95",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=fanout&sound=pushover&user=groupa"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "95",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=fanout&sound=pushover&user=groupb"
+            }
+          }
+        ],
+        "expectedCount": 3,
+        "result": true
+      }
+    },
+    {
+      "name": "priority-sound-and-link",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-fields?priority=high&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open%20dashboard",
+        "title": "Fields",
+        "body": "linked",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "170",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=1&title=Fields&message=linked&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open+dashboard&user=USERKEY&device=device-fields"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "emergency-boundaries",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-emergency?priority=emergency&interval=30&expire=10800",
+        "title": "",
+        "body": "urgent",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "142",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=2&title=Apprise+Notifications&message=urgent&sound=pushover&retry=30&expire=10800&user=USERKEY&device=device-emergency"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "emergency-underscored-integers",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-underscore?priority=emergency&interval=3_0&expire=1_0",
+        "title": "",
+        "body": "underscored integers",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "154",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=2&title=Apprise+Notifications&message=underscored+integers&sound=pushover&retry=30&expire=10&user=USERKEY&device=device-underscore"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "invalid-emergency-interval",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN?priority=emergency&interval=29",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "invalid-missing-user-key",
+      "input": {
+        "url": "pover://APPTOKEN",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "invalid-target-only",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/%24invalid",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "no-request"
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "target-failure-continues",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device/%23groupa/%23groupb",
+        "title": "",
+        "body": "continue",
+        "type": "info",
+        "responses": [
+          {
+            "status": 200
+          },
+          {
+            "status": 500
+          },
+          {
+            "status": 200
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "112",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=continue&sound=pushover&user=USERKEY&device=device"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "97",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=continue&sound=pushover&user=groupa"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "97",
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=continue&sound=pushover&user=groupb"
+            }
+          }
+        ],
+        "expectedCount": 3,
+        "result": false
+      }
+    },
+    {
+      "name": "single-image-attachment",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-image",
+        "title": "Photo",
+        "body": "one image",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "base64": "AQIDBA=="
+            },
+            "mimetype": "image/png",
+            "name": "one.png"
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "11111111111111111111111111111111"
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "810",
+            "Content-Type": "multipart/form-data; boundary=11111111111111111111111111111111",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "base64": "LS0xMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTENCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTENCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNClBob3RvDQotLTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9Im1lc3NhZ2UiDQoNCm9uZSBpbWFnZQ0KLS0xMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJzb3VuZCINCg0KcHVzaG92ZXINCi0tMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTENCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idXNlciINCg0KVVNFUktFWQ0KLS0xMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJkZXZpY2UiDQoNCmRldmljZS1pbWFnZQ0KLS0xMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhdHRhY2htZW50IjsgZmlsZW5hbWU9Im9uZS5wbmciDQoNCgECAwQNCi0tMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTEtLQ0K"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "multi-image-attachment",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-images",
+        "title": "Photos",
+        "body": "two images",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "base64": "AQIDBA=="
+            },
+            "mimetype": "image/png",
+            "name": "one.png"
+          },
+          {
+            "memory": {
+              "base64": "BQYHCA=="
+            },
+            "mimetype": "image/jpeg",
+            "name": "two.jpg"
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "22222222222222222222222222222222"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "813",
+              "Content-Type": "multipart/form-data; boundary=22222222222222222222222222222222",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNClBob3Rvcw0KLS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQp0d28gaW1hZ2VzDQotLTIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InNvdW5kIg0KDQpwdXNob3Zlcg0KLS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ1c2VyIg0KDQpVU0VSS0VZDQotLTIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImRldmljZSINCg0KZGV2aWNlLWltYWdlcw0KLS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhdHRhY2htZW50IjsgZmlsZW5hbWU9Im9uZS5wbmciDQoNCgECAwQNCi0tMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjItLQ0K"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "800",
+              "Content-Type": "multipart/form-data; boundary=22222222222222222222222222222222",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCg0KLS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQp0d28uanBnDQotLTIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InNvdW5kIg0KDQpub25lDQotLTIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InVzZXIiDQoNClVTRVJLRVkNCi0tMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZGV2aWNlIg0KDQpkZXZpY2UtaW1hZ2VzDQotLTIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dGFjaG1lbnQiOyBmaWxlbmFtZT0idHdvLmpwZyINCg0KBQYHCA0KLS0yMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMi0tDQo="
+            }
+          }
+        ],
+        "expectedCount": 2,
+        "result": true
+      }
+    },
+    {
+      "name": "unsupported-attachment-falls-back-to-form",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-text",
+        "title": "",
+        "body": "text attachment",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "text": "plain"
+            },
+            "mimetype": "text/plain",
+            "name": "note.txt"
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "124",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=0&title=Apprise+Notifications&message=text+attachment&sound=pushover&user=USERKEY&device=device-text"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "empty-image-attachment-fails",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-empty",
+        "title": "",
+        "body": "empty image",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "base64": ""
+            },
+            "mimetype": "image/png",
+            "name": "empty.png"
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "no-request"
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "devices-groups-multi-image-partial-failure",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-b/%23groupb/device-a/%23groupa",
+        "title": "Matrix",
+        "body": "six requests",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          },
+          {
+            "file": "cases/assets/push-two.jpg"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200
+          },
+          {
+            "status": 200
+          },
+          {
+            "status": 500
+          },
+          {
+            "status": 200
+          },
+          {
+            "status": 200
+          },
+          {
+            "status": 200
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "33333333333333333333333333333333"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "835",
+              "Content-Type": "multipart/form-data; boundary=33333333333333333333333333333333",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCk1hdHJpeA0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQpzaXggcmVxdWVzdHMNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCnB1c2hvdmVyDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InVzZXIiDQoNClVTRVJLRVkNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZGV2aWNlIg0KDQpkZXZpY2UtYSxkZXZpY2UtYg0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhdHRhY2htZW50IjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzLS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "825",
+              "Content-Type": "multipart/form-data; boundary=33333333333333333333333333333333",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCg0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQpwdXNoLXR3by5qcGcNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCm5vbmUNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idXNlciINCg0KVVNFUktFWQ0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJkZXZpY2UiDQoNCmRldmljZS1hLGRldmljZS1iDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dGFjaG1lbnQiOyBmaWxlbmFtZT0icHVzaC10d28uanBnIg0KDQpwdXNoLWltYWdlLXR3bwoNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMtLQ0K"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "730",
+              "Content-Type": "multipart/form-data; boundary=33333333333333333333333333333333",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCk1hdHJpeA0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQpzaXggcmVxdWVzdHMNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCnB1c2hvdmVyDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InVzZXIiDQoNCmdyb3VwYQ0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhdHRhY2htZW50IjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzLS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "720",
+              "Content-Type": "multipart/form-data; boundary=33333333333333333333333333333333",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCg0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQpwdXNoLXR3by5qcGcNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCm5vbmUNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idXNlciINCg0KZ3JvdXBhDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dGFjaG1lbnQiOyBmaWxlbmFtZT0icHVzaC10d28uanBnIg0KDQpwdXNoLWltYWdlLXR3bwoNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMtLQ0K"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "730",
+              "Content-Type": "multipart/form-data; boundary=33333333333333333333333333333333",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCk1hdHJpeA0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQpzaXggcmVxdWVzdHMNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCnB1c2hvdmVyDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InVzZXIiDQoNCmdyb3VwYg0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhdHRhY2htZW50IjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzLS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "720",
+              "Content-Type": "multipart/form-data; boundary=33333333333333333333333333333333",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCg0KLS0zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQpwdXNoLXR3by5qcGcNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCm5vbmUNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idXNlciINCg0KZ3JvdXBiDQotLTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dGFjaG1lbnQiOyBmaWxlbmFtZT0icHVzaC10d28uanBnIg0KDQpwdXNoLWltYWdlLXR3bwoNCi0tMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMtLQ0K"
+            }
+          }
+        ],
+        "expectedCount": 6,
+        "result": false
+      }
+    },
+    {
+      "name": "e2ee-all-fields",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-secure?key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&url=https%3A%2F%2Fexample.com%2Fsecret&url_title=Secret%20link",
+        "title": "Encrypted title",
+        "body": "encrypted body",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null,
+        "entropyHex": [
+          "000102030405060708090a0b0c0d0e0f",
+          "101112131415161718191a1b1c1d1e1f",
+          "202122232425262728292a2b2c2d2e2f",
+          "303132333435363738393a3b3c3d3e3f"
+        ]
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "634",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=0&title=EBESExQVFhcYGRobHB0eH0b6lQCVWIVNggP7AeR0BbrQGSnjkeWwlkIK9MVZ8GbNRer0NYBfdnPwRYNMRUiGGdwQkgKUsesisF1tUlczR6kUJBmq2S5%2F2BQZXHwZTsN5&message=AAECAwQFBgcICQoLDA0OD4CGnkqS39bxj7L94JpWABjeu0tBgl%2BcZtJzZwniMpMs4XOPd%2BBJtPrEJSSCIAmD321g6OCVdMd2bWsEj8HX0ngzjvwU%2Fq25B0kvlScZ1HfU&sound=pushover&url=ICEiIyQlJicoKSorLC0uL5yx%2FVi4iaaMblMXNH3Q52IX8ZnefeT8AHHbXLvK6fXB7L1MMONUHmMB1wVVpc3ASDMed4t53prYjXGdawE8R%2FkLDhw2FCMGnEYcMYOFd4WT&url_title=MDEyMzQ1Njc4OTo7PD0%2BP9kAb7fvg42L5KZBNm%2FYhjKHhdnIJ%2B2kR%2BWEl5JaTqpwx7Ba%2B11dQwwah1HduMtMbWCKwqz5iR1j8IxQn5vpEns%3D&encrypted=1&user=USERKEY&device=device-secure"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "e2ee-disabled-by-query",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-plain?key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no",
+        "title": "Plain title",
+        "body": "plain body",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "110",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=0&title=Plain+title&message=plain+body&sound=pushover&user=USERKEY&device=device-plain"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "invalid-e2ee-key",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN?key=not-a-64-hex-key",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "e2ee-empty-body-multi-attachment",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-secure?key=fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+        "title": "",
+        "body": "",
+        "type": "info",
+        "attachments": [
+          {
+            "memory": {
+              "base64": "AQIDBA=="
+            },
+            "mimetype": "image/png",
+            "name": "visible-one.png"
+          },
+          {
+            "memory": {
+              "base64": "BQYHCA=="
+            },
+            "mimetype": "image/jpeg",
+            "name": "visible-two.jpg"
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "44444444444444444444444444444444",
+        "entropyHex": [
+          "404142434445464748494a4b4c4d4e4f",
+          "505152535455565758595a5b5c5d5e5f"
+        ]
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "1039",
+              "Content-Type": "multipart/form-data; boundary=44444444444444444444444444444444",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS00NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNClVGRlNVMVJWVmxkWVdWcGJYRjFlWDNFejRIbE5PTUJESTVMaFNiY21JWFB4SXRXTzZ1SWIvN2diaUtEZGkya3RDTTVqRzJMczdwZXFiL1dMeVdFK1pHQVJ3RjRVS2xzcm15UE1obUZSWnEyRWVGMXZrbU5reWJ6NldyTXMwNE1CDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9Im1lc3NhZ2UiDQoNCnZpc2libGUtb25lLnBuZw0KLS00NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJzb3VuZCINCg0KcHVzaG92ZXINCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZW5jcnlwdGVkIg0KDQoxDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InVzZXIiDQoNClVTRVJLRVkNCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZGV2aWNlIg0KDQpkZXZpY2Utc2VjdXJlDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dGFjaG1lbnQiOyBmaWxlbmFtZT0idmlzaWJsZS1vbmUucG5nIg0KDQoBAgMEDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0LS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushover.net/1/messages.json",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "907",
+              "Content-Type": "multipart/form-data; boundary=44444444444444444444444444444444",
+              "Authorization": "Basic QVBQVE9LRU46"
+            },
+            "body": {
+              "base64": "LS00NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJ0b2tlbiINCg0KQVBQVE9LRU4NCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0icHJpb3JpdHkiDQoNCjANCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0idGl0bGUiDQoNCg0KLS00NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJtZXNzYWdlIg0KDQp2aXNpYmxlLXR3by5qcGcNCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0ic291bmQiDQoNCm5vbmUNCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZW5jcnlwdGVkIg0KDQoxDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9InVzZXIiDQoNClVTRVJLRVkNCi0tNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCkNvbnRlbnQtRGlzcG9zaXRpb246IGZvcm0tZGF0YTsgbmFtZT0iZGV2aWNlIg0KDQpkZXZpY2Utc2VjdXJlDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImF0dGFjaG1lbnQiOyBmaWxlbmFtZT0idmlzaWJsZS10d28uanBnIg0KDQoFBgcIDQotLTQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0LS0NCg=="
+            }
+          }
+        ],
+        "expectedCount": 2,
+        "result": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1389 @@
+{
+  "plugin": "pushbullet",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "all-devices-note",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN",
+        "title": "Alert",
+        "body": "all devices",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushbullet.com/v2/pushes",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "57",
+            "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+          },
+          "body": {
+            "text": "{\"type\": \"note\", \"title\": \"Alert\", \"body\": \"all devices\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "email-note",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/person%40example.com",
+        "title": "Email",
+        "body": "email target",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushbullet.com/v2/pushes",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "89",
+            "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+          },
+          "body": {
+            "text": "{\"type\": \"note\", \"title\": \"Email\", \"body\": \"email target\", \"email\": \"person@example.com\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "channel-note",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/%23alerts",
+        "title": "",
+        "body": "channel target",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushbullet.com/v2/pushes",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "80",
+            "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+          },
+          "body": {
+            "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"channel target\", \"channel_tag\": \"alerts\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "device-and-to-email",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device-iden?to=person%40example.com",
+        "title": "",
+        "body": "two targets",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "82",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"two targets\", \"device_iden\": \"device-iden\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "83",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"two targets\", \"email\": \"person@example.com\"}"
+            }
+          }
+        ],
+        "expectedCount": 2,
+        "result": true
+      }
+    },
+    {
+      "name": "empty-body-image-only",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device-image",
+        "title": "",
+        "body": "",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          },
+          {
+            "status": 204,
+            "body": null
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "not-json"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "51111111111111111111111111111111"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=51111111111111111111111111111111",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01MTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTUxMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExLS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          }
+        ],
+        "expectedCount": 3,
+        "result": true
+      }
+    },
+    {
+      "name": "single-image-complete-chain",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device-image",
+        "title": "Image",
+        "body": "image body",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "52222222222222222222222222222222"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=52222222222222222222222222222222",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTUyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyLS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "87",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"Image\", \"body\": \"image body\", \"device_iden\": \"device-image\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          }
+        ],
+        "expectedCount": 4,
+        "result": true
+      }
+    },
+    {
+      "name": "single-non-image-complete-chain",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device-file",
+        "title": "File",
+        "body": "file body",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/hello.txt"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"hello.txt\",\"file_type\":\"text/plain\",\"file_url\":\"https://files.example/hello.txt\",\"upload_url\":\"https://upload.example/hello\"}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "53333333333333333333333333333333"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "53",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"hello.txt\", \"file_type\": \"text/plain\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/hello",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "167",
+              "Content-Type": "multipart/form-data; boundary=53333333333333333333333333333333",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01MzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9ImhlbGxvLnR4dCINCg0KaGVsbG8gcHVzaCBhdHRhY2htZW50Cg0KLS01MzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMy0tDQo="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "84",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"File\", \"body\": \"file body\", \"device_iden\": \"device-file\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "116",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"hello.txt\", \"file_type\": \"text/plain\", \"file_url\": \"https://files.example/hello.txt\"}"
+            }
+          }
+        ],
+        "expectedCount": 4,
+        "result": true
+      }
+    },
+    {
+      "name": "two-attachments-two-targets",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/person%40example.com/%23alerts",
+        "title": "Matrix",
+        "body": "ten requests",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          },
+          {
+            "file": "cases/assets/hello.txt"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          },
+          {
+            "status": 204,
+            "body": null
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"hello.txt\",\"file_type\":\"text/plain\",\"file_url\":\"https://files.example/hello.txt\",\"upload_url\":\"https://upload.example/hello\"}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "uploaded"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "54444444444444444444444444444444"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=54444444444444444444444444444444",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTU0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0LS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "53",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"hello.txt\", \"file_type\": \"text/plain\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/hello",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "167",
+              "Content-Type": "multipart/form-data; boundary=54444444444444444444444444444444",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9ImhlbGxvLnR4dCINCg0KaGVsbG8gcHVzaCBhdHRhY2htZW50Cg0KLS01NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NC0tDQo="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "84",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"Matrix\", \"body\": \"ten requests\", \"channel_tag\": \"alerts\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "116",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"hello.txt\", \"file_type\": \"text/plain\", \"file_url\": \"https://files.example/hello.txt\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "90",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"Matrix\", \"body\": \"ten requests\", \"email\": \"person@example.com\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "116",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"hello.txt\", \"file_type\": \"text/plain\", \"file_url\": \"https://files.example/hello.txt\"}"
+            }
+          }
+        ],
+        "expectedCount": 10,
+        "result": true
+      }
+    },
+    {
+      "name": "upload-request-http-failure",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device",
+        "title": "",
+        "body": "not delivered",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 500,
+            "body": {
+              "text": "{}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushbullet.com/v2/upload-request",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "55",
+            "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+          },
+          "body": {
+            "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+          }
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "upload-request-invalid-json",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device",
+        "title": "",
+        "body": "not delivered",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "not-json"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushbullet.com/v2/upload-request",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "55",
+            "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+          },
+          "body": {
+            "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+          }
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "upload-request-missing-field",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device",
+        "title": "",
+        "body": "not delivered",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\"}"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushbullet.com/v2/upload-request",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "Content-Length": "55",
+            "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+          },
+          "body": {
+            "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+          }
+        },
+        "result": false
+      }
+    },
+    {
+      "name": "dynamic-upload-failure-short-circuits",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device",
+        "title": "",
+        "body": "not delivered",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          },
+          {
+            "status": 500,
+            "body": {
+              "text": "upload failed"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "55555555555555555555555555555555"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=55555555555555555555555555555555",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1LS0NCg=="
+            }
+          }
+        ],
+        "expectedCount": 2,
+        "result": false
+      }
+    },
+    {
+      "name": "note-failure-skips-current-files-and-continues",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device/%23alerts",
+        "title": "",
+        "body": "continue targets",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "uploaded"
+            }
+          },
+          {
+            "status": 500,
+            "body": {
+              "text": "note failed"
+            }
+          },
+          {
+            "status": 200,
+            "body": null
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "file sent"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "56666666666666666666666666666666"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=56666666666666666666666666666666",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2Ng0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTU2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2LS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "82",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"continue targets\", \"channel_tag\": \"alerts\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "82",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"continue targets\", \"device_iden\": \"device\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          }
+        ],
+        "expectedCount": 5,
+        "result": false
+      }
+    },
+    {
+      "name": "file-failure-continues-files-and-targets",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device/%23alerts",
+        "title": "",
+        "body": "continue files",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          },
+          {
+            "file": "cases/assets/hello.txt"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "uploaded"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"hello.txt\",\"file_type\":\"text/plain\",\"file_url\":\"https://files.example/hello.txt\",\"upload_url\":\"https://upload.example/hello\"}"
+            }
+          },
+          {
+            "status": 204,
+            "body": null
+          },
+          {
+            "status": 200,
+            "body": null
+          },
+          {
+            "status": 500,
+            "body": {
+              "text": "file failed"
+            }
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "file sent"
+            }
+          },
+          {
+            "status": 204,
+            "body": null
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "not-json"
+            }
+          },
+          {
+            "status": 204,
+            "body": null
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "57777777777777777777777777777777"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=57777777777777777777777777777777",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3LS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "53",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"hello.txt\", \"file_type\": \"text/plain\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/hello",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "167",
+              "Content-Type": "multipart/form-data; boundary=57777777777777777777777777777777",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nw0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9ImhlbGxvLnR4dCINCg0KaGVsbG8gcHVzaCBhdHRhY2htZW50Cg0KLS01Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Ny0tDQo="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "80",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"continue files\", \"channel_tag\": \"alerts\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "116",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"hello.txt\", \"file_type\": \"text/plain\", \"file_url\": \"https://files.example/hello.txt\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "80",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"continue files\", \"device_iden\": \"device\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "116",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"hello.txt\", \"file_type\": \"text/plain\", \"file_url\": \"https://files.example/hello.txt\"}"
+            }
+          }
+        ],
+        "expectedCount": 10,
+        "result": false
+      }
+    },
+    {
+      "name": "success-statuses-ignore-response-json",
+      "input": {
+        "url": "pbul://ACCESS_TOKEN/device",
+        "title": "",
+        "body": "status handling",
+        "type": "info",
+        "attachments": [
+          {
+            "file": "cases/assets/push-one.png"
+          }
+        ],
+        "responses": [
+          {
+            "status": 200,
+            "body": {
+              "text": "{\"file_name\":\"push-one.png\",\"file_type\":\"image/png\",\"file_url\":\"https://files.example/one.png\",\"upload_url\":\"https://upload.example/one\"}"
+            }
+          },
+          {
+            "status": 204,
+            "body": {
+              "text": "not-json"
+            }
+          },
+          {
+            "status": 204,
+            "body": null
+          },
+          {
+            "status": 200,
+            "body": {
+              "text": "also-not-json"
+            }
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": "58888888888888888888888888888888"
+      },
+      "expected": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/upload-request",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "55",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"file_name\": \"push-one.png\", \"file_type\": \"image/png\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://upload.example/one",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Length": "163",
+              "Content-Type": "multipart/form-data; boundary=58888888888888888888888888888888",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "base64": "LS01ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4OA0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJmaWxlIjsgZmlsZW5hbWU9InB1c2gtb25lLnBuZyINCg0KcHVzaC1pbWFnZS1vbmUKDQotLTU4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4LS0NCg=="
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "81",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"note\", \"title\": \"\", \"body\": \"status handling\", \"device_iden\": \"device\"}"
+            }
+          },
+          {
+            "method": "POST",
+            "url": "https://api.pushbullet.com/v2/pushes",
+            "headers": {
+              "User-Agent": "Apprise",
+              "Accept-Encoding": "gzip, deflate, zstd",
+              "Accept": "*/*",
+              "Connection": "keep-alive",
+              "Content-Type": "application/json",
+              "Content-Length": "162",
+              "Authorization": "Basic QUNDRVNTX1RPS0VOOg=="
+            },
+            "body": {
+              "text": "{\"type\": \"file\", \"file_name\": \"push-one.png\", \"file_type\": \"image/png\", \"file_url\": \"https://files.example/one.png\", \"image_url\": \"https://files.example/one.png\"}"
+            }
+          }
+        ],
+        "expectedCount": 4,
+        "result": true
+      }
+    },
+    {
+      "name": "invalid-missing-token",
+      "input": {
+        "url": "pbul://",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    }
+  ]
+}

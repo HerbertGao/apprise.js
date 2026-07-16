@@ -74,8 +74,10 @@ import base64
 import contextlib
 import importlib
 import json
+import re
 import sys
 import urllib.parse
+import uuid
 from pathlib import Path
 
 import requests
@@ -91,7 +93,7 @@ EXPECTED_APPRISE_VERSION = "1.12.0"
 DEFAULT_UID = "itest-uid-0"
 DEFAULT_RECURSION = 0
 MAX_TIMESTAMP_MS = (1 << 51) - 1
-PLUGINS_CN = {
+RESULT_REQUIRED_PLUGINS = {
     "serverchan",
     "dingtalk",
     "wecombot",
@@ -99,6 +101,11 @@ PLUGINS_CN = {
     "lark",
     "wxpusher",
     "pushdeer",
+    "pushover",
+    "pushbullet",
+    "ntfy",
+    "gotify",
+    "bark",
 }
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -107,8 +114,9 @@ URL_ORACLE_CASES_DIR = CASES_DIR / "url-oracle"
 FIXTURES_DIR = ROOT / "fixtures"
 URL_ORACLE_OUT = FIXTURES_DIR / "url-oracle.json"
 
-# Per-plugin url() emitted-key inventory (task 1.3), read straight off each
-# plugin's url() in src/plugins/*.ts. `static` keys are always emitted; each
+# Per-plugin url() emitted-key inventory, curated from the pinned upstream
+# oracle. The TypeScript url() implementation is the compared subject, never
+# the authority for this list. `static` keys are always emitted; each
 # `conditional` key is emitted only under a non-default condition and MUST be
 # activated by >=1 captured case (mechanically asserted in
 # `_assert_inventory_covered`). A bare "+"/"-"/":" conditional entry denotes the
@@ -230,6 +238,37 @@ URL_KEY_INVENTORY = {
         "conditional": ["verify", "rto", "cto"],
     },
     "pushdeer": {"static": [], "conditional": []},
+    "gotify": {
+        "static": ["priority", "format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "bark": {
+        "static": ["image", "format", "overflow"],
+        "conditional": [
+            "sound", "level", "volume", "click", "badge", "category",
+            "group", "icon", "call", "verify", "rto", "cto",
+        ],
+    },
+    "pushover": {
+        "static": ["priority", "sound", "format", "overflow"],
+        "conditional": [
+            "url", "url_title", "expire", "interval", "key", "e2ee",
+            "verify", "rto", "cto",
+        ],
+    },
+    "pushbullet": {
+        "static": ["format", "overflow"],
+        "conditional": ["verify", "rto", "cto"],
+    },
+    "ntfy": {
+        "static": [
+            "priority", "mode", "image", "auth", "format", "overflow",
+        ],
+        "conditional": [
+            "avatar_url", "attach", "click", "delay", "email", "xtags",
+            "actions", "verify", "rto", "cto",
+        ],
+    },
 }
 
 
@@ -328,6 +367,140 @@ def _timestamp_ms(seeds, case_name):
             f"between 0 and {MAX_TIMESTAMP_MS}."
         )
     return value
+
+
+def _entropy_hex(seeds, case_name):
+    """Return a validated optional queue of 16-byte entropy seeds.
+
+    The generic capture runner deliberately does not consume or install this
+    queue.  A Pushover-only context manager owns that seam (task 1.2).
+    """
+    if "entropyHex" not in seeds:
+        return None
+    value = seeds["entropyHex"]
+    if not isinstance(value, list):
+        raise SystemExit(
+            f"ERROR: case {case_name!r} seeds.entropyHex MUST be an array."
+        )
+    for idx, item in enumerate(value):
+        if not isinstance(item, str) or re.fullmatch(
+            r"[0-9a-fA-F]{32}", item
+        ) is None:
+            raise SystemExit(
+                f"ERROR: case {case_name!r} seeds.entropyHex[{idx}] MUST be "
+                "exactly 32 hexadecimal characters."
+            )
+    return value
+
+
+def _uuid_seed(seeds, case_name):
+    """Return an optional canonical lowercase hyphenated UUID seed."""
+    if "uuid" not in seeds:
+        return None
+    value = seeds["uuid"]
+    if (
+        not isinstance(value, str)
+        or re.fullmatch(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+            value,
+        ) is None
+    ):
+        raise SystemExit(
+            f"ERROR: case {case_name!r} seeds.uuid MUST be a canonical "
+            "lowercase hyphenated UUID."
+        )
+    try:
+        parsed = uuid.UUID(value)
+    except ValueError as err:
+        raise SystemExit(
+            f"ERROR: case {case_name!r} seeds.uuid is not a valid UUID."
+        ) from err
+    if str(parsed) != value:
+        raise SystemExit(
+            f"ERROR: case {case_name!r} seeds.uuid MUST round-trip canonically."
+        )
+    return value
+
+
+def _pushover_e2ee_requested(case, plugin):
+    """Return whether a case requests valid-key Pushover E2EE.
+
+    Invalid keys are construction-negative cases, not executable E2EE cases.
+    An omitted/blank e2ee value preserves upstream's default-on behaviour.
+    """
+    if plugin != "pushover":
+        return False
+    query = case.get("url", "").partition("?")[2]
+    qsd = urllib.parse.parse_qs(query, keep_blank_values=True)
+    key = (qsd.get("key") or [""])[-1]
+    if re.fullmatch(r"[0-9a-fA-F]{64}", key) is None:
+        return False
+    e2ee = (qsd.get("e2ee") or [""])[-1].strip().lower()
+    return e2ee not in {"0", "false", "f", "no", "n", "off"}
+
+
+@contextlib.contextmanager
+def pin_pushover_entropy(entropy_hex, case_name):
+    """Temporarily replace Pushover's ``_os.urandom`` with a strict queue."""
+    if entropy_hex is None:
+        yield
+        return
+
+    module = importlib.import_module("apprise.plugins.pushover")
+    original = module._os.urandom
+    queue = [bytes.fromhex(seed) for seed in entropy_hex]
+
+    def strict_urandom(size):
+        if isinstance(size, bool) or size != 16:
+            raise RuntimeError(
+                f"Pushover entropy seam only accepts 16-byte requests; got {size!r}."
+            )
+        if not queue:
+            raise RuntimeError(
+                f"Pushover entropy queue exhausted in case {case_name!r}."
+            )
+        return queue.pop(0)
+
+    module._os.urandom = strict_urandom
+    completed = False
+    try:
+        yield
+        completed = True
+    finally:
+        module._os.urandom = original
+        if completed and queue:
+            raise RuntimeError(
+                f"Pushover entropy queue has {len(queue)} unconsumed seed(s) "
+                f"in case {case_name!r}."
+            )
+
+
+def _request_has_encrypted_flag(request):
+    """Return whether a prepared form/multipart request carries encrypted=1."""
+    body = request.body
+    if isinstance(body, str):
+        fields = urllib.parse.parse_qs(body, keep_blank_values=True)
+        return fields.get("encrypted") == ["1"]
+    if isinstance(body, bytes):
+        return b'name="encrypted"\r\n\r\n1\r\n' in body
+    return False
+
+
+def _assert_multipart_boundary(captured, boundary, case_name):
+    """Require every captured multipart case to pin a non-empty boundary."""
+    has_multipart = any(
+        any(
+            key.lower() == "content-type"
+            and value.lower().startswith("multipart/form-data")
+            for key, value in request.headers.items()
+        )
+        for request in captured
+    )
+    if has_multipart and (not isinstance(boundary, str) or not boundary):
+        raise SystemExit(
+            f"ERROR: multipart case {case_name!r} MUST declare a non-empty "
+            "seeds.boundary."
+        )
 
 
 @contextlib.contextmanager
@@ -462,8 +635,22 @@ def capture_case(case, plugin):
     uid = seeds.get("uid", DEFAULT_UID)
     recursion = seeds.get("recursion", DEFAULT_RECURSION)
     boundary = seeds.get("boundary")
-    uuid_seed = seeds.get("uuid")
+    uuid_seed = _uuid_seed(seeds, case["name"])
     timestamp_ms = _timestamp_ms(seeds, case["name"])
+    entropy_hex = _entropy_hex(seeds, case["name"])
+    pushover_e2ee = _pushover_e2ee_requested(case, plugin)
+    if pushover_e2ee and entropy_hex is None:
+        raise SystemExit(
+            f"ERROR: Pushover E2EE case {case['name']!r} MUST declare "
+            "seeds.entropyHex."
+        )
+    if pushover_e2ee:
+        module = importlib.import_module("apprise.plugins.pushover")
+        if not module.PUSHOVER_E2EE_SUPPORT:
+            raise SystemExit(
+                f"ERROR: Pushover E2EE case {case['name']!r} requires the "
+                "upstream 'cryptography' dependency; refusing plaintext capture."
+            )
 
     attachments = case.get("attachments") or []
     # Per-request canned responses for multi-step plugins (login/send/...).
@@ -474,9 +661,10 @@ def capture_case(case, plugin):
         raise SystemExit(
             f"ERROR: case {case['name']!r} assertResult MUST be boolean."
         )
-    if plugin in PLUGINS_CN and not has_assert_result:
+    if plugin in RESULT_REQUIRED_PLUGINS and not has_assert_result:
         raise SystemExit(
-            f"ERROR: plugins-cn case {case['name']!r} MUST declare assertResult."
+            f"ERROR: result-required plugin case {case['name']!r} MUST declare "
+            "assertResult."
         )
 
     # `body_gen` compactly expresses a large body (e.g. overflow cases) as a
@@ -517,6 +705,8 @@ def capture_case(case, plugin):
         seeds_echo["uuid"] = uuid_seed
     if "timestampMs" in seeds:
         seeds_echo["timestampMs"] = timestamp_ms
+    if "entropyHex" in seeds:
+        seeds_echo["entropyHex"] = entropy_hex
 
     entry = {
         "name": case["name"],
@@ -531,31 +721,45 @@ def capture_case(case, plugin):
                 f"ERROR: case {case['name']!r} declared {len(responses)} "
                 "response preset(s) but constructed no request producer."
             )
-        if plugin in PLUGINS_CN and assert_result is not False:
+        if plugin in RESULT_REQUIRED_PLUGINS and assert_result is not False:
             raise SystemExit(
-                f"ERROR: instantiation-failed plugins-cn case {case['name']!r} "
+                f"ERROR: instantiation-failed result-required case {case['name']!r} "
                 "MUST set assertResult=false."
             )
         entry["expected"] = {"noRequest": {"reason": "instantiation-failed"}}
         return entry
 
-    if plugin in PLUGINS_CN and assert_result is not True:
+    if plugin in RESULT_REQUIRED_PLUGINS and assert_result is not True:
         raise SystemExit(
-            f"ERROR: constructed plugins-cn case {case['name']!r} "
+            f"ERROR: constructed result-required case {case['name']!r} "
             "MUST set assertResult=true."
         )
 
     attach = build_attach(attachments)
     with pin_dingtalk_time(timestamp_ms):
-        with intercept(
-            boundary=boundary, responses=responses, uuid_seed=uuid_seed
-        ) as captured:
-            result = ap.notify(
-                body=body,
-                title=case.get("title", ""),
-                notify_type=apprise.NotifyType(case.get("type", "info")),
-                attach=attach,
-            )
+        with pin_pushover_entropy(
+            entropy_hex if pushover_e2ee else None, case["name"]
+        ):
+            with intercept(
+                boundary=boundary, responses=responses, uuid_seed=uuid_seed
+            ) as captured:
+                result = ap.notify(
+                    body=body,
+                    title=case.get("title", ""),
+                    notify_type=apprise.NotifyType(case.get("type", "info")),
+                    attach=attach,
+                )
+
+    if pushover_e2ee and (
+        not captured
+        or any(not _request_has_encrypted_flag(request) for request in captured)
+    ):
+        raise SystemExit(
+            f"ERROR: Pushover E2EE case {case['name']!r} produced wire without "
+            "encrypted=1; refusing plaintext capture."
+        )
+
+    _assert_multipart_boundary(captured, boundary, case["name"])
 
     if len(captured) < len(responses):
         raise SystemExit(

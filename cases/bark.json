@@ -1,0 +1,89 @@
+{
+  "plugin": "bark",
+  "cases": [
+    {
+      "name": "http-default",
+      "url": "bark://bark.example/device-a",
+      "title": "Alert",
+      "body": "hello bark",
+      "assertResult": true
+    },
+    {
+      "name": "tls-default-port-no-image",
+      "url": "barks://bark.example:443/device-secure?image=no",
+      "body": "secure",
+      "assertResult": true
+    },
+    {
+      "name": "basic-password",
+      "url": "bark://alice:secret@bark.example:8080/device-auth?image=no",
+      "body": "authenticated",
+      "assertResult": true
+    },
+    {
+      "name": "basic-user-only",
+      "url": "bark://alice@bark.example/device-user?image=no",
+      "body": "user only",
+      "assertResult": true
+    },
+    {
+      "name": "multi-target-partial-failure",
+      "expectedCount": 3,
+      "url": "bark://bark.example/device-a/device-b?to=device-c&image=no",
+      "body": "fanout",
+      "assertResult": true,
+      "responses": [{ "status": 500 }, { "status": 200 }, { "status": 200 }]
+    },
+    {
+      "name": "multi-target-all-failure",
+      "expectedCount": 2,
+      "url": "bark://bark.example/device-a/device-b?image=no",
+      "body": "all fail",
+      "assertResult": true,
+      "responses": [{ "status": 500 }, { "status": 500 }]
+    },
+    {
+      "name": "all-display-fields",
+      "url": "bark://bark.example/device-fields?format=markdown&sound=alarm&level=critical&volume=10&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&category=alerts&group=ops&image=no&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes",
+      "title": "Fields",
+      "body": "**markdown**",
+      "assertResult": true
+    },
+    {
+      "name": "underscored-integers",
+      "url": "bark://bark.example/device-underscore?volume=1_0&badge=1_0&image=no",
+      "body": "underscored integers",
+      "assertResult": true
+    },
+    {
+      "name": "markdown-custom-icon-priority",
+      "url": "bark://bark.example/device-icon?format=markdown&image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png",
+      "body": "**custom**",
+      "assertResult": true
+    },
+    {
+      "name": "invalid-parameters-fall-back",
+      "url": "bark://bark.example/device-invalid?sound=bogus&level=zebra&volume=invalid&badge=-1&image=no",
+      "body": "fallback",
+      "assertResult": true
+    },
+    {
+      "name": "out-of-range-volume-retained-upstream",
+      "url": "bark://bark.example/device-volume?level=critical&volume=11&image=no",
+      "body": "volume boundary",
+      "assertResult": true
+    },
+    {
+      "name": "no-target",
+      "url": "bark://bark.example",
+      "body": "not sent",
+      "assertResult": true
+    },
+    {
+      "name": "invalid-missing-host",
+      "url": "bark://",
+      "body": "not constructed",
+      "assertResult": false
+    }
+  ]
+}

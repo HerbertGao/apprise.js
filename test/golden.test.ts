@@ -84,6 +84,48 @@ function requestCase(name: string, request: FixtureRequest): FixtureCase {
 }
 
 describe('golden diff tool self-test (task 5.3)', () => {
+  test('validates entropyHex without changing a generic plugin request', async () => {
+    const c = requestCase('generic-entropy', baseRequest)
+    c.input.assertResult = true
+    c.expected.result = true
+    c.seeds = {
+      entropyHex: [
+        '00112233445566778899aabbccddeeff',
+        'ffeeddccbbaa99887766554433221100',
+      ],
+    }
+    expect(() =>
+      validateFixture({ plugin: 'legacy', cases: [c] }),
+    ).not.toThrow()
+    await expect(matchCase(c, { bodyMode: 'json' })).resolves.toBeUndefined()
+  })
+
+  test.each([
+    ['not an array', '00112233445566778899aabbccddeeff'],
+    ['short', ['0011']],
+    ['non-hex', ['g'.repeat(32)]],
+    ['non-string', [1]],
+  ])('rejects invalid entropyHex: %s', (_name, entropyHex) => {
+    const c = requestCase('bad-entropy', baseRequest)
+    c.seeds = { entropyHex } as unknown as FixtureCase['seeds']
+    expect(() => validateFixture({ plugin: 'legacy', cases: [c] })).toThrow(
+      /seeds\.entropyHex/,
+    )
+  })
+
+  test.each([
+    '00112233-4455-6677-8899-AABBCCDDEEFF',
+    '00112233445566778899aabbccddeeff',
+    '{00112233-4455-6677-8899-aabbccddeeff}',
+    'not-a-uuid',
+  ])('rejects non-canonical uuid seed %s', (uuid) => {
+    const c = requestCase('bad-uuid', baseRequest)
+    c.seeds = { uuid }
+    expect(() => validateFixture({ plugin: 'legacy', cases: [c] })).toThrow(
+      /seeds\.uuid/,
+    )
+  })
+
   test('matches a byte-compatible request (JSON key-order independent)', async () => {
     await expect(
       matchCase(requestCase('good', baseRequest), { bodyMode: 'json' }),
@@ -541,6 +583,22 @@ describe('golden diff tool self-test (task 5.3)', () => {
 
     schemaCase.input.assertResult = true
     expect(() => validateFixture(base)).toThrow(/expected\.result/)
+
+    schemaCase.input.assertResult = 'yes' as unknown as boolean
+    expect(() => validateFixture(base)).toThrow(/declare assertResult/)
+
+    schemaCase.input.assertResult = false
+    schemaCase.expected = {
+      noRequest: { reason: 'instantiation-failed' },
+      result: false,
+    }
+    expect(() => validateFixture(base)).toThrow(/omit expected\.result/)
+
+    schemaCase.input.assertResult = true
+    delete schemaCase.expected.result
+    expect(() => validateFixture(base)).toThrow(
+      /instantiation-failed.*assertResult=false/,
+    )
   })
 })
 
