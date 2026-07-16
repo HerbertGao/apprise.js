@@ -206,6 +206,56 @@
         "default": "./dist/plugins/pushdeer.cjs"
       }
     },
+    "./plugins/pushover": {
+      "import": {
+        "types": "./dist/plugins/pushover.d.ts",
+        "default": "./dist/plugins/pushover.js"
+      },
+      "require": {
+        "types": "./dist/plugins/pushover.d.cts",
+        "default": "./dist/plugins/pushover.cjs"
+      }
+    },
+    "./plugins/pushbullet": {
+      "import": {
+        "types": "./dist/plugins/pushbullet.d.ts",
+        "default": "./dist/plugins/pushbullet.js"
+      },
+      "require": {
+        "types": "./dist/plugins/pushbullet.d.cts",
+        "default": "./dist/plugins/pushbullet.cjs"
+      }
+    },
+    "./plugins/ntfy": {
+      "import": {
+        "types": "./dist/plugins/ntfy.d.ts",
+        "default": "./dist/plugins/ntfy.js"
+      },
+      "require": {
+        "types": "./dist/plugins/ntfy.d.cts",
+        "default": "./dist/plugins/ntfy.cjs"
+      }
+    },
+    "./plugins/gotify": {
+      "import": {
+        "types": "./dist/plugins/gotify.d.ts",
+        "default": "./dist/plugins/gotify.js"
+      },
+      "require": {
+        "types": "./dist/plugins/gotify.d.cts",
+        "default": "./dist/plugins/gotify.cjs"
+      }
+    },
+    "./plugins/bark": {
+      "import": {
+        "types": "./dist/plugins/bark.d.ts",
+        "default": "./dist/plugins/bark.js"
+      },
+      "require": {
+        "types": "./dist/plugins/bark.d.cts",
+        "default": "./dist/plugins/bark.cjs"
+      }
+    },
     "./plugins/all": {
       "import": {
         "types": "./dist/plugins/all.d.ts",

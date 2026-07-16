@@ -1,0 +1,57 @@
+{
+  "plugin": "gotify",
+  "cases": [
+    {
+      "name": "http-default-text",
+      "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT",
+      "title": "Alert",
+      "body": "hello gotify",
+      "assertResult": true
+    },
+    {
+      "name": "tls-default-port-markdown",
+      "url": "gotifys://gotify.example:443/MMMMMMMMMMMMMMMM?format=markdown",
+      "title": "Markdown",
+      "body": "**important**",
+      "assertResult": true
+    },
+    {
+      "name": "custom-port-path-high",
+      "url": "gotify://gotify.example:8080/custom/api/HHHHHHHHHHHHHHHH?priority=high",
+      "title": "High",
+      "body": "custom endpoint",
+      "assertResult": true
+    },
+    {
+      "name": "priority-low-numeric-prefix",
+      "url": "gotifys://gotify.example/LLLLLLLLLLLLLLLL?priority=1",
+      "body": "low",
+      "assertResult": true
+    },
+    {
+      "name": "priority-moderate",
+      "url": "gotify://gotify.example/OOOOOOOOOOOOOOOO?priority=4",
+      "body": "moderate",
+      "assertResult": true
+    },
+    {
+      "name": "priority-emergency-ten",
+      "url": "gotifys://gotify.example/EEEEEEEEEEEEEEEE?priority=10",
+      "body": "emergency",
+      "assertResult": true
+    },
+    {
+      "name": "invalid-missing-token",
+      "url": "gotify://gotify.example",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "http-failure",
+      "url": "gotify://gotify.example/FFFFFFFFFFFFFFFF",
+      "body": "failure",
+      "assertResult": true,
+      "responses": [{ "status": 500 }]
+    }
+  ]
+}

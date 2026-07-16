@@ -1,0 +1,39 @@
+{
+  "plugin": "bark",
+  "cases": [
+    { "name": "oracle-sound", "url": "bark://bark.example/device?sound=noir" },
+    {
+      "name": "oracle-level",
+      "url": "bark://bark.example/device?level=passive"
+    },
+    { "name": "oracle-volume", "url": "bark://bark.example/device?volume=5" },
+    {
+      "name": "oracle-click",
+      "url": "bark://bark.example/device?click=https%3A%2F%2Fexample.com"
+    },
+    { "name": "oracle-badge", "url": "bark://bark.example/device?badge=3" },
+    {
+      "name": "oracle-category",
+      "url": "bark://bark.example/device?category=cat"
+    },
+    { "name": "oracle-group", "url": "bark://bark.example/device?group=grp" },
+    { "name": "oracle-image", "url": "bark://bark.example/device?image=no" },
+    {
+      "name": "oracle-icon",
+      "url": "bark://bark.example/device?icon=https%3A%2F%2Fexample.com%2Fi.png"
+    },
+    { "name": "oracle-call", "url": "bark://bark.example/device?call=yes" },
+    { "name": "oracle-to", "url": "bark://bark.example/device?to=device-two" },
+    {
+      "name": "oracle-format",
+      "url": "bark://bark.example/device?format=html"
+    },
+    {
+      "name": "oracle-overflow",
+      "url": "bark://bark.example/device?overflow=truncate"
+    },
+    { "name": "oracle-verify", "url": "bark://bark.example/device?verify=no" },
+    { "name": "oracle-rto", "url": "bark://bark.example/device?rto=9" },
+    { "name": "oracle-cto", "url": "bark://bark.example/device?cto=7" }
+  ]
+}

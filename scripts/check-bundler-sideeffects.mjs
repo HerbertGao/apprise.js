@@ -70,6 +70,14 @@ const registered = {
   wxpusher: a.add('wxpusher://AT_appid/UID_alice'),
   pushdeer: a.add('pushdeer://pushKey'),
   pushdeers: a.add('pushdeers://pushKey'),
+  pover: a.add('pover://USERKEY@APPTOKEN'),
+  pbul: a.add('pbul://ACCESS_TOKEN'),
+  ntfy: a.add('ntfy://topic'),
+  ntfys: a.add('ntfys://topic'),
+  gotify: a.add('gotify://gotify.example/TOKEN'),
+  gotifys: a.add('gotifys://gotify.example/TOKEN'),
+  bark: a.add('bark://bark.example/device'),
+  barks: a.add('barks://bark.example/device'),
 }
 process.stdout.write(JSON.stringify(registered))
 `

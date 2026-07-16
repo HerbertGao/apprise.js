@@ -1,0 +1,208 @@
+{
+  "plugin": "pushover",
+  "cases": [
+    {
+      "name": "default-all-devices-text",
+      "url": "pover://USERKEY@APPTOKEN",
+      "title": "Alert",
+      "body": "hello pushover",
+      "assertResult": true
+    },
+    {
+      "name": "html-format",
+      "url": "pover://USERKEY@APPTOKEN/device-html?format=html",
+      "title": "HTML",
+      "body": "<b>important</b>",
+      "assertResult": true
+    },
+    {
+      "name": "markdown-format",
+      "url": "pover://USERKEY@APPTOKEN/device-markdown?format=markdown",
+      "body": "**important**",
+      "assertResult": true
+    },
+    {
+      "name": "devices-groups-and-to",
+      "expectedCount": 3,
+      "url": "pover://USERKEY@APPTOKEN/device-b/%23groupb/device-a?to=%23groupa%2Cdevice-c",
+      "body": "fanout",
+      "assertResult": true
+    },
+    {
+      "name": "priority-sound-and-link",
+      "url": "pover://USERKEY@APPTOKEN/device-fields?priority=high&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open%20dashboard",
+      "title": "Fields",
+      "body": "linked",
+      "assertResult": true
+    },
+    {
+      "name": "emergency-boundaries",
+      "url": "pover://USERKEY@APPTOKEN/device-emergency?priority=emergency&interval=30&expire=10800",
+      "body": "urgent",
+      "assertResult": true
+    },
+    {
+      "name": "invalid-emergency-interval",
+      "url": "pover://USERKEY@APPTOKEN?priority=emergency&interval=29",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "invalid-missing-user-key",
+      "url": "pover://APPTOKEN",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "invalid-target-only",
+      "url": "pover://USERKEY@APPTOKEN/%24invalid",
+      "body": "not sent",
+      "assertResult": true
+    },
+    {
+      "name": "target-failure-continues",
+      "expectedCount": 3,
+      "url": "pover://USERKEY@APPTOKEN/device/%23groupa/%23groupb",
+      "body": "continue",
+      "assertResult": true,
+      "responses": [{ "status": 200 }, { "status": 500 }, { "status": 200 }]
+    },
+    {
+      "name": "single-image-attachment",
+      "url": "pover://USERKEY@APPTOKEN/device-image",
+      "title": "Photo",
+      "body": "one image",
+      "assertResult": true,
+      "attachments": [
+        {
+          "memory": { "base64": "AQIDBA==" },
+          "mimetype": "image/png",
+          "name": "one.png"
+        }
+      ],
+      "seeds": { "boundary": "11111111111111111111111111111111" }
+    },
+    {
+      "name": "multi-image-attachment",
+      "expectedCount": 2,
+      "url": "pover://USERKEY@APPTOKEN/device-images",
+      "title": "Photos",
+      "body": "two images",
+      "assertResult": true,
+      "attachments": [
+        {
+          "memory": { "base64": "AQIDBA==" },
+          "mimetype": "image/png",
+          "name": "one.png"
+        },
+        {
+          "memory": { "base64": "BQYHCA==" },
+          "mimetype": "image/jpeg",
+          "name": "two.jpg"
+        }
+      ],
+      "seeds": { "boundary": "22222222222222222222222222222222" }
+    },
+    {
+      "name": "unsupported-attachment-falls-back-to-form",
+      "url": "pover://USERKEY@APPTOKEN/device-text",
+      "body": "text attachment",
+      "assertResult": true,
+      "attachments": [
+        {
+          "memory": { "text": "plain" },
+          "mimetype": "text/plain",
+          "name": "note.txt"
+        }
+      ]
+    },
+    {
+      "name": "empty-image-attachment-fails",
+      "url": "pover://USERKEY@APPTOKEN/device-empty",
+      "body": "empty image",
+      "assertResult": true,
+      "attachments": [
+        {
+          "memory": { "base64": "" },
+          "mimetype": "image/png",
+          "name": "empty.png"
+        }
+      ]
+    },
+    {
+      "name": "devices-groups-multi-image-partial-failure",
+      "expectedCount": 6,
+      "url": "pover://USERKEY@APPTOKEN/device-b/%23groupb/device-a/%23groupa",
+      "title": "Matrix",
+      "body": "six requests",
+      "assertResult": true,
+      "attachments": [
+        { "file": "cases/assets/push-one.png" },
+        { "file": "cases/assets/push-two.jpg" }
+      ],
+      "responses": [
+        { "status": 200 },
+        { "status": 200 },
+        { "status": 500 },
+        { "status": 200 },
+        { "status": 200 },
+        { "status": 200 }
+      ],
+      "seeds": { "boundary": "33333333333333333333333333333333" }
+    },
+    {
+      "name": "e2ee-all-fields",
+      "url": "pover://USERKEY@APPTOKEN/device-secure?key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&url=https%3A%2F%2Fexample.com%2Fsecret&url_title=Secret%20link",
+      "title": "Encrypted title",
+      "body": "encrypted body",
+      "assertResult": true,
+      "seeds": {
+        "entropyHex": [
+          "000102030405060708090a0b0c0d0e0f",
+          "101112131415161718191a1b1c1d1e1f",
+          "202122232425262728292a2b2c2d2e2f",
+          "303132333435363738393a3b3c3d3e3f"
+        ]
+      }
+    },
+    {
+      "name": "e2ee-disabled-by-query",
+      "url": "pover://USERKEY@APPTOKEN/device-plain?key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no",
+      "title": "Plain title",
+      "body": "plain body",
+      "assertResult": true
+    },
+    {
+      "name": "invalid-e2ee-key",
+      "url": "pover://USERKEY@APPTOKEN?key=not-a-64-hex-key",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "e2ee-empty-body-multi-attachment",
+      "expectedCount": 2,
+      "url": "pover://USERKEY@APPTOKEN/device-secure?key=fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+      "body": "",
+      "assertResult": true,
+      "attachments": [
+        {
+          "memory": { "base64": "AQIDBA==" },
+          "mimetype": "image/png",
+          "name": "visible-one.png"
+        },
+        {
+          "memory": { "base64": "BQYHCA==" },
+          "mimetype": "image/jpeg",
+          "name": "visible-two.jpg"
+        }
+      ],
+      "seeds": {
+        "boundary": "44444444444444444444444444444444",
+        "entropyHex": [
+          "404142434445464748494a4b4c4d4e4f",
+          "505152535455565758595a5b5c5d5e5f"
+        ]
+      }
+    }
+  ]
+}

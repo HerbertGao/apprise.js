@@ -225,6 +225,91 @@
     "pushdeer": {
       "static": [],
       "conditional": []
+    },
+    "gotify": {
+      "static": [
+        "priority",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "bark": {
+      "static": [
+        "image",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "sound",
+        "level",
+        "volume",
+        "click",
+        "badge",
+        "category",
+        "group",
+        "icon",
+        "call",
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "pushover": {
+      "static": [
+        "priority",
+        "sound",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "url",
+        "url_title",
+        "expire",
+        "interval",
+        "key",
+        "e2ee",
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "pushbullet": {
+      "static": [
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "verify",
+        "rto",
+        "cto"
+      ]
+    },
+    "ntfy": {
+      "static": [
+        "priority",
+        "mode",
+        "image",
+        "auth",
+        "format",
+        "overflow"
+      ],
+      "conditional": [
+        "avatar_url",
+        "attach",
+        "click",
+        "delay",
+        "email",
+        "xtags",
+        "actions",
+        "verify",
+        "rto",
+        "cto"
+      ]
     }
   },
   "oracle": {
@@ -1675,6 +1760,1080 @@
         "reserialize": [
           "pushdeer://pushKey",
           "pushdeer://pushKey"
+        ]
+      }
+    },
+    "gotify": {
+      "http-default-text": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "tls-default-port-markdown": {
+        "url": "gotifys://gotify.example/MMMMMMMMMMMMMMMM/?priority=normal&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotifys://gotify.example/M...M/?priority=normal&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotifys://gotify.example/MMMMMMMMMMMMMMMM/?priority=normal&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotifys://gotify.example/MMMMMMMMMMMMMMMM/?priority=normal&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "custom-port-path-high": {
+        "url": "gotify://gotify.example:8080/custom/api/HHHHHHHHHHHHHHHH/?priority=high&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example:8080/custom/api/H...H/?priority=high&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example:8080/custom/api/HHHHHHHHHHHHHHHH/?priority=high&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example:8080/custom/api/HHHHHHHHHHHHHHHH/?priority=high&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "priority-low-numeric-prefix": {
+        "url": "gotifys://gotify.example/LLLLLLLLLLLLLLLL/?priority=low&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotifys://gotify.example/L...L/?priority=low&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotifys://gotify.example/LLLLLLLLLLLLLLLL/?priority=low&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotifys://gotify.example/LLLLLLLLLLLLLLLL/?priority=low&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "priority-moderate": {
+        "url": "gotify://gotify.example/OOOOOOOOOOOOOOOO/?priority=moderate&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example/O...O/?priority=moderate&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example/OOOOOOOOOOOOOOOO/?priority=moderate&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example/OOOOOOOOOOOOOOOO/?priority=moderate&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "priority-emergency-ten": {
+        "url": "gotifys://gotify.example/EEEEEEEEEEEEEEEE/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotifys://gotify.example/E...E/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotifys://gotify.example/EEEEEEEEEEEEEEEE/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotifys://gotify.example/EEEEEEEEEEEEEEEE/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "http-failure": {
+        "url": "gotify://gotify.example/FFFFFFFFFFFFFFFF/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example/F...F/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example/FFFFFFFFFFFFFFFF/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example/FFFFFFFFFFFFFFFF/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-priority": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=emergency&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=normal&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=normal&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0"
+        ]
+      },
+      "oracle-cto": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "urlPrivacy": "gotify://gotify.example/T...T/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "reserialize": [
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+          "gotify://gotify.example/TTTTTTTTTTTTTTTT/?priority=normal&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0"
+        ]
+      }
+    },
+    "bark": {
+      "http-default": {
+        "url": "bark://bark.example/device-a?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-a?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-a?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-a?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "tls-default-port-no-image": {
+        "url": "barks://bark.example/device-secure?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "barks://bark.example/device-secure?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "barks://bark.example/device-secure?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "barks://bark.example/device-secure?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "basic-password": {
+        "url": "bark://alice:secret@bark.example:8080/device-auth?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://alice:****@bark.example:8080/device-auth?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://alice:secret@bark.example:8080/device-auth?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://alice:secret@bark.example:8080/device-auth?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "basic-user-only": {
+        "url": "bark://alice@bark.example/device-user?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://alice@bark.example/device-user?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://alice@bark.example/device-user?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://alice@bark.example/device-user?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "multi-target-partial-failure": {
+        "url": "bark://bark.example/device-a/device-b/device-c?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-a/device-b/device-c?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-a/device-b/device-c?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-a/device-b/device-c?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "multi-target-all-failure": {
+        "url": "bark://bark.example/device-a/device-b?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-a/device-b?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-a/device-b?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-a/device-b?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "all-display-fields": {
+        "url": "bark://bark.example/device-fields?image=no&sound=alarm.caf&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&level=critical&volume=10&category=alerts&group=ops&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-fields?image=no&sound=alarm.caf&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&level=critical&volume=10&category=alerts&group=ops&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-fields?image=no&sound=alarm.caf&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&level=critical&volume=10&category=alerts&group=ops&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-fields?image=no&sound=alarm.caf&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&level=critical&volume=10&category=alerts&group=ops&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "markdown-custom-icon-priority": {
+        "url": "bark://bark.example/device-icon?image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-icon?image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-icon?image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-icon?image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "invalid-parameters-fall-back": {
+        "url": "bark://bark.example/device-invalid?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-invalid?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-invalid?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-invalid?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "out-of-range-volume-retained-upstream": {
+        "url": "bark://bark.example/device-volume?image=no&level=critical&volume=11&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-volume?image=no&level=critical&volume=11&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-volume?image=no&level=critical&volume=11&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-volume?image=no&level=critical&volume=11&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "no-target": {
+        "url": "bark://bark.example/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-sound": {
+        "url": "bark://bark.example/device?image=yes&sound=noir.caf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&sound=noir.caf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&sound=noir.caf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&sound=noir.caf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-level": {
+        "url": "bark://bark.example/device?image=yes&level=passive&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&level=passive&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&level=passive&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&level=passive&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-volume": {
+        "url": "bark://bark.example/device?image=yes&volume=5&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&volume=5&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&volume=5&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&volume=5&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-click": {
+        "url": "bark://bark.example/device?image=yes&click=https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&click=https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&click=https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&click=https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-badge": {
+        "url": "bark://bark.example/device?image=yes&badge=3&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&badge=3&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&badge=3&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&badge=3&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-category": {
+        "url": "bark://bark.example/device?image=yes&category=cat&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&category=cat&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&category=cat&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&category=cat&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-group": {
+        "url": "bark://bark.example/device?image=yes&group=grp&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&group=grp&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&group=grp&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&group=grp&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-image": {
+        "url": "bark://bark.example/device?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-icon": {
+        "url": "bark://bark.example/device?image=yes&icon=https%3A%2F%2Fexample.com%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&icon=https%3A%2F%2Fexample.com%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&icon=https%3A%2F%2Fexample.com%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&icon=https%3A%2F%2Fexample.com%2Fi.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-call": {
+        "url": "bark://bark.example/device?image=yes&call=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&call=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&call=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&call=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-to": {
+        "url": "bark://bark.example/device/device-two?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device/device-two?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device/device-two?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device/device-two?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "bark://bark.example/device?image=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "bark://bark.example/device?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device?image=yes&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "urlPrivacy": "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0",
+          "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.0"
+        ]
+      },
+      "oracle-cto": {
+        "url": "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "urlPrivacy": "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+        "reserialize": [
+          "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0",
+          "bark://bark.example/device?image=yes&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=7.0"
+        ]
+      }
+    },
+    "pushover": {
+      "default-all-devices-text": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "html-format": {
+        "url": "pover://USERKEY@APPTOKEN/device-html/?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-html/?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-html/?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-html/?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "markdown-format": {
+        "url": "pover://USERKEY@APPTOKEN/device-markdown/?priority=normal&sound=pushover&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-markdown/?priority=normal&sound=pushover&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-markdown/?priority=normal&sound=pushover&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-markdown/?priority=normal&sound=pushover&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "devices-groups-and-to": {
+        "url": "pover://USERKEY@APPTOKEN/device-a/device-b/device-c/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-a/device-b/device-c/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-a/device-b/device-c/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-a/device-b/device-c/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "priority-sound-and-link": {
+        "url": "pover://USERKEY@APPTOKEN/device-fields/?priority=high&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open%20dashboard&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-fields/?priority=high&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open%20dashboard&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-fields/?priority=high&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open%20dashboard&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-fields/?priority=high&sound=cosmic&url=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&url_title=Open%20dashboard&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "emergency-boundaries": {
+        "url": "pover://USERKEY@APPTOKEN/device-emergency/?priority=emergency&sound=pushover&expire=10800&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-emergency/?priority=emergency&sound=pushover&expire=10800&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-emergency/?priority=emergency&sound=pushover&expire=10800&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-emergency/?priority=emergency&sound=pushover&expire=10800&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "invalid-target-only": {
+        "url": "pover://USERKEY@APPTOKEN/%24invalid/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/%24invalid/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/%24invalid/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/%24invalid/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "target-failure-continues": {
+        "url": "pover://USERKEY@APPTOKEN/device/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "single-image-attachment": {
+        "url": "pover://USERKEY@APPTOKEN/device-image/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-image/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-image/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-image/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "multi-image-attachment": {
+        "url": "pover://USERKEY@APPTOKEN/device-images/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-images/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-images/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-images/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "unsupported-attachment-falls-back-to-form": {
+        "url": "pover://USERKEY@APPTOKEN/device-text/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-text/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-text/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-text/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "empty-image-attachment-fails": {
+        "url": "pover://USERKEY@APPTOKEN/device-empty/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-empty/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-empty/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-empty/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "devices-groups-multi-image-partial-failure": {
+        "url": "pover://USERKEY@APPTOKEN/device-a/device-b/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-a/device-b/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-a/device-b/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-a/device-b/%23groupa/%23groupb/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "e2ee-all-fields": {
+        "url": "pover://USERKEY@APPTOKEN/device-secure/?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fsecret&url_title=Secret%20link&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-secure/?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fsecret&url_title=Secret%20link&key=0...f&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-secure/?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fsecret&url_title=Secret%20link&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-secure/?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fsecret&url_title=Secret%20link&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "e2ee-disabled-by-query": {
+        "url": "pover://USERKEY@APPTOKEN/device-plain/?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-plain/?priority=normal&sound=pushover&key=0...f&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-plain/?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-plain/?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "e2ee-empty-body-multi-attachment": {
+        "url": "pover://USERKEY@APPTOKEN/device-secure/?priority=normal&sound=pushover&key=fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-secure/?priority=normal&sound=pushover&key=f...0&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-secure/?priority=normal&sound=pushover&key=fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-secure/?priority=normal&sound=pushover&key=fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-priority": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=low&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=low&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=low&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=low&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-sound": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=magic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=magic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=magic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=magic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-url": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&url=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-url-title": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&url_title=Open%20it&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&url_title=Open%20it&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&url_title=Open%20it&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&url_title=Open%20it&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-interval": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=emergency&sound=pushover&expire=3600&interval=31&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=emergency&sound=pushover&expire=3600&interval=31&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=emergency&sound=pushover&expire=3600&interval=31&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=emergency&sound=pushover&expire=3600&interval=31&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-expire": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=emergency&sound=pushover&expire=7200&interval=900&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=emergency&sound=pushover&expire=7200&interval=900&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=emergency&sound=pushover&expire=7200&interval=900&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=emergency&sound=pushover&expire=7200&interval=900&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-key": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&key=0...f&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-e2ee": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&key=0...f&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-to": {
+        "url": "pover://USERKEY@APPTOKEN/device-extra/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-extra/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-extra/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-extra/?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5"
+        ]
+      },
+      "oracle-cto": {
+        "url": "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+        "urlPrivacy": "pover://U...Y@A...N//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+          "pover://USERKEY@APPTOKEN//?priority=normal&sound=pushover&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5"
+        ]
+      }
+    },
+    "pushbullet": {
+      "all-devices-note": {
+        "url": "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "email-note": {
+        "url": "pbul://ACCESS_TOKEN/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "channel-note": {
+        "url": "pbul://ACCESS_TOKEN/%23alerts/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/%23alerts/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/%23alerts/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/%23alerts/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "device-and-to-email": {
+        "url": "pbul://ACCESS_TOKEN/device-iden/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device-iden/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device-iden/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device-iden/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "empty-body-image-only": {
+        "url": "pbul://ACCESS_TOKEN/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "single-image-complete-chain": {
+        "url": "pbul://ACCESS_TOKEN/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device-image/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "single-non-image-complete-chain": {
+        "url": "pbul://ACCESS_TOKEN/device-file/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device-file/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device-file/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device-file/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "two-attachments-two-targets": {
+        "url": "pbul://ACCESS_TOKEN/%23alerts/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/%23alerts/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/%23alerts/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/%23alerts/person%40example.com/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "upload-request-http-failure": {
+        "url": "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "upload-request-invalid-json": {
+        "url": "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "upload-request-missing-field": {
+        "url": "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "dynamic-upload-failure-short-circuits": {
+        "url": "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "note-failure-skips-current-files-and-continues": {
+        "url": "pbul://ACCESS_TOKEN/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "file-failure-continues-files-and-targets": {
+        "url": "pbul://ACCESS_TOKEN/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/%23alerts/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "success-statuses-ignore-response-json": {
+        "url": "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-to": {
+        "url": "pbul://ACCESS_TOKEN/device-extra/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N/device-extra/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN/device-extra/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN/device-extra/?format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "pbul://ACCESS_TOKEN//?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N//?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN//?format=html&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN//?format=html&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "pbul://ACCESS_TOKEN//?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pbul://A...N//?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN//?format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "pbul://ACCESS_TOKEN//?format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "pbul://A...N//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+        "urlPrivacy": "pbul://A...N//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5"
+        ]
+      },
+      "oracle-cto": {
+        "url": "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+        "urlPrivacy": "pbul://A...N//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+        "reserialize": [
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+          "pbul://ACCESS_TOKEN//?format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5"
+        ]
+      }
+    },
+    "ntfy": {
+      "cloud-shorthand": {
+        "url": "ntfys://cloud-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://cloud-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://cloud-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://cloud-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-http": {
+        "url": "ntfy://ntfy.private.example/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfy://ntfy.private.example/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfy://ntfy.private.example/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfy://ntfy.private.example/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-tls-custom-port": {
+        "url": "ntfys://ntfy.private.example:8443/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://ntfy.private.example:8443/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://ntfy.private.example:8443/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://ntfy.private.example:8443/private-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "native-http-cloud": {
+        "url": "ntfys://native-http?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://native-http?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://native-http?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://native-http?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "native-https-cloud": {
+        "url": "ntfys://native-https?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://native-https?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://native-https?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://native-https?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-basic-password": {
+        "url": "ntfys://alice:secret@ntfy.private.example/basic-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://alice:****@ntfy.private.example/basic-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://alice:secret@ntfy.private.example/basic-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://alice:secret@ntfy.private.example/basic-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-basic-user-only-json": {
+        "url": "ntfy://alice@ntfy.private.example/basic-user-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfy://alice@ntfy.private.example/basic-user-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfy://alice@ntfy.private.example/basic-user-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfy://alice@ntfy.private.example/basic-user-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-token-authority": {
+        "url": "ntfys://tk_AUTHORITY_TOKEN@ntfy.private.example/token-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t...N@ntfy.private.example/token-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://tk_AUTHORITY_TOKEN@ntfy.private.example/token-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://tk_AUTHORITY_TOKEN@ntfy.private.example/token-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-token-query": {
+        "url": "ntfys://tk_QUERY_TOKEN@ntfy.private.example/token-query-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t...N@ntfy.private.example/token-query-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://tk_QUERY_TOKEN@ntfy.private.example/token-query-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://tk_QUERY_TOKEN@ntfy.private.example/token-query-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "private-token-missing": {
+        "url": "ntfys://ntfy.private.example/token-missing-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://ntfy.private.example/token-missing-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://ntfy.private.example/token-missing-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://ntfy.private.example/token-missing-topic?priority=default&mode=private&image=no&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "json-multi-topic-first-failure-continues": {
+        "url": "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "markdown-all-headers-legacy-tags": {
+        "url": "ntfys://headers-topic?priority=max&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Favatar.png&click=https%3A%2F%2Fexample.com%2F%25E8%25B7%25AF%25E5%25BE%2584%3Fx%3D1&delay=10m&email=ops%40example.com&xtags=rotating_light%2Cwarning&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://headers-topic?priority=max&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Favatar.png&click=https%3A%2F%2Fexample.com%2F%25E8%25B7%25AF%25E5%25BE%2584%3Fx%3D1&delay=10m&email=ops%40example.com&xtags=rotating_light%2Cwarning&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://headers-topic?priority=max&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Favatar.png&click=https%3A%2F%2Fexample.com%2F%25E8%25B7%25AF%25E5%25BE%2584%3Fx%3D1&delay=10m&email=ops%40example.com&xtags=rotating_light%2Cwarning&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://headers-topic?priority=max&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Favatar.png&click=https%3A%2F%2Fexample.com%2F%25E8%25B7%25AF%25E5%25BE%2584%3Fx%3D1&delay=10m&email=ops%40example.com&xtags=rotating_light%2Cwarning&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "remote-attachment-with-filename": {
+        "url": "ntfys://remote-topic?priority=default&mode=cloud&image=no&auth=basic&attach=https%3A%2F%2Ffiles.example%2Freport.pdf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://remote-topic?priority=default&mode=cloud&image=no&auth=basic&attach=https%3A%2F%2Ffiles.example%2Freport.pdf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://remote-topic?priority=default&mode=cloud&image=no&auth=basic&attach=https%3A%2F%2Ffiles.example%2Freport.pdf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://remote-topic?priority=default&mode=cloud&image=no&auth=basic&attach=https%3A%2F%2Ffiles.example%2Freport.pdf&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "local-single-user-only-basic-raw": {
+        "url": "ntfy://alice@ntfy.private.example/raw-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfy://alice@ntfy.private.example/raw-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfy://alice@ntfy.private.example/raw-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfy://alice@ntfy.private.example/raw-topic?priority=default&mode=private&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "local-two-attachments": {
+        "url": "ntfys://raw-cloud?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://raw-cloud?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://raw-cloud?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://raw-cloud?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "two-topics-two-local-attachments": {
+        "url": "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "local-attachment-failure-short-circuits": {
+        "url": "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic-a/topic-b?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "json-length-exactly-8000": {
+        "url": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "json-length-8001-to-raw": {
+        "url": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "unicode-python-length-to-raw": {
+        "url": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "titled-overlimit-raw-content": {
+        "url": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://t?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "invalid-topic-only": {
+        "url": "ntfys://?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "http-error-json-body": {
+        "url": "ntfys://error-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://error-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://error-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://error-topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-attach-filename-loss": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&attach=https%3A%2F%2Ffiles.example%2Fa.txt&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&attach=https%3A%2F%2Ffiles.example%2Fa.txt&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&attach=https%3A%2F%2Ffiles.example%2Fa.txt&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&attach=https%3A%2F%2Ffiles.example%2Fa.txt&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-image": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=no&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-avatar-url": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Fa.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Fa.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Fa.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&avatar_url=https%3A%2F%2Fexample.com%2Fa.png&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-click": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&click=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&click=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&click=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&click=https%3A%2F%2Fexample.com%2Fopen&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-delay": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&delay=10m&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&delay=10m&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&delay=10m&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&delay=10m&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-email": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&email=ops%40example.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&email=ops%40example.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&email=ops%40example.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&email=ops%40example.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-priority": {
+        "url": "ntfys://topic?priority=high&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=high&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=high&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=high&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-xtags": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-legacy-tags": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&xtags=fire%2Cwarning&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-actions": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-mode": {
+        "url": "ntfy://ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfy://ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfy://ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfy://ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-token-query": {
+        "url": "ntfys://tk_QUERY@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://t...Y@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://tk_QUERY@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://tk_QUERY@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=token&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-auth": {
+        "url": "ntfys://alice@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://alice@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://alice@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://alice@ntfy.private.example/topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-to": {
+        "url": "ntfys://topic/extra-topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic/extra-topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic/extra-topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic/extra-topic?priority=default&mode=private&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-format": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-overflow": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=truncate&retry=0&wait=0.5&optional=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=truncate&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "oracle-verify": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&verify=no"
+        ]
+      },
+      "oracle-rto": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&rto=9.5"
+        ]
+      },
+      "oracle-cto": {
+        "url": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+        "urlPrivacy": "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+        "reserialize": [
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5",
+          "ntfys://topic?priority=default&mode=cloud&image=yes&auth=basic&format=text&overflow=upstream&retry=0&wait=0.5&optional=no&cto=8.5"
         ]
       }
     }

@@ -12,7 +12,10 @@ import {
   UNKNOWN_MIMETYPE,
 } from '../src/attachment/base.js'
 import { AttachFile } from '../src/attachment/file.js'
-import { AttachMemory } from '../src/attachment/memory.js'
+import {
+  AttachMemory,
+  setAttachMemoryUuidSeed,
+} from '../src/attachment/memory.js'
 
 const UUID_RE = /^[0-9a-f-]{36}\.(txt|dat)$/i
 
@@ -129,6 +132,23 @@ describe('AttachFile via a file:// URL (upstream parse_url + unquote)', () => {
 })
 
 describe('AttachMemory', () => {
+  test('scoped UUID seam pins and restores automatic names', () => {
+    const first = '00112233-4455-6677-8899-aabbccddeeff'
+    const second = 'ffeeddcc-bbaa-9988-7766-554433221100'
+    try {
+      setAttachMemoryUuidSeed(first)
+      expect(new AttachMemory({ content: 'x' }).name).toBe(`${first}.txt`)
+      expect(new AttachMemory({ content: Buffer.from([1]) }).name).toBe(
+        `${first}.dat`,
+      )
+      setAttachMemoryUuidSeed(second)
+      expect(new AttachMemory({ content: 'x' }).name).toBe(`${second}.txt`)
+    } finally {
+      setAttachMemoryUuidSeed(null)
+    }
+    expect(new AttachMemory({ content: 'x' }).name).not.toBe(`${second}.txt`)
+  })
+
   test('string content -> text/plain + uuid .txt name', () => {
     const attach = new AttachMemory({ content: 'hello world' })
     expect(attach.mimetype).toBe('text/plain')

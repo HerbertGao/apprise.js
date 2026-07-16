@@ -1,0 +1,14 @@
+{
+  "plugin": "pushbullet",
+  "cases": [
+    { "name": "oracle-to", "url": "pbul://ACCESS_TOKEN/?to=device-extra" },
+    { "name": "oracle-format", "url": "pbul://ACCESS_TOKEN/?format=html" },
+    {
+      "name": "oracle-overflow",
+      "url": "pbul://ACCESS_TOKEN/?overflow=truncate"
+    },
+    { "name": "oracle-verify", "url": "pbul://ACCESS_TOKEN/?verify=no" },
+    { "name": "oracle-rto", "url": "pbul://ACCESS_TOKEN/?rto=9.5" },
+    { "name": "oracle-cto", "url": "pbul://ACCESS_TOKEN/?cto=8.5" }
+  ]
+}

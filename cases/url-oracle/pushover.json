@@ -1,0 +1,43 @@
+{
+  "plugin": "pushover",
+  "cases": [
+    {
+      "name": "oracle-priority",
+      "url": "pover://USERKEY@APPTOKEN/?priority=low"
+    },
+    { "name": "oracle-sound", "url": "pover://USERKEY@APPTOKEN/?sound=magic" },
+    {
+      "name": "oracle-url",
+      "url": "pover://USERKEY@APPTOKEN/?url=https%3A%2F%2Fexample.com%2Fopen"
+    },
+    {
+      "name": "oracle-url-title",
+      "url": "pover://USERKEY@APPTOKEN/?url_title=Open%20it"
+    },
+    {
+      "name": "oracle-interval",
+      "url": "pover://USERKEY@APPTOKEN/?priority=emergency&interval=31"
+    },
+    {
+      "name": "oracle-expire",
+      "url": "pover://USERKEY@APPTOKEN/?priority=emergency&expire=7200"
+    },
+    {
+      "name": "oracle-key",
+      "url": "pover://USERKEY@APPTOKEN/?key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    },
+    {
+      "name": "oracle-e2ee",
+      "url": "pover://USERKEY@APPTOKEN/?key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&e2ee=no"
+    },
+    { "name": "oracle-to", "url": "pover://USERKEY@APPTOKEN/?to=device-extra" },
+    { "name": "oracle-format", "url": "pover://USERKEY@APPTOKEN/?format=html" },
+    {
+      "name": "oracle-overflow",
+      "url": "pover://USERKEY@APPTOKEN/?overflow=truncate"
+    },
+    { "name": "oracle-verify", "url": "pover://USERKEY@APPTOKEN/?verify=no" },
+    { "name": "oracle-rto", "url": "pover://USERKEY@APPTOKEN/?rto=9.5" },
+    { "name": "oracle-cto", "url": "pover://USERKEY@APPTOKEN/?cto=8.5" }
+  ]
+}

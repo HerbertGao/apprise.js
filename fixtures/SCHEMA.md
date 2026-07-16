@@ -26,7 +26,7 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
       "body": "hello body",         // optional, default ""
       "body_gen": { "char": "A", "count": 4001 }, // optional; expands to char*count in place of `body` (compact large/overflow bodies)
       "type": "info",               // info|success|warning|failure, default info
-      "assertResult": true,          // required for plugins-cn wire cases
+      "assertResult": true,          // required for the explicit result-required plugin set
       "attachments": [ /* descriptors, optional */ ],
       "responses": [ /* CannedResponse[], optional; multi-step plugins */ ],
       "seeds": {                    // optional; defaults applied per field
@@ -35,7 +35,10 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
         "boundary": null,           // multipart boundary pin (null = none this batch)
         "txn": 0,                   // matrix login-mode txnId counter start (optional)
         "uuid": "...",              // matrix raw-token fixed uuid4 (optional)
-        "timestampMs": 1700000000123 // DingTalk epoch ms, integer 0..2^51-1
+        "timestampMs": 1700000000123, // DingTalk epoch ms, integer 0..2^51-1
+        "entropyHex": [              // optional Pushover IV queue
+          "00112233445566778899aabbccddeeff" // each item: exactly 32 hex chars
+        ]
       }
     }
   ]
@@ -43,8 +46,11 @@ no normalisation (normalisation is the TS diff side's job, task 5.3).
 ```
 
 Defaults when a case omits `seeds` (or a field): `uid="itest-uid-0"`,
-`recursion=0`, `boundary=null`. `txn`/`uuid` are only echoed into the fixture
-when the case declares them (single-request fixtures stay byte-identical).
+`recursion=0`, `boundary=null`. `txn`/`uuid`/`entropyHex` are only echoed into
+the fixture when the case declares them (existing fixtures stay byte-identical).
+The generic capture/replay runners validate `entropyHex` but do not consume it,
+change plugin state, install an entropy source, or alter execution order. Only
+the explicit sequential Pushover E2EE tests install the queue.
 
 ### Multi-request plugins (`responses`, `expected.requests`, `expectedCount`)
 
@@ -148,10 +154,12 @@ seed via `setStoreSeeds`).
   No other `reason` value is valid.
   The TS side asserts it likewise constructs-and-refuses / sends nothing.
 
-New `plugins-cn` wire cases MUST set source `assertResult`. Successful
-construction (including `no-request`) uses `true` and records boolean
+Wire cases for the explicit result-required plugin set MUST set source
+`assertResult`: `serverchan`, `dingtalk`, `wecombot`, `feishu`, `lark`,
+`wxpusher`, `pushdeer`, `pushover`, `pushbullet`, `ntfy`, `gotify`, and `bark`.
+Successful construction (including `no-request`) uses `true` and records boolean
 `expected.result`; `instantiation-failed` uses `false` and omits the result.
-Legacy fixtures without these fields remain readable and byte-compatible.
+Legacy fixtures for plugins outside this set remain readable and byte-compatible.
 
 ### `body` encoding (self-describing)
 

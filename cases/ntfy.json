@@ -1,0 +1,200 @@
+{
+  "plugin": "ntfy",
+  "cases": [
+    {
+      "name": "cloud-shorthand",
+      "url": "ntfys://cloud-topic?image=no",
+      "title": "Cloud",
+      "body": "hello cloud",
+      "assertResult": true
+    },
+    {
+      "name": "private-http",
+      "url": "ntfy://ntfy.private.example/private-topic?image=no",
+      "body": "private http",
+      "assertResult": true
+    },
+    {
+      "name": "private-tls-custom-port",
+      "url": "ntfys://ntfy.private.example:8443/private-topic?image=no",
+      "body": "private tls",
+      "assertResult": true
+    },
+    {
+      "name": "native-http-cloud",
+      "url": "http://ntfy.sh/native-http?image=no",
+      "body": "native http",
+      "assertResult": true
+    },
+    {
+      "name": "native-https-cloud",
+      "url": "https://ntfy.sh/native-https?image=no",
+      "body": "native https",
+      "assertResult": true
+    },
+    {
+      "name": "private-basic-password",
+      "url": "ntfys://alice:secret@ntfy.private.example/basic-topic?mode=private&auth=basic&image=no",
+      "body": "basic password",
+      "assertResult": true
+    },
+    {
+      "name": "private-basic-user-only-json",
+      "url": "ntfy://alice@ntfy.private.example/basic-user-topic?mode=private&auth=basic&image=no",
+      "body": "basic user only",
+      "assertResult": true
+    },
+    {
+      "name": "private-token-authority",
+      "url": "ntfys://tk_AUTHORITY_TOKEN@ntfy.private.example/token-topic?mode=private&auth=token&image=no",
+      "body": "bearer authority",
+      "assertResult": true
+    },
+    {
+      "name": "private-token-query",
+      "url": "ntfys://ntfy.private.example/token-query-topic?mode=private&auth=token&token=tk_QUERY_TOKEN&image=no",
+      "body": "bearer query",
+      "assertResult": true
+    },
+    {
+      "name": "private-token-missing",
+      "url": "ntfys://ntfy.private.example/token-missing-topic?mode=private&auth=token&image=no",
+      "body": "not sent",
+      "assertResult": true
+    },
+    {
+      "name": "json-multi-topic-first-failure-continues",
+      "expectedCount": 2,
+      "url": "ntfys://topic-a/topic-b?mode=cloud&image=no",
+      "body": "continue topics",
+      "assertResult": true,
+      "responses": [
+        {
+          "status": 500,
+          "body": { "text": "{\"error\":\"first failed\",\"code\":50001}" }
+        },
+        { "status": 200, "body": null }
+      ]
+    },
+    {
+      "name": "markdown-all-headers-legacy-tags",
+      "url": "ntfys://headers-topic?format=markdown&priority=max&delay=10m&click=https%3A%2F%2Fexample.com%2F%E8%B7%AF%E5%BE%84%3Fx%3D1&email=ops%40example.com&tags=warning%2Crotating_light&actions=view%2C%20Open%2C%20https%3A%2F%2Fexample.com&image=yes&avatar_url=https%3A%2F%2Fexample.com%2Favatar.png",
+      "title": "Headers",
+      "body": "**markdown**",
+      "assertResult": true
+    },
+    {
+      "name": "remote-attachment-with-filename",
+      "url": "ntfys://remote-topic?image=no&attach=https%3A%2F%2Ffiles.example%2Freport.pdf&filename=renamed.pdf",
+      "title": "Remote",
+      "body": "remote reference",
+      "assertResult": true
+    },
+    {
+      "name": "local-single-user-only-basic-raw",
+      "url": "ntfy://alice@ntfy.private.example/raw-topic?mode=private&auth=basic&image=no",
+      "title": "Raw",
+      "body": "first attachment",
+      "assertResult": true,
+      "attachments": [{ "file": "cases/assets/hello.txt" }]
+    },
+    {
+      "name": "local-two-attachments",
+      "expectedCount": 2,
+      "url": "ntfys://raw-cloud?image=no",
+      "title": "Files",
+      "body": "only first",
+      "assertResult": true,
+      "attachments": [
+        { "file": "cases/assets/push-one.png" },
+        { "file": "cases/assets/hello.txt" }
+      ]
+    },
+    {
+      "name": "two-topics-two-local-attachments",
+      "expectedCount": 4,
+      "url": "ntfys://topic-a/topic-b?mode=cloud&image=no",
+      "title": "Reset",
+      "body": "per topic first",
+      "assertResult": true,
+      "attachments": [
+        { "file": "cases/assets/push-one.png" },
+        { "file": "cases/assets/hello.txt" }
+      ]
+    },
+    {
+      "name": "local-attachment-failure-short-circuits",
+      "expectedCount": 2,
+      "url": "ntfys://topic-a/topic-b?mode=cloud&image=no",
+      "title": "Stop",
+      "body": "stop immediately",
+      "assertResult": true,
+      "attachments": [
+        { "file": "cases/assets/push-one.png" },
+        { "file": "cases/assets/hello.txt" }
+      ],
+      "responses": [
+        { "status": 200, "body": null },
+        { "status": 500, "body": { "text": "failure" } }
+      ]
+    },
+    {
+      "name": "json-length-exactly-8000",
+      "url": "ntfys://t?image=no",
+      "body_gen": { "char": "x", "count": 7971 },
+      "assertResult": true
+    },
+    {
+      "name": "json-length-8001-to-raw",
+      "url": "ntfys://t?image=no",
+      "body_gen": { "char": "x", "count": 7972 },
+      "assertResult": true,
+      "seeds": { "uuid": "11111111-1111-4111-8111-111111111111" }
+    },
+    {
+      "name": "unicode-python-length-to-raw",
+      "url": "ntfys://t?image=no",
+      "body_gen": { "char": "你", "count": 1329 },
+      "assertResult": true,
+      "seeds": { "uuid": "22222222-2222-4222-8222-222222222222" }
+    },
+    {
+      "name": "titled-overlimit-raw-content",
+      "url": "ntfys://t?image=no",
+      "title": "Large title",
+      "body_gen": { "char": "z", "count": 7972 },
+      "assertResult": true,
+      "seeds": { "uuid": "33333333-3333-4333-8333-333333333333" }
+    },
+    {
+      "name": "invalid-mode",
+      "url": "ntfys://topic?mode=invalid",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "invalid-auth",
+      "url": "ntfys://topic?auth=invalid",
+      "body": "not sent",
+      "assertResult": false
+    },
+    {
+      "name": "invalid-topic-only",
+      "url": "ntfys://%24invalid?mode=cloud&image=no",
+      "body": "not sent",
+      "assertResult": true
+    },
+    {
+      "name": "http-error-json-body",
+      "url": "ntfys://error-topic?image=no",
+      "body": "server error",
+      "assertResult": true,
+      "responses": [
+        {
+          "status": 429,
+          "body": { "text": "{\"error\":\"rate limited\",\"code\":42901}" }
+        }
+      ]
+    }
+  ]
+}

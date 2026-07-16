@@ -1,0 +1,270 @@
+{
+  "plugin": "gotify",
+  "generated_by": "scripts/capture_fixtures.py",
+  "apprise_version": "1.12.0",
+  "cases": [
+    {
+      "name": "http-default-text",
+      "input": {
+        "url": "gotify://gotify.example/TTTTTTTTTTTTTTTT",
+        "title": "Alert",
+        "body": "hello gotify",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://gotify.example/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "TTTTTTTTTTTTTTTT",
+            "Content-Length": "60"
+          },
+          "body": {
+            "text": "{\"priority\": 5, \"title\": \"Alert\", \"message\": \"hello gotify\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "tls-default-port-markdown",
+      "input": {
+        "url": "gotifys://gotify.example:443/MMMMMMMMMMMMMMMM?format=markdown",
+        "title": "Markdown",
+        "body": "**important**",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://gotify.example:443/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "MMMMMMMMMMMMMMMM",
+            "Content-Length": "129"
+          },
+          "body": {
+            "text": "{\"priority\": 5, \"title\": \"Markdown\", \"message\": \"**important**\", \"extras\": {\"client::display\": {\"contentType\": \"text/markdown\"}}}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "custom-port-path-high",
+      "input": {
+        "url": "gotify://gotify.example:8080/custom/api/HHHHHHHHHHHHHHHH?priority=high",
+        "title": "High",
+        "body": "custom endpoint",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://gotify.example:8080/custom/api/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "HHHHHHHHHHHHHHHH",
+            "Content-Length": "62"
+          },
+          "body": {
+            "text": "{\"priority\": 8, \"title\": \"High\", \"message\": \"custom endpoint\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "priority-low-numeric-prefix",
+      "input": {
+        "url": "gotifys://gotify.example/LLLLLLLLLLLLLLLL?priority=1",
+        "title": "",
+        "body": "low",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://gotify.example/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "LLLLLLLLLLLLLLLL",
+            "Content-Length": "46"
+          },
+          "body": {
+            "text": "{\"priority\": 0, \"title\": \"\", \"message\": \"low\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "priority-moderate",
+      "input": {
+        "url": "gotify://gotify.example/OOOOOOOOOOOOOOOO?priority=4",
+        "title": "",
+        "body": "moderate",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://gotify.example/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "OOOOOOOOOOOOOOOO",
+            "Content-Length": "51"
+          },
+          "body": {
+            "text": "{\"priority\": 3, \"title\": \"\", \"message\": \"moderate\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "priority-emergency-ten",
+      "input": {
+        "url": "gotifys://gotify.example/EEEEEEEEEEEEEEEE?priority=10",
+        "title": "",
+        "body": "emergency",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://gotify.example/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "EEEEEEEEEEEEEEEE",
+            "Content-Length": "53"
+          },
+          "body": {
+            "text": "{\"priority\": 10, \"title\": \"\", \"message\": \"emergency\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
+      "name": "invalid-missing-token",
+      "input": {
+        "url": "gotify://gotify.example",
+        "title": "",
+        "body": "not sent",
+        "type": "info",
+        "assertResult": false
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "noRequest": {
+          "reason": "instantiation-failed"
+        }
+      }
+    },
+    {
+      "name": "http-failure",
+      "input": {
+        "url": "gotify://gotify.example/FFFFFFFFFFFFFFFF",
+        "title": "",
+        "body": "failure",
+        "type": "info",
+        "responses": [
+          {
+            "status": 500
+          }
+        ],
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://gotify.example/message",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json",
+            "X-Gotify-Key": "FFFFFFFFFFFFFFFF",
+            "Content-Length": "50"
+          },
+          "body": {
+            "text": "{\"priority\": 5, \"title\": \"\", \"message\": \"failure\"}"
+          }
+        },
+        "result": false
+      }
+    }
+  ]
+}
