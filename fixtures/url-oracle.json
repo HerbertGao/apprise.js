@@ -1926,6 +1926,14 @@
           "bark://bark.example/device-fields?image=no&sound=alarm.caf&click=https%3A%2F%2Fexample.com%2Fopen%3Fx%3D1&badge=7&level=critical&volume=10&category=alerts&group=ops&icon=https%3A%2F%2Fexample.com%2Fcustom.png&call=yes&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no"
         ]
       },
+      "underscored-integers": {
+        "url": "bark://bark.example/device-underscore?image=no&badge=10&volume=10&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "bark://bark.example/device-underscore?image=no&badge=10&volume=10&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "bark://bark.example/device-underscore?image=no&badge=10&volume=10&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "bark://bark.example/device-underscore?image=no&badge=10&volume=10&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
       "markdown-custom-icon-priority": {
         "url": "bark://bark.example/device-icon?image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
         "urlPrivacy": "bark://bark.example/device-icon?image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png&format=markdown&overflow=upstream&retry=0&wait=0.5&optional=no",
@@ -2134,6 +2142,14 @@
         "reserialize": [
           "pover://USERKEY@APPTOKEN/device-emergency/?priority=emergency&sound=pushover&expire=10800&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
           "pover://USERKEY@APPTOKEN/device-emergency/?priority=emergency&sound=pushover&expire=10800&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
+        ]
+      },
+      "emergency-underscored-integers": {
+        "url": "pover://USERKEY@APPTOKEN/device-underscore/?priority=emergency&sound=pushover&expire=10&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "urlPrivacy": "pover://U...Y@A...N/device-underscore/?priority=emergency&sound=pushover&expire=10&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+        "reserialize": [
+          "pover://USERKEY@APPTOKEN/device-underscore/?priority=emergency&sound=pushover&expire=10&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no",
+          "pover://USERKEY@APPTOKEN/device-underscore/?priority=emergency&sound=pushover&expire=10&interval=30&format=text&overflow=upstream&retry=0&wait=0.5&optional=no"
         ]
       },
       "invalid-target-only": {

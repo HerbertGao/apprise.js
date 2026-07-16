@@ -87,8 +87,9 @@ function splitPath(path: string | null | undefined): string[] {
 
 function pyInt(value: unknown): number | null {
   if (typeof value === 'number') return Number.isInteger(value) ? value : null
-  if (typeof value !== 'string' || !/^[+-]?\d+$/.test(value.trim())) return null
-  const parsed = Number(value.trim())
+  if (typeof value !== 'string' || !/^[+-]?\d(?:_?\d)*$/.test(value.trim()))
+    return null
+  const parsed = Number(value.trim().replaceAll('_', ''))
   return Number.isFinite(parsed) && Number.isInteger(parsed) ? parsed : null
 }
 

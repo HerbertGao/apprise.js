@@ -114,8 +114,9 @@ URL_ORACLE_CASES_DIR = CASES_DIR / "url-oracle"
 FIXTURES_DIR = ROOT / "fixtures"
 URL_ORACLE_OUT = FIXTURES_DIR / "url-oracle.json"
 
-# Per-plugin url() emitted-key inventory (task 1.3), read straight off each
-# plugin's url() in src/plugins/*.ts. `static` keys are always emitted; each
+# Per-plugin url() emitted-key inventory, curated from the pinned upstream
+# oracle. The TypeScript url() implementation is the compared subject, never
+# the authority for this list. `static` keys are always emitted; each
 # `conditional` key is emitted only under a non-default condition and MUST be
 # activated by >=1 captured case (mechanically asserted in
 # `_assert_inventory_covered`). A bare "+"/"-"/":" conditional entry denotes the
@@ -736,7 +737,9 @@ def capture_case(case, plugin):
 
     attach = build_attach(attachments)
     with pin_dingtalk_time(timestamp_ms):
-        with pin_pushover_entropy(entropy_hex, case["name"]):
+        with pin_pushover_entropy(
+            entropy_hex if pushover_e2ee else None, case["name"]
+        ):
             with intercept(
                 boundary=boundary, responses=responses, uuid_seed=uuid_seed
             ) as captured:

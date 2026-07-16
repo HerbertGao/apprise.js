@@ -259,6 +259,11 @@ describe('pushover targets, attachments and privacy', () => {
       }),
     })
     expect(app.add(raw)).toBe(true)
-    expect(messages.join('\n')).not.toContain('TOKENSECRET')
+    const diagnostics = messages.join('\n')
+    expect(diagnostics).not.toContain('USERSECRET')
+    expect(diagnostics).not.toContain('TOKENSECRET')
+    expect(diagnostics).not.toContain(
+      '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+    )
   })
 })

@@ -116,6 +116,28 @@ class CaptureFixtureTest(unittest.TestCase):
                 with self.assertRaises(SystemExit):
                     capture._entropy_hex({"entropyHex": value}, "bad")
 
+        base_case = {
+            "name": "generic-seed",
+            "url": "gotify://gotify.example/TOKEN",
+            "body": "body",
+            "assertResult": True,
+        }
+        first = capture.capture_case(
+            {
+                **base_case,
+                "seeds": {"entropyHex": ["00" * 16, "11" * 16]},
+            },
+            "gotify",
+        )
+        second = capture.capture_case(
+            {
+                **base_case,
+                "seeds": {"entropyHex": ["22" * 16, "33" * 16]},
+            },
+            "gotify",
+        )
+        self.assertEqual(first["expected"], second["expected"])
+
     def test_uuid_seed_requires_canonical_lowercase_hyphenated_form(self):
         canonical = "00112233-4455-6677-8899-aabbccddeeff"
         self.assertEqual(capture._uuid_seed({"uuid": canonical}, "ok"), canonical)

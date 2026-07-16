@@ -89,13 +89,16 @@ describe('gotify endpoint, token and priority contract', () => {
   })
 
   test('invalid token fails through plugin diagnostics without leaking a secret', () => {
-    const events: string[] = []
+    const events: Array<{ kind: string; message: string }> = []
     const app = new Apprise({
       asset: new AppriseAsset({
-        diagnostic: (event) => events.push(event.kind),
+        diagnostic: (event) => events.push(event),
       }),
     })
-    expect(app.add('gotify://gotify.example')).toBe(false)
-    expect(events).toContain('plugin-error')
+    expect(app.add('gotify://gotify.example/TOKEN%20SECRET')).toBe(false)
+    expect(events.map((event) => event.kind)).toContain('plugin-error')
+    expect(events.map((event) => event.message).join('\n')).not.toContain(
+      'TOKEN SECRET',
+    )
   })
 })

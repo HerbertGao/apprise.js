@@ -42,6 +42,12 @@
       "assertResult": true
     },
     {
+      "name": "emergency-underscored-integers",
+      "url": "pover://USERKEY@APPTOKEN/device-underscore?priority=emergency&interval=3_0&expire=1_0",
+      "body": "underscored integers",
+      "assertResult": true
+    },
+    {
       "name": "invalid-emergency-interval",
       "url": "pover://USERKEY@APPTOKEN?priority=emergency&interval=29",
       "body": "not sent",

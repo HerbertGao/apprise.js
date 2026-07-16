@@ -243,6 +243,40 @@
       }
     },
     {
+      "name": "emergency-underscored-integers",
+      "input": {
+        "url": "pover://USERKEY@APPTOKEN/device-underscore?priority=emergency&interval=3_0&expire=1_0",
+        "title": "",
+        "body": "underscored integers",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "https://api.pushover.net/1/messages.json",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Length": "154",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic QVBQVE9LRU46"
+          },
+          "body": {
+            "text": "token=APPTOKEN&priority=2&title=Apprise+Notifications&message=underscored+integers&sound=pushover&retry=30&expire=10&user=USERKEY&device=device-underscore"
+          }
+        },
+        "result": true
+      }
+    },
+    {
       "name": "invalid-emergency-interval",
       "input": {
         "url": "pover://USERKEY@APPTOKEN?priority=emergency&interval=29",

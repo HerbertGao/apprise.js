@@ -256,25 +256,34 @@ if (calibration !== 'OK') {
 }
 
 for (const [entry, schemes] of [...ENTRY_SCHEMES, ['all', ALL_SCHEMES]]) {
-  const output = runModuleProbe(`
-    const calls = []
-    const observerKey = Symbol.for(${JSON.stringify(OBSERVER)})
-    const registryKey = Symbol.for(${JSON.stringify(REGISTRY)})
-    if (globalThis[registryKey] !== undefined || calls.length !== 0) process.exit(20)
-    globalThis[observerKey] = (scheme) => calls.push(scheme)
-    await import('./dist/plugins/${entry}.js')
-    const registry = globalThis[registryKey]
-    const expected = ${JSON.stringify(schemes)}
-    const actual = [...registry.keys()].sort()
-    const counts = Object.fromEntries(expected.map((scheme) => [scheme, calls.filter((x) => x === scheme).length]))
-    const okay = JSON.stringify(actual) === JSON.stringify([...expected].sort()) &&
-      expected.every((scheme) => counts[scheme] === 1) &&
-      !registry.has('observerstub') && !calls.includes('observerstub')
-    process.stdout.write(okay ? 'OK' : JSON.stringify({ actual, expected, calls, counts }))
-  `)
-  if (output !== 'OK') {
-    console.error(`✗ isolated registration failed for ${entry}: ${output}`)
-    process.exit(1)
+  for (const format of ['esm', 'cjs']) {
+    const load =
+      format === 'esm'
+        ? `await import('./dist/plugins/${entry}.js')`
+        : `createRequire(import.meta.url)('./dist/plugins/${entry}.cjs')`
+    const output = runModuleProbe(`
+      import { createRequire } from 'node:module'
+      const calls = []
+      const observerKey = Symbol.for(${JSON.stringify(OBSERVER)})
+      const registryKey = Symbol.for(${JSON.stringify(REGISTRY)})
+      if (globalThis[registryKey] !== undefined || calls.length !== 0) process.exit(20)
+      globalThis[observerKey] = (scheme) => calls.push(scheme)
+      ${load}
+      const registry = globalThis[registryKey]
+      const expected = ${JSON.stringify(schemes)}
+      const actual = [...registry.keys()].sort()
+      const counts = Object.fromEntries(expected.map((scheme) => [scheme, calls.filter((x) => x === scheme).length]))
+      const okay = JSON.stringify(actual) === JSON.stringify([...expected].sort()) &&
+        expected.every((scheme) => counts[scheme] === 1) &&
+        !registry.has('observerstub') && !calls.includes('observerstub')
+      process.stdout.write(okay ? 'OK' : JSON.stringify({ actual, expected, calls, counts }))
+    `)
+    if (output !== 'OK') {
+      console.error(
+        `✗ isolated ${format.toUpperCase()} registration failed for ${entry}: ${output}`,
+      )
+      process.exit(1)
+    }
   }
 }
 
@@ -282,5 +291,5 @@ console.log(
   `✓ registry is a single process-wide table ` +
     `(${PROBES.length} ESM/CJS load combinations resolve; ` +
     `CJS-loaded plugins deliver over a stub transport; ` +
-    `${ENTRY_SCHEMES.length} isolated entries + plugins/all register once)`,
+    `${ENTRY_SCHEMES.length} isolated ESM+CJS entries + plugins/all register once)`,
 )

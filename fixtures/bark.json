@@ -307,6 +307,39 @@
       }
     },
     {
+      "name": "underscored-integers",
+      "input": {
+        "url": "bark://bark.example/device-underscore?volume=1_0&badge=1_0&image=no",
+        "title": "",
+        "body": "underscored integers",
+        "type": "info",
+        "assertResult": true
+      },
+      "seeds": {
+        "uid": "itest-uid-0",
+        "recursion": 0,
+        "boundary": null
+      },
+      "expected": {
+        "request": {
+          "method": "POST",
+          "url": "http://bark.example/push",
+          "headers": {
+            "User-Agent": "Apprise",
+            "Accept-Encoding": "gzip, deflate, zstd",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "128"
+          },
+          "body": {
+            "text": "{\"title\": \"Apprise Notifications\", \"body\": \"underscored integers\", \"badge\": 10, \"volume\": 10, \"device_key\": \"device-underscore\"}"
+          }
+        },
+        "result": true
+      }
+    },
+    {
       "name": "markdown-custom-icon-priority",
       "input": {
         "url": "bark://bark.example/device-icon?format=markdown&image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png",

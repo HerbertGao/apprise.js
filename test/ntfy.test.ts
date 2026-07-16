@@ -174,11 +174,9 @@ describe.sequential('ntfy modes, size oracle, raw sequencing and privacy', () =>
     expect(basic.auth).toBe(NtfyAuth.BASIC)
     expect(basic.url(true)).not.toContain('secret')
 
-    const token = new NotifyNtfy(
-      parse(
-        'ntfys://tk_SECRET@ntfy.private.example/topic?mode=private&auth=token',
-      ),
-    )
+    const tokenRaw =
+      'ntfys://tk_SECRET@ntfy.private.example/topic?mode=private&auth=token'
+    const token = new NotifyNtfy(parse(tokenRaw))
     expect(token.url(true)).not.toContain('tk_SECRET')
 
     const messages: string[] = []
@@ -192,7 +190,10 @@ describe.sequential('ntfy modes, size oracle, raw sequencing and privacy', () =>
         'ntfys://alice:secret@ntfy.private.example/topic?mode=private&auth=basic',
       ),
     ).toBe(true)
-    expect(messages.join('\n')).not.toContain('secret')
+    expect(app.add(tokenRaw)).toBe(true)
+    const diagnostics = messages.join('\n')
+    expect(diagnostics).not.toContain('secret')
+    expect(diagnostics).not.toContain('tk_SECRET')
   })
 
   test('local raw delivery accepts an in-memory attachment and preserves bytes', async () => {

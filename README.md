@@ -80,7 +80,7 @@ apprise.add('feishu://bot_token')
 const ok = await apprise.notify({ title: 'Hello', body: 'World' })
 ```
 
-Minimal URL shapes for the China-oriented plugins are:
+Minimal URL shapes for selected service plugins are:
 
 ```text
 schan://token

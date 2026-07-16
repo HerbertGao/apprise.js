@@ -50,6 +50,12 @@
       "assertResult": true
     },
     {
+      "name": "underscored-integers",
+      "url": "bark://bark.example/device-underscore?volume=1_0&badge=1_0&image=no",
+      "body": "underscored integers",
+      "assertResult": true
+    },
+    {
       "name": "markdown-custom-icon-priority",
       "url": "bark://bark.example/device-icon?format=markdown&image=yes&icon=https%3A%2F%2Fexample.com%2Foverride.png",
       "body": "**custom**",

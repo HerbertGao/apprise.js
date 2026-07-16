@@ -106,8 +106,8 @@ function splitPath(path: string | null | undefined): string[] {
 
 function pyInt(value: unknown, fallback: number): number {
   if (typeof value === 'number' && Number.isInteger(value)) return value
-  if (typeof value === 'string' && /^[+-]?\d+$/.test(value.trim())) {
-    return Number(value.trim())
+  if (typeof value === 'string' && /^[+-]?\d(?:_?\d)*$/.test(value.trim())) {
+    return Number(value.trim().replaceAll('_', ''))
   }
   return fallback
 }

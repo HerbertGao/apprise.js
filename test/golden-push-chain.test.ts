@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSD-2-Clause
-// Synthetic response-driven binary chain used to calibrate the golden harness
-// before the real Pushbullet plugin/fixture is introduced.
+// Synthetic response-driven binary chain that calibrates the golden harness
+// independently of the real Pushbullet implementation and fixtures.
 
 import { describe, expect, test } from 'vitest'
 import { NotifyBase } from '../src/core/notify-base.js'
