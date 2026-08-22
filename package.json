@@ -290,14 +290,14 @@
     "test:assertions": "node scripts/check-failure-assertions.mjs"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.3",
+    "@biomejs/biome": "2.5.9",
     "@types/markdown-it": "^14.1.2",
-    "@types/node": "^26.1.1",
-    "@vitest/coverage-v8": "4.1.10",
+    "@types/node": "^26.2.0",
+    "@vitest/coverage-v8": "4.1.11",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
-    "vitest": "4.1.10",
-    "esbuild": "^0.28.1"
+    "vitest": "4.1.11",
+    "esbuild": "^0.28.2"
   },
   "dependencies": {
     "markdown-it": "^14.3.0"
